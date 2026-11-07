@@ -1,0 +1,1514 @@
+﻿[
+    {
+        "table_name":  "academic_years",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "academic_years",
+        "column_name":  "year_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "academic_years",
+        "column_name":  "start_date",
+        "data_type":  "date",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "academic_years",
+        "column_name":  "end_date",
+        "data_type":  "date",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "academic_years",
+        "column_name":  "is_active",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "false"
+    },
+    {
+        "table_name":  "academic_years",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "academic_years",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "student_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "exam_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "combination_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "subjects_count",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "total_marks",
+        "data_type":  "numeric",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "average_marks",
+        "data_type":  "numeric",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "principal_passes",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "points",
+        "data_type":  "integer",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "division",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "position_in_combination",
+        "data_type":  "integer",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "position_overall",
+        "data_type":  "integer",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "alevel_results",
+        "column_name":  "processed_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "user_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "action",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "table_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "record_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "old_data",
+        "data_type":  "jsonb",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "new_data",
+        "data_type":  "jsonb",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "audit_logs",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "class_streams",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "class_streams",
+        "column_name":  "class_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "class_streams",
+        "column_name":  "stream_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "class_streams",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "class_subjects",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "class_subjects",
+        "column_name":  "class_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "class_subjects",
+        "column_name":  "subject_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "class_subjects",
+        "column_name":  "is_compulsory",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "true"
+    },
+    {
+        "table_name":  "class_subjects",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "classes",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "classes",
+        "column_name":  "class_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "classes",
+        "column_name":  "level",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "classes",
+        "column_name":  "sort_order",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "classes",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "combination_subjects",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "combination_subjects",
+        "column_name":  "combination_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "combination_subjects",
+        "column_name":  "subject_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "combination_subjects",
+        "column_name":  "subject_role",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "combination_subjects",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "combinations",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "combinations",
+        "column_name":  "code",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "combinations",
+        "column_name":  "name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "combinations",
+        "column_name":  "is_active",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "true"
+    },
+    {
+        "table_name":  "combinations",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "divisions",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "divisions",
+        "column_name":  "level",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "divisions",
+        "column_name":  "division",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "divisions",
+        "column_name":  "min_points",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "divisions",
+        "column_name":  "max_points",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exam_classes",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "exam_classes",
+        "column_name":  "exam_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exam_classes",
+        "column_name":  "class_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "level",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "exam_type",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "term_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "academic_year_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "start_date",
+        "data_type":  "date",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "end_date",
+        "data_type":  "date",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "status",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027draft\u0027::text"
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "created_by",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "exams",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "level",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "grade",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "min_mark",
+        "data_type":  "numeric",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "max_mark",
+        "data_type":  "numeric",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "points",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "remarks",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "grades",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "exam_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "student_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "subject_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "marks_obtained",
+        "data_type":  "numeric",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "practical_marks",
+        "data_type":  "numeric",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "is_absent",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "false"
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "entered_by",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "marks",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "recipient_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "recipient_role",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "title",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "message",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "type",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027info\u0027::text"
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "link",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "is_read",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "false"
+    },
+    {
+        "table_name":  "notifications",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "student_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "exam_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "subjects_count",
+        "data_type":  "integer",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "total_marks",
+        "data_type":  "numeric",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "average_marks",
+        "data_type":  "numeric",
+        "is_nullable":  "NO",
+        "column_default":  "0"
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "grade",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "points",
+        "data_type":  "integer",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "division",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "position_in_stream",
+        "data_type":  "integer",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "position_in_class",
+        "data_type":  "integer",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "olevel_results",
+        "column_name":  "processed_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "email",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "full_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027User\u0027::text"
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "phone",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "role",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027teacher\u0027::text"
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "is_active",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "true"
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "profiles",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "school_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "school_code",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "address",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "phone",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "email",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "region",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "district",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "logo_url",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "national_logo_url",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "school_settings",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "streams",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "streams",
+        "column_name":  "stream_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "streams",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "student_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "academic_year_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "class_stream_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "combination_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "status",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027active\u0027::text"
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "student_enrollments",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "student_subjects",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "student_subjects",
+        "column_name":  "student_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_subjects",
+        "column_name":  "subject_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_subjects",
+        "column_name":  "academic_year_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "student_subjects",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "admission_number",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "first_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "middle_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "surname",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "gender",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "date_of_birth",
+        "data_type":  "date",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "admission_date",
+        "data_type":  "date",
+        "is_nullable":  "NO",
+        "column_default":  "CURRENT_DATE"
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "parent_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "parent_phone",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "address",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "prems_number",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "status",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027active\u0027::text"
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "students",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "subject_code",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "subject_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "short_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "level",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "has_practical",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "false"
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "is_active",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "true"
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "subjects",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "teacher_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "academic_year_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "duty_type",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "class_stream_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "description",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_duties",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "teacher_subjects",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "teacher_subjects",
+        "column_name":  "teacher_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_subjects",
+        "column_name":  "class_stream_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_subjects",
+        "column_name":  "subject_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_subjects",
+        "column_name":  "academic_year_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teacher_subjects",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "profile_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "employee_number",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "qualification",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "specialization",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "gender",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "status",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  "\u0027active\u0027::text"
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "teachers",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  "gen_random_uuid()"
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "academic_year_id",
+        "data_type":  "uuid",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "term_name",
+        "data_type":  "text",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "start_date",
+        "data_type":  "date",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "end_date",
+        "data_type":  "date",
+        "is_nullable":  "NO",
+        "column_default":  null
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "is_active",
+        "data_type":  "boolean",
+        "is_nullable":  "NO",
+        "column_default":  "false"
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "created_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "terms",
+        "column_name":  "updated_at",
+        "data_type":  "timestamp with time zone",
+        "is_nullable":  "NO",
+        "column_default":  "now()"
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "admission_number",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "first_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "middle_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "surname",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "gender",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "student_status",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "enrollment_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "enrollment_status",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "class_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "level",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "stream_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "class_stream_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "combination_code",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "combination_id",
+        "data_type":  "uuid",
+        "is_nullable":  "YES",
+        "column_default":  null
+    },
+    {
+        "table_name":  "v_current_students",
+        "column_name":  "year_name",
+        "data_type":  "text",
+        "is_nullable":  "YES",
+        "column_default":  null
+    }
+]

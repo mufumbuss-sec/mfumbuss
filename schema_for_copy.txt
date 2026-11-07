@@ -1,0 +1,54 @@
+﻿-- Schema ya mfumo wa shule (Supabase/Postgres)
+-- Tumia kwenye SQL Editor ya Supabase
+
+create extension if not exists "uuid-ossp";
+
+create type user_role as enum ('headmaster','academic','teacher');
+create type user_sex as enum ('M','F');
+
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  first_name text not null,
+  middle_name text,
+  last_name text not null,
+  full_name text generated always as (trim(coalesce(first_name,'') || ' ' || coalesce(middle_name,'') || ' ' || coalesce(last_name,''))) stored,
+  sex user_sex not null,
+  phone text,
+  email text,
+  role user_role not null,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists public.teaching_assignments (
+  id uuid primary key default uuid_generate_v4(),
+  teacher_id uuid not null references public.profiles(id) on delete cascade,
+  class_name text not null,
+  subject_name text not null,
+  created_at timestamptz default now()
+);
+
+-- Enable RLS
+alter table public.profiles enable row level security;
+alter table public.teaching_assignments enable row level security;
+
+-- Policies
+create policy "Users can view their own profile"
+  on public.profiles for select
+  using (auth.uid() = id);
+
+create policy "Users can view their own assignments"
+  on public.teaching_assignments for select
+  using (auth.uid() = teacher_id);
+
+-- Auto-create profile on signup (optional helper)
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  -- Insert tupu - itajazwa na admin kupitia service role au insert moja kwa moja
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Note: Kwa kuunda watumiaji, tumia Supabase Auth (Admin API/Service role) ili kuunda user
+-- kisha weka rekodi kwenye profiles na teaching_assignments.

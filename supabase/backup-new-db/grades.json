@@ -1,0 +1,12 @@
+﻿[{"id":"66548b40-e0a8-4d49-9acb-7b40463df595","level":"O_LEVEL","grade":"A","min_mark":75.00,"max_mark":100.00,"points":1,"remarks":"Excellent","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"58f4a179-5c9d-408b-956c-a1719d5bddc6","level":"O_LEVEL","grade":"B","min_mark":65.00,"max_mark":74.99,"points":2,"remarks":"Very Good","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"660cbaa8-a298-49f3-b39c-a4c333cce62a","level":"O_LEVEL","grade":"C","min_mark":45.00,"max_mark":64.99,"points":3,"remarks":"Good","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"64402588-edb6-4250-a097-c7dc4e02cd08","level":"O_LEVEL","grade":"D","min_mark":30.00,"max_mark":44.99,"points":4,"remarks":"Satisfactory","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"43f9544b-fb49-40a7-8131-ac374919f0d6","level":"O_LEVEL","grade":"F","min_mark":0.00,"max_mark":29.99,"points":5,"remarks":"Fail","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"97643f0a-9fae-458f-bc67-425f7f5cc6b8","level":"A_LEVEL","grade":"A","min_mark":80.00,"max_mark":100.00,"points":1,"remarks":"Excellent","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"0e5591ac-231d-4996-80d5-f7845ce5809b","level":"A_LEVEL","grade":"B","min_mark":70.00,"max_mark":79.99,"points":2,"remarks":"Very Good","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"38c6c5e4-318e-49ad-871c-85f05759d7c3","level":"A_LEVEL","grade":"C","min_mark":60.00,"max_mark":69.99,"points":3,"remarks":"Good","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"54b32a03-7077-48b7-9f4e-ef93af52b16c","level":"A_LEVEL","grade":"D","min_mark":50.00,"max_mark":59.99,"points":4,"remarks":"Average","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"c50c3df4-8123-4ce3-bede-0b6e71c2d75b","level":"A_LEVEL","grade":"E","min_mark":40.00,"max_mark":49.99,"points":5,"remarks":"Satisfactory","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"2eddf7c7-0724-434a-b8c5-8f9260214e06","level":"A_LEVEL","grade":"S","min_mark":35.00,"max_mark":39.99,"points":6,"remarks":"Subsidiary Pass","created_at":"2026-07-02T17:22:35.731117+00:00"}, 
+ {"id":"942c9aa8-6ee2-4221-a64b-772d4773f6ae","level":"A_LEVEL","grade":"F","min_mark":0.00,"max_mark":34.99,"points":7,"remarks":"Fail","created_at":"2026-07-02T17:22:35.731117+00:00"}]

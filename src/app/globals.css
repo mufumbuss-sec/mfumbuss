@@ -1,0 +1,615 @@
+@import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a[href]:not([aria-disabled="true"]),
+button:not(:disabled):not([aria-disabled="true"]),
+input[type="button"]:enabled,
+input[type="submit"]:enabled,
+input[type="reset"]:enabled,
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+@keyframes notification-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.notification-progress {
+  animation: notification-progress 5s linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification-progress {
+    animation: none;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm 9mm;
+  }
+
+  @page isal-a4 {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    width: 100%;
+    max-width: none;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .exam-report,
+  .exam-report *,
+  .isal-print-shell,
+  .isal-print-shell *,
+  #certificate-print-root,
+  #certificate-print-root * {
+    visibility: visible !important;
+  }
+
+  .isal-print-shell {
+    page: isal-a4;
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .exam-report {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 12pt !important;
+    line-height: 1.25 !important;
+    overflow: visible !important;
+  }
+
+  .exam-report,
+  .exam-report * {
+    background: transparent !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .exam-report > * + * {
+    margin-top: 5pt !important;
+  }
+
+  .exam-report .report-no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .exam-report .report-heading {
+    padding: 5pt 8pt !important;
+    border: 0.75pt solid #000000 !important;
+    border-top: 2pt solid #000000 !important;
+  }
+
+  .exam-report .report-heading p {
+    margin: 0 !important;
+    font-size: 9pt !important;
+    line-height: 1.3 !important;
+  }
+
+  .exam-report .report-heading p:first-of-type {
+    font-size: 8.5pt !important;
+    letter-spacing: 0.2pt !important;
+  }
+
+  .exam-report .report-heading p:nth-of-type(3) {
+    margin-top: 3pt !important;
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+  }
+
+  .exam-report .report-heading-title {
+    margin: 3pt auto 0 !important;
+    padding-top: 3pt !important;
+    border-top: 0.5pt solid #000000 !important;
+    font-size: 9.5pt !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4pt !important;
+    text-transform: uppercase !important;
+  }
+
+  .exam-report .report-heading h1 {
+    margin: 1pt 0 0 !important;
+    font-size: 16pt !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.4pt !important;
+  }
+
+  .exam-report section {
+    margin-top: 5pt !important;
+  }
+
+  .exam-report section > h2 {
+    margin: 0 0 3pt !important;
+    padding-bottom: 2pt !important;
+    font-size: 10pt !important;
+    border-bottom: 0.75pt solid #000000 !important;
+  }
+
+  .exam-report .report-division-layout {
+    display: block !important;
+  }
+
+  .exam-report .report-division-summary {
+    width: 46% !important;
+    max-width: 46% !important;
+    margin: 0 auto 4pt !important;
+    border: 0.75pt solid #000000 !important;
+  }
+
+  .exam-report .report-division-table {
+    font-size: 10pt !important;
+    line-height: 1.1 !important;
+  }
+
+  .exam-report .report-division-table th,
+  .exam-report .report-division-table td {
+    padding: 2pt 3pt !important;
+  }
+
+  .exam-report .report-division-layout > div:last-child {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 4pt !important;
+    width: 72% !important;
+    margin: 0 auto !important;
+  }
+
+  .exam-report .report-division-layout > div:last-child > div {
+    border: 0.5pt solid #000000 !important;
+    padding: 2pt 3pt !important;
+    text-align: center !important;
+  }
+
+  .exam-report .report-division-layout > div:last-child > div p:first-child {
+    font-size: 7pt !important;
+    letter-spacing: 0.2pt !important;
+  }
+
+  .exam-report .report-division-layout > div:last-child > div p:last-child {
+    margin-top: 1pt !important;
+    font-size: 10pt !important;
+    font-weight: 700 !important;
+  }
+
+  .exam-report .report-scroll {
+    display: block !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .exam-report .report-subject-cards,
+  .exam-report .report-students-cards {
+    display: none !important;
+  }
+
+  .exam-report .report-summary-section {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .exam-report table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 0.75pt solid #000000 !important;
+  }
+
+  .exam-report th,
+  .exam-report td {
+    padding: 2pt 3pt !important;
+    border: 0.5pt solid #000000 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .exam-report thead th {
+    background: #e6e6e6 !important;
+    font-weight: 700 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report .report-students-table {
+    font-size: 12pt !important;
+    line-height: 1.15 !important;
+  }
+
+  .exam-report .report-summary-table {
+    font-size: 8pt !important;
+    line-height: 1.15 !important;
+  }
+
+  .exam-report .report-students-table th,
+  .exam-report .report-students-table td {
+    padding: 1.5pt 2.5pt !important;
+  }
+
+  .exam-report .report-summary-table th,
+  .exam-report .report-summary-table td {
+    padding: 1pt 2pt !important;
+  }
+
+  .exam-report tbody tr:nth-child(even) td {
+    background: #f7f7f7 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report footer {
+    margin-top: 4pt !important;
+    padding-top: 2pt !important;
+    border-top: 0.5pt solid #000000 !important;
+    font-size: 8pt !important;
+  }
+
+  .exam-report thead {
+    display: table-header-group;
+  }
+
+  .exam-report tr,
+  .exam-report .report-division-layout {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .exam-report p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  @supports selector(:has(*)) {
+    body *:not(.exam-report):not(.isal-print-shell):not(#certificate-print-root):not(:has(.exam-report)):not(:has(.isal-print-shell)):not(:has(#certificate-print-root)):not(.exam-report *):not(.isal-print-shell *):not(#certificate-print-root *) {
+      display: none !important;
+    }
+
+    body:has(.exam-report),
+    body *:has(.exam-report),
+    body:has(.isal-print-shell),
+    body *:has(.isal-print-shell),
+    body:has(#certificate-print-root),
+    body *:has(#certificate-print-root) {
+      display: block !important;
+      float: none !important;
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      min-height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: #ffffff !important;
+      box-shadow: none !important;
+    }
+
+    .exam-report {
+      position: static !important;
+    }
+  }
+}
+
+/* Report card typography: formal serif for official school documents. */
+.report-card {
+  font-family: "Times New Roman", "Liberation Serif", Georgia, serif;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.report-card .report-card-header h1,
+.report-card .report-card-exam-title,
+.report-card .report-card-section-title {
+  letter-spacing: 0.045em;
+}
+
+/* Report card print layout: A4 portrait, one student per page. */
+@media print {
+  @page report-card {
+    size: A4 portrait;
+    margin: 7mm 7mm;
+  }
+
+  .exam-report.report-card-page {
+    page: report-card;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11pt !important;
+    line-height: 1.2 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .exam-report.report-card-page .report-card,
+  .exam-report.report-card-page .report-card * {
+    font-family: "Times New Roman", "Liberation Serif", Georgia, serif !important;
+  }
+
+  .exam-report.report-card-page > * + * {
+    margin-top: 0 !important;
+  }
+
+  .exam-report.report-card-page .report-no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .exam-report.report-card-page .report-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    break-after: page !important;
+    page-break-after: always !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .exam-report.report-card-page .report-card:last-child {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  .exam-report.report-card-page .report-card-header {
+    margin: 0 0 2pt !important;
+    padding: 0 !important;
+    border: 0 !important;
+    text-align: center !important;
+  }
+
+  .exam-report.report-card-page .report-card-header p {
+    margin: 0 !important;
+    font-size: 11pt !important;
+    line-height: 1.15 !important;
+    color: #000000 !important;
+  }
+
+  .exam-report.report-card-page .report-card-header h1 {
+    margin: 1pt 0 !important;
+    font-size: 16pt !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.3pt !important;
+    color: #000000 !important;
+  }
+
+  .exam-report.report-card-page .report-card-exam-title {
+    margin-top: 1pt !important;
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+  }
+
+  .exam-report.report-card-page section {
+    margin-top: 4pt !important;
+  }
+
+  .exam-report.report-card-page .report-card-section-title {
+    margin: 0 0 1.5pt !important;
+    padding: 0 0 0.5pt !important;
+    border-bottom: 0.5pt solid #94a3b8 !important;
+    font-size: 11pt !important;
+    line-height: 1.1 !important;
+    color: #0f172a !important;
+  }
+
+  .exam-report.report-card-page .report-student-info {
+    margin-top: 2pt !important;
+    padding: 1.5pt 0 !important;
+    border-top: 0.5pt solid #cbd5e1 !important;
+    border-bottom: 0.5pt solid #cbd5e1 !important;
+    font-size: 11pt !important;
+    line-height: 1.2 !important;
+  }
+
+  .exam-report.report-card-page table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 0.5pt solid #cbd5e1 !important;
+    font-size: 11pt !important;
+    line-height: 1.1 !important;
+  }
+
+  .exam-report.report-card-page th,
+  .exam-report.report-card-page td {
+    padding: 0.9pt 2pt !important;
+    border: 0.5pt solid #cbd5e1 !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+
+  .exam-report.report-card-page thead th {
+    background: #1f3a5f !important;
+    color: #ffffff !important;
+    border-color: #1f3a5f !important;
+    font-weight: 700 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page tbody tr:nth-child(even) td {
+    background: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .grade-a {
+    background: #dcfce7 !important;
+    color: #14532d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .grade-b {
+    background: #dbeafe !important;
+    color: #1e3a8a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .grade-c {
+    background: #fef9c3 !important;
+    color: #713f12 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .grade-d {
+    background: #ffedd5 !important;
+    color: #7c2d12 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .grade-f {
+    background: #fee2e2 !important;
+    color: #7f1d1d !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .trend-up {
+    color: #15803d !important;
+  }
+
+  .exam-report.report-card-page .trend-down {
+    color: #b91c1c !important;
+  }
+
+  .exam-report.report-card-page .trend-same,
+  .exam-report.report-card-page .trend-none {
+    color: #64748b !important;
+  }
+
+  .exam-report.report-card-page .report-card-comments {
+    font-size: 11pt !important;
+    line-height: 1.2 !important;
+  }
+
+  .exam-report.report-card-page .report-card-parent {
+    margin-top: 4pt !important;
+    padding: 2pt 3pt !important;
+    border: 0.5pt solid #cbd5e1 !important;
+    font-size: 11pt !important;
+    line-height: 1.2 !important;
+    text-align: justify !important;
+  }
+
+  .exam-report.report-card-page .report-card-signatures {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14pt !important;
+    margin-top: 5pt !important;
+    padding-top: 0 !important;
+  }
+
+  .exam-report.report-card-page .report-card-signature {
+    border-top: 0 !important;
+    padding-top: 0 !important;
+    text-align: center !important;
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+  }
+
+  .exam-report.report-card-page .report-card-signature-space {
+    height: 36pt !important;
+  }
+
+  .exam-report.report-card-page .report-card-signature-line {
+    border-top: 0.5pt solid #64748b !important;
+    padding-top: 1.5pt !important;
+  }
+
+  .exam-report.report-card-page .report-card-signatures img {
+    display: block !important;
+    max-width: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .exam-report.report-card-page .report-card-footer {
+    margin-top: 2pt !important;
+    padding-top: 2pt !important;
+    border-top: 0.5pt solid #cbd5e1 !important;
+    text-align: center !important;
+    font-size: 11pt !important;
+    color: #475569 !important;
+  }
+}

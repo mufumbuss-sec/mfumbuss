@@ -1,0 +1,442 @@
+﻿[
+    {
+        "tablename":  "academic_years",
+        "policyname":  "p_academic_years_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "academic_years",
+        "policyname":  "p_academic_years_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "alevel_results",
+        "policyname":  "p_alevel_results_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "audit_logs",
+        "policyname":  "p_audit_logs_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027headmaster\u0027::text]))",
+        "with_check":  null
+    },
+    {
+        "tablename":  "class_streams",
+        "policyname":  "p_class_streams_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "class_streams",
+        "policyname":  "p_class_streams_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "class_subjects",
+        "policyname":  "p_class_subjects_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "class_subjects",
+        "policyname":  "p_class_subjects_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "classes",
+        "policyname":  "p_classes_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "classes",
+        "policyname":  "p_classes_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "combination_subjects",
+        "policyname":  "p_combination_subjects_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "combination_subjects",
+        "policyname":  "p_combination_subjects_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "combinations",
+        "policyname":  "p_combinations_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "combinations",
+        "policyname":  "p_combinations_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "divisions",
+        "policyname":  "p_divisions_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "divisions",
+        "policyname":  "p_divisions_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "exam_classes",
+        "policyname":  "p_exam_classes_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "exam_classes",
+        "policyname":  "p_exam_classes_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "exams",
+        "policyname":  "p_exams_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "exams",
+        "policyname":  "p_exams_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "grades",
+        "policyname":  "p_grades_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "grades",
+        "policyname":  "p_grades_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "marks",
+        "policyname":  "p_marks_admin",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "marks",
+        "policyname":  "p_marks_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "marks",
+        "policyname":  "p_marks_teacher",
+        "cmd":  "INSERT",
+        "roles":  "{public}",
+        "qual":  null,
+        "with_check":  "((get_my_role() = \u0027teacher\u0027::text) AND (EXISTS ( SELECT 1\n   FROM (((teachers t\n     JOIN teacher_subjects ts ON ((ts.teacher_id = t.id)))\n     JOIN student_enrollments se ON (((se.class_stream_id = ts.class_stream_id) AND (se.academic_year_id = ts.academic_year_id))))\n     JOIN exams e ON (((e.id = marks.exam_id) AND (e.academic_year_id = ts.academic_year_id))))\n  WHERE ((t.profile_id = auth.uid()) AND (ts.subject_id = marks.subject_id) AND (se.student_id = marks.student_id)))))"
+    },
+    {
+        "tablename":  "marks",
+        "policyname":  "p_marks_teacher_delete",
+        "cmd":  "DELETE",
+        "roles":  "{public}",
+        "qual":  "((get_my_role() = \u0027teacher\u0027::text) AND (EXISTS ( SELECT 1\n   FROM exams e\n  WHERE ((e.id = marks.exam_id) AND (e.status = \u0027entering_marks\u0027::text)))) AND (EXISTS ( SELECT 1\n   FROM (teachers t\n     JOIN teacher_subjects ts ON ((ts.teacher_id = t.id)))\n  WHERE ((t.profile_id = auth.uid()) AND (ts.subject_id = marks.subject_id)))))",
+        "with_check":  null
+    },
+    {
+        "tablename":  "marks",
+        "policyname":  "p_marks_teacher_update",
+        "cmd":  "UPDATE",
+        "roles":  "{public}",
+        "qual":  "((get_my_role() = \u0027teacher\u0027::text) AND (EXISTS ( SELECT 1\n   FROM (((teachers t\n     JOIN teacher_subjects ts ON ((ts.teacher_id = t.id)))\n     JOIN student_enrollments se ON (((se.class_stream_id = ts.class_stream_id) AND (se.academic_year_id = ts.academic_year_id))))\n     JOIN exams e ON (((e.id = marks.exam_id) AND (e.academic_year_id = ts.academic_year_id))))\n  WHERE ((t.profile_id = auth.uid()) AND (ts.subject_id = marks.subject_id) AND (se.student_id = marks.student_id)))))",
+        "with_check":  null
+    },
+    {
+        "tablename":  "notifications",
+        "policyname":  "p_notifications_mark_read",
+        "cmd":  "UPDATE",
+        "roles":  "{public}",
+        "qual":  "(recipient_id = auth.uid())",
+        "with_check":  "(recipient_id = auth.uid())"
+    },
+    {
+        "tablename":  "notifications",
+        "policyname":  "p_notifications_own",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "((recipient_id = auth.uid()) OR (recipient_role = get_my_role()))",
+        "with_check":  null
+    },
+    {
+        "tablename":  "notifications",
+        "policyname":  "p_notifications_send",
+        "cmd":  "INSERT",
+        "roles":  "{public}",
+        "qual":  null,
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text, \u0027headmaster\u0027::text]))"
+    },
+    {
+        "tablename":  "olevel_results",
+        "policyname":  "p_olevel_results_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "profiles",
+        "policyname":  "p_profiles_admin_all",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = \u0027admin\u0027::text)",
+        "with_check":  "(get_my_role() = \u0027admin\u0027::text)"
+    },
+    {
+        "tablename":  "profiles",
+        "policyname":  "p_profiles_self_select",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(auth.uid() = id)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "profiles",
+        "policyname":  "p_profiles_self_update",
+        "cmd":  "UPDATE",
+        "roles":  "{public}",
+        "qual":  "(auth.uid() = id)",
+        "with_check":  "((auth.uid() = id) AND (role = get_my_role()))"
+    },
+    {
+        "tablename":  "profiles",
+        "policyname":  "p_profiles_staff_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027headmaster\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  null
+    },
+    {
+        "tablename":  "school_settings",
+        "policyname":  "p_settings_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027headmaster\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027headmaster\u0027::text]))"
+    },
+    {
+        "tablename":  "school_settings",
+        "policyname":  "p_settings_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "streams",
+        "policyname":  "p_streams_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "streams",
+        "policyname":  "p_streams_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "student_enrollments",
+        "policyname":  "p_student_enrollments_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "student_enrollments",
+        "policyname":  "p_student_enrollments_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "student_subjects",
+        "policyname":  "p_student_subjects_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "student_subjects",
+        "policyname":  "p_student_subjects_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "students",
+        "policyname":  "p_students_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "students",
+        "policyname":  "p_students_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "subjects",
+        "policyname":  "p_subjects_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "subjects",
+        "policyname":  "p_subjects_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "teacher_duties",
+        "policyname":  "p_duties_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "teacher_duties",
+        "policyname":  "p_duties_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "teacher_subjects",
+        "policyname":  "p_tsubjects_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "teacher_subjects",
+        "policyname":  "p_tsubjects_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "teachers",
+        "policyname":  "p_teachers_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "teachers",
+        "policyname":  "p_teachers_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    },
+    {
+        "tablename":  "terms",
+        "policyname":  "p_terms_manage",
+        "cmd":  "ALL",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))",
+        "with_check":  "(get_my_role() = ANY (ARRAY[\u0027admin\u0027::text, \u0027academic\u0027::text]))"
+    },
+    {
+        "tablename":  "terms",
+        "policyname":  "p_terms_read",
+        "cmd":  "SELECT",
+        "roles":  "{public}",
+        "qual":  "(get_my_role() IS NOT NULL)",
+        "with_check":  null
+    }
+]

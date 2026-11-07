@@ -1,0 +1,10 @@
+﻿[{"id":"d7a0801b-34a2-4962-b616-facaf2eb7b8a","level":"O_LEVEL","division":"I","min_points":7,"max_points":17}, 
+ {"id":"30ac6b15-144a-4d68-814d-5b8b5b69f40a","level":"O_LEVEL","division":"II","min_points":18,"max_points":21}, 
+ {"id":"7060243b-9aab-4f2c-a79f-fc0d802749ce","level":"O_LEVEL","division":"III","min_points":22,"max_points":25}, 
+ {"id":"3367d99a-ff5d-411d-a50a-c83102e4767f","level":"O_LEVEL","division":"IV","min_points":26,"max_points":33}, 
+ {"id":"d62ba703-8d96-44fa-ace6-296b1efce977","level":"O_LEVEL","division":"0","min_points":34,"max_points":35}, 
+ {"id":"c4bc2fee-53b0-4e06-9308-86c349ba934c","level":"A_LEVEL","division":"I","min_points":3,"max_points":9}, 
+ {"id":"44be961c-a7e2-43c8-b05d-fcce0d088ea6","level":"A_LEVEL","division":"II","min_points":10,"max_points":12}, 
+ {"id":"38e42fda-a1b9-41cd-b100-1f7596a12065","level":"A_LEVEL","division":"III","min_points":13,"max_points":17}, 
+ {"id":"9423a0bd-c732-4876-9ada-b16312be0001","level":"A_LEVEL","division":"IV","min_points":18,"max_points":19}, 
+ {"id":"715461e6-2c99-449b-9b9f-85481d62be15","level":"A_LEVEL","division":"0","min_points":20,"max_points":21}]
