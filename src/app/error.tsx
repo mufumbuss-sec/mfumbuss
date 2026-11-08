@@ -16,30 +16,27 @@ export default function AppError({
   }, [error]);
 
   return (
-    <main className="flex min-h-[100dvh] items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-red-200 bg-white p-6 text-center shadow-sm">
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-700">
+    <main className="flex min-h-[100dvh] items-center justify-center bg-canvas px-4">
+      <div className="w-full max-w-md rounded-[14px] border border-line bg-white p-8 text-center">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-danger text-danger-ink">
           <AlertTriangle className="h-6 w-6" />
         </span>
-        <h1 className="mt-4 text-lg font-bold text-slate-950">
+        <h1 className="mt-4 text-xl font-bold text-ink">
           Something went wrong
         </h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">
+        <p className="mt-2 text-sm leading-6 text-muted">
           The page could not be loaded. Please try again.
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
           <button
             type="button"
             onClick={reset}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800"
+            className="app-btn app-btn-primary"
           >
             <RefreshCw className="h-4 w-4" />
             Try again
           </button>
-          <Link
-            href="/"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
+          <Link href="/" className="app-btn app-btn-secondary">
             Go home
           </Link>
         </div>

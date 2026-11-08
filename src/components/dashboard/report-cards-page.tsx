@@ -719,7 +719,7 @@ export function ReportCardsPage() {
           </div>
 
           <div className="app-card-body space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               <SelectField
                 label="Class"
                 icon={GraduationCap}
@@ -880,18 +880,18 @@ export function ReportCardsPage() {
         </section>
       </div>
 
+      {data && showSignatureManager ? (
+        <SignatureManager
+          school={data.school}
+          onSchoolChange={updateSchoolSignatures}
+          onClose={() => setShowSignatureManager(false)}
+        />
+      ) : null}
+
       <div
         data-theme={darkMode ? "dark" : "light"}
         className="exam-report report-card-page space-y-4 text-slate-900 dark:text-slate-100"
       >
-        {data && showSignatureManager ? (
-          <SignatureManager
-            school={data.school}
-            onSchoolChange={updateSchoolSignatures}
-            onClose={() => setShowSignatureManager(false)}
-          />
-        ) : null}
-
         {loadingExams || loadingReport ? (
           <LoadingIndicator label="Loading report cards..." className="py-12" />
         ) : error ? (

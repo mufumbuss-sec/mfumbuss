@@ -307,7 +307,7 @@ export default async function HeadmasterDashboard() {
                 );
               })}
             </div>
-            <div className="mt-5 flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-xs">
+            <div className="mt-5 flex items-center justify-between rounded-xl bg-canvas px-4 py-3 text-xs">
               <span className="text-slate-500">Audit log entries</span>
               <span className="font-semibold text-slate-800">
                 {formatNumber(requireDashboardCount(auditRes.count, "audit log"))}
@@ -340,7 +340,7 @@ export default async function HeadmasterDashboard() {
             ) : (
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="rounded-xl bg-canvas p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                       Students
                     </p>
@@ -348,7 +348,7 @@ export default async function HeadmasterDashboard() {
                       {formatNumber(latestResultsCount)}
                     </p>
                   </div>
-                  <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="rounded-xl bg-canvas p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                       Average
                     </p>
@@ -358,7 +358,7 @@ export default async function HeadmasterDashboard() {
                         : `${overallAverage.toFixed(1)}%`}
                     </p>
                   </div>
-                  <div className="rounded-xl bg-slate-50 p-3">
+                  <div className="rounded-xl bg-canvas p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                       Incomplete
                     </p>

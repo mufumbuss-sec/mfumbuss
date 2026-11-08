@@ -60,12 +60,9 @@ const TEACHING_FORMS = [
   "Form VI",
 ];
 
-const inputClassName =
-  "min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
-const passwordInputClassName =
-  "min-h-11 w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-3.5 pr-12 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
-const secondaryButtonClassName =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50";
+const inputClassName = "app-input";
+const passwordInputClassName = "app-input pr-12";
+const secondaryButtonClassName = "app-btn app-btn-secondary";
 
 export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -604,12 +601,12 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                       </div>
                     )}
 
-                    <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 pt-3">
+                    <div className="flex flex-wrap justify-end gap-2 border-t border-line pt-3">
                       {teacher.role === "teacher" && (
                         <button
                           type="button"
                           onClick={() => openAssignmentModal(teacher)}
-                          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-100"
+                          className="app-btn app-btn-secondary app-btn-sm"
                         >
                           <Plus className="h-4 w-4" />
                           Assign classes & subjects
@@ -620,7 +617,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                           <button
                             type="button"
                             onClick={() => openEditTeacher(teacher)}
-                            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3 text-xs font-semibold text-blue-800 transition hover:bg-blue-100"
+                            className="app-btn app-btn-secondary app-btn-sm"
                           >
                             <Edit className="h-4 w-4" />
                             Edit
@@ -628,7 +625,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                           <button
                             type="button"
                             onClick={() => void deleteTeacher(teacher)}
-                            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 text-xs font-semibold text-rose-800 transition hover:bg-rose-100"
+                            className="app-btn app-btn-danger app-btn-sm"
                           >
                             <Trash2 className="h-4 w-4" />
                             Delete
@@ -654,10 +651,10 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
       </section>
 
       {confirmTeacher && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
-          <div className="w-full max-w-md rounded-t-3xl bg-white p-5 shadow-xl sm:rounded-2xl sm:p-6">
-            <h3 className="text-lg font-bold text-slate-950">Confirm deletion</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-brand-deep/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="w-full max-w-md rounded-t-2xl border border-line bg-white p-5 shadow-2xl sm:rounded-[14px] sm:p-6">
+            <h3 className="text-base font-bold text-ink">Confirm deletion</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">
               Are you sure you want to delete {confirmTeacher.full_name}?
             </p>
             <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -671,7 +668,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               <button
                 type="button"
                 onClick={() => void confirmTeacherDelete()}
-                className="min-h-11 rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white hover:bg-rose-700"
+                className="app-btn app-btn-danger"
               >
                 Delete
               </button>
@@ -681,10 +678,10 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
       )}
 
       {confirmAssignment && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
-          <div className="w-full max-w-md rounded-t-3xl bg-white p-5 shadow-xl sm:rounded-2xl sm:p-6">
-            <h3 className="text-lg font-bold text-slate-950">Remove assignment</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-brand-deep/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="w-full max-w-md rounded-t-2xl border border-line bg-white p-5 shadow-2xl sm:rounded-[14px] sm:p-6">
+            <h3 className="text-base font-bold text-ink">Remove assignment</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">
               Remove {confirmAssignment.class_name} - {confirmAssignment.subject_name} from this teacher?
             </p>
             <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -698,7 +695,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               <button
                 type="button"
                 onClick={() => void confirmAssignmentDelete()}
-                className="min-h-11 rounded-xl bg-rose-600 px-4 text-sm font-semibold text-white hover:bg-rose-700"
+                className="app-btn app-btn-danger"
               >
                 Remove
               </button>
@@ -708,11 +705,11 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
       )}
 
       {showTeacherModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
-          <div className="flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl bg-white shadow-xl sm:rounded-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-brand-deep/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="flex max-h-[92dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border border-line bg-white shadow-2xl sm:rounded-[14px]">
+            <div className="flex items-center justify-between border-b border-line px-5 py-4 sm:px-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Staff directory</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-brand">Staff directory</p>
                 <h3 className="mt-1 text-lg font-bold text-slate-950">
                   {editing ? "Edit staff account" : "Add staff account"}
                 </h3>
@@ -721,14 +718,14 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 type="button"
                 onClick={() => setShowTeacherModal(false)}
                 aria-label="Close"
-                className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                className="rounded-lg p-2 text-muted transition hover:bg-brand-tint hover:text-brand"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="grid gap-4 overflow-y-auto p-5 sm:grid-cols-2 sm:p-6">
+            <div className="grid gap-4 overflow-y-auto p-5 lg:grid-cols-2 lg:p-6">
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="app-label">
                   First name *
                 </label>
                 <input
@@ -741,7 +738,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="app-label">
                   Middle name
                 </label>
                 <input
@@ -753,7 +750,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="app-label">
                   Last name *
                 </label>
                 <input
@@ -766,7 +763,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="app-label">
                   Gender *
                 </label>
                 <select
@@ -780,7 +777,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               </div>
               {canManageTeachers && (
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="app-label">
                     Role *
                   </label>
                   <select
@@ -802,7 +799,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 </div>
               )}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="app-label">
                   Email {!editing && "*"}
                 </label>
                 <input
@@ -814,7 +811,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">
+                <label className="app-label">
                   Phone number
                 </label>
                 <input
@@ -826,7 +823,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               </div>
               {!editing && (
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="app-label">
                     Password *
                   </label>
                   <div className="relative">
@@ -859,7 +856,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 </div>
               )}
             </div>
-            <div className="flex flex-col-reverse gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+            <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
               <button
                 type="button"
                 onClick={() => setShowTeacherModal(false)}
@@ -870,7 +867,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               <button
                 type="button"
                 onClick={() => void saveTeacher()}
-                className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white transition hover:bg-blue-800"
+                className="app-btn app-btn-primary"
               >
                 Save staff account
               </button>
@@ -880,11 +877,11 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
       )}
 
       {showAssignmentModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
-          <div className="flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-xl sm:rounded-2xl">
-            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-brand-deep/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl border border-line bg-white shadow-2xl sm:rounded-[14px]">
+            <div className="flex items-center justify-between border-b border-line px-5 py-4 sm:px-6">
               <div>
-                <h3 className="text-lg font-bold text-slate-950">
+                <h3 className="text-base font-bold text-ink">
                   Assign Classes and Subjects
                 </h3>
                 <p className="mt-0.5 text-sm text-slate-500">
@@ -899,7 +896,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 onClick={() => setShowAssignmentModal(false)}
                 disabled={savingAssignments}
                 aria-label="Close"
-                className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
+                className="rounded-lg p-2 text-muted transition hover:bg-brand-tint hover:text-brand disabled:opacity-50"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1083,13 +1080,12 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 )}
               </div>
 
-              <p className="rounded-lg bg-blue-50 px-3 py-2.5 text-sm text-blue-900">
-                {selectedAssignmentKeys.size} new class-subject assignment(s)
-                selected. Teachers can have multiple subjects in one form and
-                different subjects across forms.
+              <p className="rounded-lg bg-highlight px-3 py-2.5 text-sm text-highlight-ink">
+                Teachers can have multiple subjects in one form and different
+                subjects across forms.
               </p>
             </div>
-            <div className="flex flex-col-reverse gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+            <div className="flex flex-col-reverse gap-2 border-t border-line px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
               <button
                 type="button"
                 onClick={() => setShowAssignmentModal(false)}
@@ -1102,7 +1098,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 type="button"
                 onClick={() => void saveAssignment()}
                 disabled={savingAssignments || selectedAssignmentKeys.size === 0}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                className="app-btn app-btn-primary"
               >
                 {savingAssignments ? (
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

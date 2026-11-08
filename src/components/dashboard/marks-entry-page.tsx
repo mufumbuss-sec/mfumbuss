@@ -371,7 +371,7 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
         subtitle="Record marks for an active examination."
       />
 
-      <section className="app-card grid gap-4 p-5 sm:grid-cols-2">
+      <section className="app-card grid gap-4 p-5 lg:grid-cols-2">
         <label className="app-label">
           Active examination
           <select

@@ -649,7 +649,7 @@ export function ExamManagementPage({
             </div>
 
             <form onSubmit={(event) => void createExam(event)}>
-              <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+              <div className="grid gap-4 p-5 lg:grid-cols-2 lg:p-6">
                 <label className="space-y-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">
                   Examination name
                   <input

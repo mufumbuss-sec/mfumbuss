@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, LoaderCircle, Mail, Phone, Save, User } from "lucide-react";
+import { Calendar, LoaderCircle, Mail, Save, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/page-header";

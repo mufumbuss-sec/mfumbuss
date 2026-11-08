@@ -32,24 +32,24 @@ export function Pagination({
 
   return (
     <div
-      className={`flex flex-col gap-3 border-t border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 ${className}`}
+      className={`flex flex-col gap-3 border-t border-line bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 ${className}`}
     >
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-slate-600">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
         <span>
-          Showing <span className="font-semibold text-slate-900">{from}</span>-
-          <span className="font-semibold text-slate-900">{to}</span> of{" "}
-          <span className="font-semibold text-slate-900">{total}</span>
+          Showing <span className="font-semibold text-ink">{from}</span>-
+          <span className="font-semibold text-ink">{to}</span> of{" "}
+          <span className="font-semibold text-ink">{total}</span>
         </span>
         {onPageSizeChange && (
           <label className="inline-flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
               Per page
             </span>
             <select
               value={pageSize}
               onChange={(event) => onPageSizeChange(Number(event.target.value))}
               disabled={loading}
-              className="min-h-9 rounded-lg border border-slate-300 bg-white px-2 text-sm text-slate-700 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+              className="h-9 rounded-[10px] border border-line-strong bg-white px-2 text-sm text-ink outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/10 disabled:cursor-not-allowed disabled:bg-canvas"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -66,19 +66,19 @@ export function Pagination({
           type="button"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={loading || currentPage <= 1}
-          className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="app-btn app-btn-secondary app-btn-sm"
         >
           <ChevronLeft className="h-4 w-4" />
           Previous
         </button>
-        <span className="text-sm font-medium text-slate-600">
+        <span className="text-sm font-medium text-muted">
           Page {currentPage} of {totalPages}
         </span>
         <button
           type="button"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={loading || currentPage >= totalPages}
-          className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="app-btn app-btn-secondary app-btn-sm"
         >
           Next
           <ChevronRight className="h-4 w-4" />

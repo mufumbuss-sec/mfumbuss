@@ -691,11 +691,11 @@ export function ExamResultsPage({
       {loading ? (
         <LoadingIndicator label="Loading results..." className="py-12" />
       ) : error ? (
-        <div role="alert" className="rounded border border-slate-400 bg-slate-50 p-3 text-sm font-semibold text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100">
+        <div role="alert" className="rounded-xl border border-danger-line bg-danger px-4 py-3 text-sm font-semibold text-danger-ink">
           {error}
         </div>
       ) : !exam || !school ? (
-        <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-sm dark:border-slate-700 dark:bg-slate-900">
+        <div className="app-card p-8 text-center text-sm text-muted">
           No processed results available at the moment.
         </div>
       ) : (

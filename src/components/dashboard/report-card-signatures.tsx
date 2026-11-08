@@ -324,14 +324,14 @@ export function SignatureManager({
           : "Mabadiliko huhifadhiwa moja kwa moja";
 
   return (
-    <div className="report-no-print space-y-4 rounded-2xl border border-slate-300 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900 sm:p-5 print:hidden">
+    <div className="report-no-print app-card space-y-4 p-5 print:hidden">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-slate-100">
-            <PenLine className="h-4 w-4" />
+        <div className="min-w-0">
+          <h2 className="app-card-title flex items-center gap-2">
+            <PenLine className="h-4 w-4 text-brand" />
             Saini na Muhuri
           </h2>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-xs leading-relaxed text-muted">
             Pakia saini za mkuu wa shule, mwalimu wa taaluma, mwalimu wa darasa na
             muhuri wa shule. Buruta picha kusogeza; vuta kishale cha pembe ya chini
             kulia kukuza au kupunguza.
@@ -341,10 +341,10 @@ export function SignatureManager({
           <span
             className={`text-xs font-semibold ${
               saveState === "error"
-                ? "text-rose-600 dark:text-rose-400"
+                ? "text-danger-ink"
                 : saveState === "saved"
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-slate-500 dark:text-slate-400"
+                  ? "text-success-ink"
+                  : "text-muted"
             }`}
           >
             {savedLabel}
@@ -353,7 +353,7 @@ export function SignatureManager({
             type="button"
             onClick={onClose}
             aria-label="Funga saini na muhuri"
-            className="rounded-lg border border-slate-300 p-1.5 text-slate-500 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="rounded-lg border border-line p-1.5 text-muted transition hover:bg-brand-tint hover:text-brand"
           >
             <X className="h-4 w-4" />
           </button>
@@ -362,12 +362,12 @@ export function SignatureManager({
 
       <div
         ref={canvasRef}
-        className="relative h-[180px] w-full touch-none select-none overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 dark:border-slate-600 dark:bg-slate-800/60"
+        className="relative h-[180px] w-full touch-none select-none overflow-hidden rounded-xl border-2 border-dashed border-line-strong bg-canvas"
       >
         <div className="pointer-events-none absolute inset-0 grid grid-cols-3 gap-4 p-3">
           {SIGNATURE_COLUMNS.map((kind) => (
             <div key={kind} className="relative">
-              <div className="absolute inset-x-0 bottom-7 border-t border-dashed border-slate-300 dark:border-slate-600" />
+              <div className="absolute inset-x-0 bottom-7 border-t border-dashed border-line-strong" />
               <span className="absolute inset-x-0 bottom-0 text-center text-[9px] font-semibold uppercase tracking-wide text-slate-400">
                 {SIGNATURE_SHORT_LABELS[kind]}
               </span>
@@ -392,8 +392,8 @@ export function SignatureManager({
               tabIndex={0}
               className={`absolute cursor-move touch-none rounded outline-none ${
                 isSelected
-                  ? "z-20 ring-2 ring-blue-500 ring-offset-1"
-                  : "z-10 ring-1 ring-slate-300 dark:ring-slate-500"
+                  ? "z-20 ring-2 ring-brand ring-offset-1"
+                  : "z-10 ring-1 ring-line-strong"
               }`}
               style={{
                 left: `${placement.x}%`,
@@ -419,7 +419,7 @@ export function SignatureManager({
                   onPointerMove={handlePointerMove}
                   onPointerUp={endDrag}
                   onPointerCancel={endDrag}
-                  className="absolute -bottom-2.5 -right-2.5 grid h-6 w-6 cursor-nwse-resize touch-none place-items-center rounded-full bg-blue-600 text-white shadow-md"
+                  className="absolute -bottom-2.5 -right-2.5 grid h-6 w-6 cursor-nwse-resize touch-none place-items-center rounded-full bg-brand text-white shadow-md"
                 >
                   <Move className="h-3.5 w-3.5" />
                 </button>
@@ -447,20 +447,20 @@ export function SignatureManager({
           return (
             <div
               key={kind}
-              className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/60"
+              className="rounded-xl border border-line bg-canvas p-3"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  <p className="text-sm font-semibold text-ink">
                     {SIGNATURE_LABELS[kind]}
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="mt-0.5 text-xs text-muted">
                     {url ? "Picha imepakiwa" : "Hakuna picha"}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-1.5">
                   <label
-                    className={`inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 ${
+                    className={`app-btn app-btn-secondary app-btn-sm cursor-pointer ${
                       busy ? "pointer-events-none opacity-60" : ""
                     }`}
                   >
@@ -488,7 +488,7 @@ export function SignatureManager({
                       aria-label={`Ondoa ${SIGNATURE_LABELS[kind]}`}
                       disabled={busy}
                       onClick={() => void handleRemove(kind)}
-                      className="inline-flex min-h-8 items-center gap-1 rounded-lg border border-rose-300 bg-white px-2 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60 dark:border-rose-800 dark:bg-slate-800 dark:text-rose-300 dark:hover:bg-rose-950"
+                      className="app-btn app-btn-danger app-btn-sm"
                     >
                       {isRemoving ? (
                         <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
@@ -502,7 +502,7 @@ export function SignatureManager({
               </div>
 
               {url && (
-                <div className="mt-2 flex h-16 items-center justify-center rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
+                <div className="mt-2 flex h-16 items-center justify-center rounded-lg border border-line bg-white">
                   <Image
                     src={url}
                     alt={SIGNATURE_LABELS[kind]}
@@ -518,7 +518,7 @@ export function SignatureManager({
         })}
       </div>
 
-      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+      <p className="text-[11px] text-muted">
         Mpangilio wa mwisho: {Math.round(layout.headmaster.x)}% kushoto,{" "}
         {Math.round(layout.headmaster.y)}% juu kwa saini ya mkuu wa shule. Picha
         zote zinaonekana kwenye kila kadi ya mwanafunzi.
