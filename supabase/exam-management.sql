@@ -63,7 +63,7 @@ grant select, insert, update on public.academic_period_settings to authenticated
 create table if not exists public.exams (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
-  class_form text not null check (class_form in ('Form I','Form II','Form III','Form IV')),
+  class_form text not null check (class_form in ('Form I','Form II','Form III','Form IV','Form V','Form VI')),
   term text not null,
   academic_year text not null,
   start_date date not null,

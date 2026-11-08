@@ -42,6 +42,7 @@ type Subject = {
   name: string;
   subject_code: string;
   has_practical: boolean;
+  subject_type?: string;
 };
 
 type AcademicPeriod = {
@@ -49,7 +50,9 @@ type AcademicPeriod = {
   term: "Term I" | "Term II";
 };
 
-const FORMS = ["Form I", "Form II", "Form III", "Form IV"];
+const FORMS = ["Form I", "Form II", "Form III", "Form IV", "Form V", "Form VI"];
+
+const A_LEVEL_FORMS = new Set(["Form V", "Form VI"]);
 
 const inputClass =
   "min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
@@ -79,6 +82,7 @@ export function ExamManagementPage({
 }) {
   const [exams, setExams] = useState<Exam[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [subjectsLoading, setSubjectsLoading] = useState(false);
   const [activePeriod, setActivePeriod] = useState<AcademicPeriod | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -125,16 +129,7 @@ export function ExamManagementPage({
       return;
     }
     try {
-      const [subjectsResponse, periodResponse] = await Promise.all([
-        fetch("/api/subjects"),
-        fetch("/api/settings/academic-period"),
-      ]);
-
-      const subjectsResult = await subjectsResponse.json();
-      if (!subjectsResponse.ok) {
-        throw new Error(subjectsResult.error || "Unable to load subjects.");
-      }
-      setSubjects((subjectsResult.subjects ?? []) as Subject[]);
+      const periodResponse = await fetch("/api/settings/academic-period");
 
       const periodResult = await periodResponse.json();
       if (!periodResponse.ok && periodResponse.status !== 409) {
@@ -161,6 +156,36 @@ export function ExamManagementPage({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadSupport();
   }, [loadSupport]);
+
+  const loadSubjects = useCallback(async (classForm: string) => {
+    if (!canManageExams) return;
+    const isALevel = A_LEVEL_FORMS.has(classForm);
+    setSubjectsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/subjects${isALevel ? "?level=alevel" : ""}`,
+      );
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to load subjects.");
+      }
+      setSubjects((result.subjects ?? []) as Subject[]);
+    } catch (error) {
+      setSubjects([]);
+      notify(
+        "error",
+        error instanceof Error ? error.message : "Unable to load subjects.",
+      );
+    } finally {
+      setSubjectsLoading(false);
+    }
+  }, [canManageExams]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedSubjectIds(new Set());
+    void loadSubjects(form.class_form);
+  }, [form.class_form, loadSubjects]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -738,9 +763,16 @@ export function ExamManagementPage({
                   <legend className="text-sm font-semibold text-slate-700">
                     Subjects included
                   </legend>
-                  {subjects.length === 0 ? (
+                  {subjectsLoading ? (
+                    <p className="flex items-center gap-2 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                      Loading subjects...
+                    </p>
+                  ) : subjects.length === 0 ? (
                     <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
-                      Add subjects before creating an examination.
+                      {A_LEVEL_FORMS.has(form.class_form)
+                        ? "Add A-Level subjects before creating an examination."
+                        : "Add subjects before creating an examination."}
                     </p>
                   ) : (
                     <div className="grid max-h-52 gap-2 overflow-y-auto rounded-xl border border-slate-200 p-3 sm:grid-cols-2">
@@ -761,6 +793,9 @@ export function ExamManagementPage({
                             </span>
                             <span className="text-xs text-slate-500">
                               {subject.subject_code}
+                              {subject.subject_type
+                                ? ` · ${subject.subject_type.replace(/_/g, " ")}`
+                                : ""}
                               {subject.has_practical ? " · Practical" : ""}
                             </span>
                           </span>
@@ -785,7 +820,7 @@ export function ExamManagementPage({
                 </button>
                 <button
                   type="submit"
-                  disabled={saving || subjects.length === 0}
+                  disabled={saving || subjectsLoading || subjects.length === 0}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
                 >
                   {saving ? (

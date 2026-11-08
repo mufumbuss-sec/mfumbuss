@@ -214,7 +214,7 @@ export async function POST(request: Request) {
   if (!name || !academicYear || !startDate || !endDate) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
-  if (!["Form I", "Form II", "Form III", "Form IV"].includes(classForm)) {
+  if (!["Form I", "Form II", "Form III", "Form IV", "Form V", "Form VI"].includes(classForm)) {
     return NextResponse.json({ error: "Invalid class form" }, { status: 400 });
   }
   if (!["Term I", "Term II"].includes(term)) {
@@ -241,6 +241,29 @@ export async function POST(request: Request) {
   }
   if (subjects.length !== new Set(subjects).size) {
     return NextResponse.json({ error: "Duplicate subjects are not allowed" }, { status: 400 });
+  }
+
+  const subjectIds = subjects as string[];
+  const isALevel = classForm === "Form V" || classForm === "Form VI";
+  const subjectTable = isALevel ? "a_level_subjects" : "subjects";
+  const subjectLinkTable = isALevel ? "a_level_exam_subjects" : "exam_subjects";
+
+  const { data: validSubjects, error: validSubjectsError } = await supabase
+    .from(subjectTable)
+    .select("id")
+    .in("id", subjectIds);
+  if (validSubjectsError) {
+    return NextResponse.json({ error: validSubjectsError.message }, { status: 500 });
+  }
+  if ((validSubjects ?? []).length !== subjectIds.length) {
+    return NextResponse.json(
+      {
+        error: isALevel
+          ? "One or more selected subjects are not valid A-Level subjects."
+          : "One or more selected subjects are not valid subjects.",
+      },
+      { status: 400 },
+    );
   }
 
   const { data: activePeriod, error: periodError } = await supabase
@@ -288,12 +311,12 @@ export async function POST(request: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const examSubjects = subjects.map((subjectId) => ({
+  const examSubjects = subjectIds.map((subjectId) => ({
     exam_id: exam.id,
     subject_id: subjectId,
   }));
   const { error: subjectsError } = await supabase
-    .from("exam_subjects")
+    .from(subjectLinkTable)
     .insert(examSubjects);
 
   if (subjectsError) {

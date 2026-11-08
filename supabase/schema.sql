@@ -281,6 +281,17 @@ create table if not exists public.a_level_student_subjects (
 create index if not exists a_level_student_subjects_source_idx
   on public.a_level_student_subjects (student_id, source);
 
+create table if not exists public.a_level_exam_subjects (
+  id uuid primary key default uuid_generate_v4(),
+  exam_id uuid not null references public.exams(id) on delete cascade,
+  subject_id uuid not null references public.a_level_subjects(id) on delete restrict,
+  created_at timestamptz not null default now(),
+  unique(exam_id, subject_id)
+);
+
+create index if not exists a_level_exam_subjects_exam_id_idx
+  on public.a_level_exam_subjects (exam_id);
+
 create table if not exists public.a_level_marks (
   id uuid primary key default uuid_generate_v4(),
   student_id uuid not null references public.students(id) on delete cascade,
@@ -309,6 +320,7 @@ alter table public.a_level_combinations enable row level security;
 alter table public.a_level_combination_subjects enable row level security;
 alter table public.a_level_student_combinations enable row level security;
 alter table public.a_level_student_subjects enable row level security;
+alter table public.a_level_exam_subjects enable row level security;
 alter table public.a_level_marks enable row level security;
 alter table public.a_level_combination_transfer_logs enable row level security;
 
@@ -324,6 +336,8 @@ drop policy if exists "A-level student combinations are viewable by authenticate
 drop policy if exists "A-level student combinations can be managed by headmaster and academic" on public.a_level_student_combinations;
 drop policy if exists "A-level student subjects are viewable by authenticated users" on public.a_level_student_subjects;
 drop policy if exists "A-level student subjects can be managed by headmaster and academic" on public.a_level_student_subjects;
+drop policy if exists "A-level exam subjects are viewable by authenticated users" on public.a_level_exam_subjects;
+drop policy if exists "A-level exam subjects can be managed by headmaster and academic" on public.a_level_exam_subjects;
 drop policy if exists "A-level marks are viewable by authenticated users" on public.a_level_marks;
 drop policy if exists "A-level marks can be managed by headmaster and academic" on public.a_level_marks;
 drop policy if exists "A-level transfer logs are viewable by authenticated users" on public.a_level_combination_transfer_logs;
@@ -383,6 +397,15 @@ create policy "A-level student subjects can be managed by headmaster and academi
   using (public.can_manage_classes())
   with check (public.can_manage_classes());
 
+create policy "A-level exam subjects are viewable by authenticated users"
+  on public.a_level_exam_subjects for select
+  using (auth.uid() is not null);
+
+create policy "A-level exam subjects can be managed by headmaster and academic"
+  on public.a_level_exam_subjects for all
+  using (public.can_manage_classes())
+  with check (public.can_manage_classes());
+
 create policy "A-level marks are viewable by authenticated users"
   on public.a_level_marks for select
   using (auth.uid() is not null);
@@ -407,6 +430,7 @@ grant select, insert, update, delete on public.a_level_combinations to authentic
 grant select, insert, update, delete on public.a_level_combination_subjects to authenticated;
 grant select, insert, update, delete on public.a_level_student_combinations to authenticated;
 grant select, insert, update, delete on public.a_level_student_subjects to authenticated;
+grant select, insert, update, delete on public.a_level_exam_subjects to authenticated;
 grant select, insert, update, delete on public.a_level_marks to authenticated;
 grant select, insert, update, delete on public.a_level_combination_transfer_logs to authenticated;
 

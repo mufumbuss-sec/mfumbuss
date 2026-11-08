@@ -106,13 +106,15 @@ const ROMAN_TO_NUMBER: Record<string, string> = {
   ii: "2",
   iii: "3",
   iv: "4",
+  v: "5",
+  vi: "6",
 };
 
 function normalizeClassKey(value: unknown) {
   return String(value ?? "")
     .toLowerCase()
     .replace(/\bform\b/g, "")
-    .replace(/\b(iv|iii|ii|i)\b/g, (match) => ROMAN_TO_NUMBER[match] ?? match)
+    .replace(/\b(vi|v|iv|iii|ii|i)\b/g, (match) => ROMAN_TO_NUMBER[match] ?? match)
     .replace(/[^a-z0-9]/g, "");
 }
 
@@ -180,14 +182,29 @@ function getClassId(row: CsvRow, lookup: Map<string, string>) {
   return null;
 }
 
-function downloadTemplate() {
-  const csv =
-    "first_name,middle_name,last_name,sex,class\nJohn,Paul,Mdoe,M,Form I\nMary,,Kweka,F,Form I\n";
+function downloadTemplate(form: FormLevel, classes: SchoolClass[]) {
+  const streams = classes
+    .filter((item) => item.form === form)
+    .map((item) => item.stream)
+    .sort((a, b) => a.localeCompare(b));
+  const classLabels =
+    streams.length > 0
+      ? streams.map((stream) => `${form} ${stream}`)
+      : [form];
+  const rows = classLabels.flatMap((label) => [
+    `John,Paul,Mdoe,M,${label}`,
+    `Mary,,Kweka,F,${label}`,
+  ]);
+  const csv = [
+    "first_name,middle_name,last_name,sex,class",
+    ...rows,
+    "",
+  ].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "students_template.csv";
+  link.download = `students_template_${form.replace(/\s+/g, "_").toLowerCase()}.csv`;
   link.click();
   window.URL.revokeObjectURL(url);
 }
@@ -655,11 +672,11 @@ export default function StudentsPage() {
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
           <button
             type="button"
-            onClick={downloadTemplate}
+            onClick={() => downloadTemplate(activeForm, classes)}
             className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 text-sm font-semibold text-white transition hover:bg-white/20"
           >
             <Download className="h-4 w-4" />
-            Download Template
+            Download {activeForm} CSV
           </button>
           <button
             type="button"
