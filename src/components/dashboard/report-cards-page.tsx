@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Building2,
   CalendarDays,
-  ChevronDown,
   ClipboardList,
   Download,
   GraduationCap,
@@ -12,11 +11,12 @@ import {
   Moon,
   PenLine,
   Printer,
-  SlidersHorizontal,
   Sun,
   UserRound,
 } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   ReportCardSignatures,
   SignatureManager,
@@ -196,10 +196,8 @@ const SWAHILI_MONTHS = [
   "Novemba",
   "Desemba",
 ];
-const selectClass =
-  "h-11 w-full appearance-none truncate rounded-xl border border-slate-300 bg-white pl-10 pr-10 text-sm font-semibold text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.05)] outline-none transition hover:border-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 disabled:shadow-none dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/10 dark:disabled:bg-slate-800/60 dark:disabled:text-slate-500";
-const inputClass =
-  "h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 text-sm font-semibold text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.05)] outline-none transition hover:border-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-500/10 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/10 dark:disabled:bg-slate-800/60 dark:disabled:text-slate-500";
+const selectClass = "app-select";
+const inputClass = "app-input";
 
 function SelectField({
   label,
@@ -219,23 +217,19 @@ function SelectField({
   children: React.ReactNode;
 }) {
   return (
-    <label className={`group min-w-0 ${className ?? ""}`}>
-      <span className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500 transition-colors group-focus-within:text-blue-700 dark:text-slate-400 dark:group-focus-within:text-blue-300">
-        <Icon className="h-3 w-3 text-slate-400 transition-colors group-focus-within:text-blue-600 dark:text-slate-500 dark:group-focus-within:text-blue-400" />
+    <label className={`block min-w-0 ${className ?? ""}`}>
+      <span className="app-label flex items-center gap-1.5">
+        <Icon className="h-3.5 w-3.5 text-muted" />
         {label}
       </span>
-      <span className="relative block">
-        <select
-          className={selectClass}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          disabled={disabled}
-        >
-          {children}
-        </select>
-        <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-600 dark:text-slate-500 dark:group-focus-within:text-blue-400" />
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-transform group-focus-within:rotate-180 dark:text-slate-500" />
-      </span>
+      <select
+        className={selectClass}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        disabled={disabled}
+      >
+        {children}
+      </select>
     </label>
   );
 }
@@ -250,20 +244,17 @@ function DateField({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="group min-w-0">
-      <span className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500 transition-colors group-focus-within:text-blue-700 dark:text-slate-400 dark:group-focus-within:text-blue-300">
-        <CalendarDays className="h-3 w-3 text-slate-400 transition-colors group-focus-within:text-blue-600 dark:text-slate-500 dark:group-focus-within:text-blue-400" />
+    <label className="block min-w-0">
+      <span className="app-label flex items-center gap-1.5">
+        <CalendarDays className="h-3.5 w-3.5 text-muted" />
         {label}
       </span>
-      <span className="relative block">
-        <input
-          type="date"
-          className={inputClass}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-        <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-600 dark:text-slate-500 dark:group-focus-within:text-blue-400" />
-      </span>
+      <input
+        type="date"
+        className={inputClass}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
     </label>
   );
 }
@@ -700,50 +691,35 @@ export function ReportCardsPage() {
   }
 
   return (
-    <div
-      data-theme={darkMode ? "dark" : "light"}
-      className="exam-report report-card-page mx-auto w-full min-w-0 max-w-[210mm] space-y-4 text-slate-900 dark:text-slate-100"
-    >
-      <div className="report-no-print print:hidden">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
-          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-4 py-4 dark:border-slate-800 sm:px-5">
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">
-                Report Cards
-              </p>
-              <h1 className="mt-1 text-xl font-black tracking-tight text-slate-900 dark:text-white sm:text-2xl">
-                Results Report
-              </h1>
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                One A4 page per student · choose class, exam and student to preview
-              </p>
-            </div>
+    <div className="mx-auto w-full min-w-0 max-w-[210mm] space-y-4">
+      <div className="report-no-print space-y-4 print:hidden">
+        <PageHeader
+          title="Report Cards"
+          subtitle="Preview and print student report cards."
+          action={
             <button
               type="button"
               onClick={() => setDarkMode((value) => !value)}
-              className="inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              className="app-btn app-btn-secondary app-btn-sm"
             >
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              {darkMode ? "Light" : "Dark"}
+              {darkMode ? "Light preview" : "Dark preview"}
             </button>
+          }
+        />
+
+        <section className="app-card">
+          <div className="app-card-header border-b border-line pb-4">
+            <div className="min-w-0">
+              <h2 className="app-card-title">Report filters</h2>
+              <p className="app-card-subtitle">
+                Choose class, year, exam and student.
+              </p>
+            </div>
           </div>
 
-          <div className="border-t border-slate-100 bg-slate-50/60 px-4 py-4 dark:border-slate-800 dark:bg-slate-900/40 sm:px-5">
-            <div className="mb-3 flex items-center gap-2.5">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50 text-blue-600 shadow-sm dark:border-blue-900 dark:bg-blue-950/60 dark:text-blue-300">
-                <SlidersHorizontal className="h-4 w-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-700 dark:text-slate-200">
-                  Report Filters
-                </p>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Select class, year, exam and student
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2">
+          <div className="app-card-body space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <SelectField
                 label="Class"
                 icon={GraduationCap}
@@ -802,76 +778,68 @@ export function ReportCardsPage() {
               </SelectField>
             </div>
 
-            <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/40 p-3 dark:border-blue-900/50 dark:bg-blue-950/20">
-              <div className="mb-2 flex items-center gap-2">
-                <Building2 className="h-3.5 w-3.5 text-blue-600 dark:text-blue-300" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-700 dark:text-blue-300">
+            <div className="rounded-xl border border-line bg-canvas p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-brand" />
+                <p className="text-sm font-semibold text-ink">
                   Hali ya Shule — Ripoti Zote
                 </p>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="sm:w-52">
-                  <SelectField
-                    label="Hali"
-                    icon={Building2}
-                    value={schoolStatus}
-                    onChange={(value) =>
-                      setSchoolStatus(value === "closed" ? "closed" : "open")
-                    }
-                  >
-                    <option value="open">Haitafungwa</option>
-                    <option value="closed">Itafungwa</option>
-                  </SelectField>
-                </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <SelectField
+                  label="Hali"
+                  icon={Building2}
+                  value={schoolStatus}
+                  onChange={(value) =>
+                    setSchoolStatus(value === "closed" ? "closed" : "open")
+                  }
+                >
+                  <option value="open">Haitafungwa</option>
+                  <option value="closed">Itafungwa</option>
+                </SelectField>
                 {schoolStatus === "closed" ? (
                   <>
-                    <div className="sm:flex-1">
-                      <DateField
-                        label="Tarehe ya Kufunga"
-                        value={closingDate}
-                        onChange={setClosingDate}
-                      />
-                    </div>
-                    <div className="sm:flex-1">
-                      <DateField
-                        label="Tarehe ya Kufungua"
-                        value={openingDate}
-                        onChange={setOpeningDate}
-                      />
-                    </div>
+                    <DateField
+                      label="Tarehe ya Kufunga"
+                      value={closingDate}
+                      onChange={setClosingDate}
+                    />
+                    <DateField
+                      label="Tarehe ya Kufungua"
+                      value={openingDate}
+                      onChange={setOpeningDate}
+                    />
                   </>
                 ) : null}
               </div>
-              <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="mt-3 text-xs text-muted">
                 {schoolStatus === "closed"
                   ? "Tarehe za kufunga na kufungua zitawekwa kwenye ripoti zote."
                   : "Shule Haitafungwa itawekwa kwenye ripoti zote."}
               </p>
             </div>
 
-            <div className="mt-3 rounded-xl border border-emerald-100 bg-emerald-50/40 p-3 dark:border-emerald-900/50 dark:bg-emerald-950/20">
-              <div className="mb-2 flex items-center gap-2">
-                <ListChecks className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-300" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">
+            <div className="rounded-xl border border-line bg-canvas p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <ListChecks className="h-4 w-4 text-brand" />
+                <p className="text-sm font-semibold text-ink">
                   Tabia na Mwenendo — Ripoti Zote
                 </p>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="sm:w-72">
-                  <SelectField
-                    label="Utekelezaji"
-                    icon={ListChecks}
-                    value={behaviourMode}
-                    onChange={(value) =>
-                      setBehaviourMode(value === "auto" ? "auto" : "blank")
-                    }
-                  >
-                    <option value="blank">Acha tupu (kujaza kwa mkono)</option>
-                    <option value="auto">Jaza kiotomatiki</option>
-                  </SelectField>
-                </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <SelectField
+                  label="Utekelezaji"
+                  icon={ListChecks}
+                  value={behaviourMode}
+                  onChange={(value) =>
+                    setBehaviourMode(value === "auto" ? "auto" : "blank")
+                  }
+                >
+                  <option value="blank">Acha tupu (kujaza kwa mkono)</option>
+                  <option value="auto">Jaza kiotomatiki</option>
+                </SelectField>
               </div>
-              <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="mt-3 text-xs text-muted">
                 {behaviourMode === "auto"
                   ? "Alama za ✓ zitawekwa kiotomatiki: wengi VIZURI, wanafunzi bora VIZURI SANA, na wachache WASTANI."
                   : "Masanduku yataachwa tupu ili ujaze kwa mkono baada ya kuchapisha."}
@@ -879,12 +847,12 @@ export function ReportCardsPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 bg-slate-50/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-900/70 sm:px-5">
+          <div className="flex flex-wrap items-center gap-2 border-t border-line px-5 py-4">
             <button
               type="button"
               onClick={printReport}
               disabled={!data || loadingReport || cards.length === 0}
-              className="inline-flex h-10 items-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="app-btn app-btn-primary"
             >
               <Printer className="h-4 w-4" />
               Print / PDF
@@ -893,7 +861,7 @@ export function ReportCardsPage() {
               type="button"
               onClick={exportExcel}
               disabled={!data || loadingReport || cards.length === 0}
-              className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              className="app-btn app-btn-secondary"
             >
               <Download className="h-4 w-4" />
               Export Excel
@@ -902,58 +870,62 @@ export function ReportCardsPage() {
               type="button"
               onClick={() => setShowSignatureManager((value) => !value)}
               disabled={!data || loadingReport}
-              className="inline-flex h-10 items-center gap-2 rounded-lg border border-emerald-300 bg-white px-4 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-emerald-700 dark:bg-slate-800 dark:text-emerald-300 dark:hover:bg-emerald-950"
+              className="app-btn app-btn-secondary"
               aria-expanded={showSignatureManager}
             >
               <PenLine className="h-4 w-4" />
               Saini na Muhuri
             </button>
-            <span className="ml-auto text-xs font-medium text-slate-500 dark:text-slate-400">
-              {data && !loadingReport ? `${cards.length} report card(s)` : ""}
-            </span>
           </div>
-        </div>
+        </section>
       </div>
 
-      {data && showSignatureManager ? (
-        <SignatureManager
-          school={data.school}
-          onSchoolChange={updateSchoolSignatures}
-          onClose={() => setShowSignatureManager(false)}
-        />
-      ) : null}
-
-      {loadingExams || loadingReport ? (
-        <LoadingIndicator label="Loading report cards..." className="py-12" />
-      ) : error ? (
-        <div
-          role="alert"
-          className="rounded border border-slate-400 bg-slate-50 p-3 text-sm font-semibold text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-        >
-          {error}
-        </div>
-      ) : data && cards.length === 0 ? (
-        <div className="rounded border border-slate-300 bg-white p-8 text-center text-sm dark:border-slate-700 dark:bg-slate-900">
-          No students sat this examination.
-        </div>
-      ) : data ? (
-        cards.map((student) => (
-          <ReportCard
-            key={student.id}
-            exam={data.exam}
+      <div
+        data-theme={darkMode ? "dark" : "light"}
+        className="exam-report report-card-page space-y-4 text-slate-900 dark:text-slate-100"
+      >
+        {data && showSignatureManager ? (
+          <SignatureManager
             school={data.school}
-            student={student}
-            result={selectedExamResults[student.id]}
-            subjects={data.subjects}
-            reportDate={reportDate}
-            totalStudents={totalStudents}
-            schoolStatus={schoolStatus}
-            closingDate={closingDate}
-            openingDate={openingDate}
-            behaviourMode={behaviourMode}
+            onSchoolChange={updateSchoolSignatures}
+            onClose={() => setShowSignatureManager(false)}
           />
-        ))
-      ) : null}
+        ) : null}
+
+        {loadingExams || loadingReport ? (
+          <LoadingIndicator label="Loading report cards..." className="py-12" />
+        ) : error ? (
+          <div
+            role="alert"
+            className="rounded-xl border border-danger-line bg-danger px-4 py-3 text-sm font-semibold text-danger-ink"
+          >
+            {error}
+          </div>
+        ) : data && cards.length === 0 ? (
+          <EmptyState
+            icon={ClipboardList}
+            title="No students sat this examination"
+            description="Choose another exam or class to preview report cards."
+          />
+        ) : data ? (
+          cards.map((student) => (
+            <ReportCard
+              key={student.id}
+              exam={data.exam}
+              school={data.school}
+              student={student}
+              result={selectedExamResults[student.id]}
+              subjects={data.subjects}
+              reportDate={reportDate}
+              totalStudents={totalStudents}
+              schoolStatus={schoolStatus}
+              closingDate={closingDate}
+              openingDate={openingDate}
+              behaviourMode={behaviourMode}
+            />
+          ))
+        ) : null}
+      </div>
     </div>
   );
 }

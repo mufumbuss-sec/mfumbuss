@@ -113,7 +113,14 @@ export async function POST(request: Request) {
   const rawAssignments = Array.isArray(body.assignments)
     ? body.assignments
     : [{ class_name: body.class_name, subject_name: body.subject_name }];
-  const validForms = new Set(["Form I", "Form II", "Form III", "Form IV"]);
+  const validForms = new Set([
+    "Form I",
+    "Form II",
+    "Form III",
+    "Form IV",
+    "Form V",
+    "Form VI",
+  ]);
   if (!teacherId || rawAssignments.length === 0 || rawAssignments.length > 100) {
     return NextResponse.json(
       { error: "Select a teacher and between 1 and 100 class-subject assignments." },
@@ -168,33 +175,56 @@ export async function POST(request: Request) {
   }
 
   const forms = [...new Set(requestedAssignments.map((assignment) => assignment.class_name))];
-  const { data: classSubjects, error: classSubjectsError } = await adminSupabase
-    .from("class_subject_assignments")
-    .select("form, subject_id")
-    .in("form", forms);
+  const aLevelFormSet = new Set<string>(["Form V", "Form VI"]);
+  const aLevelForms = forms.filter((form) => aLevelFormSet.has(form));
+  const oLevelForms = forms.filter((form) => !aLevelFormSet.has(form));
+  const eligibleKeys = new Set<string>();
 
-  if (classSubjectsError) {
-    return NextResponse.json({ error: classSubjectsError.message }, { status: 500 });
-  }
+  if (oLevelForms.length > 0) {
+    const { data: classSubjects, error: classSubjectsError } = await adminSupabase
+      .from("class_subject_assignments")
+      .select("form, subject_id")
+      .in("form", oLevelForms);
 
-  const subjectIds = [...new Set((classSubjects || []).map((assignment) => assignment.subject_id))];
-  const { data: subjects, error: subjectError } = await adminSupabase
-    .from("subjects")
-    .select("id, name")
-    .in("id", subjectIds.length ? subjectIds : ["00000000-0000-0000-0000-000000000000"]);
+    if (classSubjectsError) {
+      return NextResponse.json({ error: classSubjectsError.message }, { status: 500 });
+    }
 
-  if (subjectError) {
-    return NextResponse.json({ error: subjectError.message }, { status: 500 });
-  }
-  const subjectNameById = new Map((subjects ?? []).map((subject) => [subject.id, subject.name]));
-  const eligibleKeys = new Set(
-    (classSubjects ?? []).flatMap((assignment) => {
+    const subjectIds = [...new Set((classSubjects || []).map((assignment) => assignment.subject_id))];
+    const { data: subjects, error: subjectError } = await adminSupabase
+      .from("subjects")
+      .select("id, name")
+      .in("id", subjectIds.length ? subjectIds : ["00000000-0000-0000-0000-000000000000"]);
+
+    if (subjectError) {
+      return NextResponse.json({ error: subjectError.message }, { status: 500 });
+    }
+    const subjectNameById = new Map((subjects ?? []).map((subject) => [subject.id, subject.name]));
+    for (const assignment of classSubjects ?? []) {
       const subjectName = subjectNameById.get(assignment.subject_id);
-      return subjectName
-        ? [`${assignment.form}:${subjectName.toLowerCase()}`]
-        : [];
-    }),
-  );
+      if (subjectName) {
+        eligibleKeys.add(`${assignment.form}:${subjectName.toLowerCase()}`);
+      }
+    }
+  }
+
+  if (aLevelForms.length > 0) {
+    const { data: aLevelSubjects, error: aLevelSubjectsError } = await adminSupabase
+      .from("a_level_subjects")
+      .select("name")
+      .eq("active", true)
+      .eq("status", "Active");
+
+    if (aLevelSubjectsError) {
+      return NextResponse.json({ error: aLevelSubjectsError.message }, { status: 500 });
+    }
+
+    for (const form of aLevelForms) {
+      for (const subject of aLevelSubjects ?? []) {
+        eligibleKeys.add(`${form}:${subject.name.trim().toLowerCase()}`);
+      }
+    }
+  }
   const invalidAssignment = requestedAssignments.find(
     (assignment) =>
       !eligibleKeys.has(`${assignment.class_name}:${assignment.subject_name.toLowerCase()}`),

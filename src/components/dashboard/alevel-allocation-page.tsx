@@ -2,6 +2,12 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowRightLeft, BookOpen, CheckCircle2, Loader2, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Field, Input, Select } from "@/components/ui/field";
+import { PageHeader } from "@/components/ui/page-header";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
 
@@ -199,14 +205,6 @@ export default function ALevelAllocationPage() {
       ),
     [academicYear, assignments, selectedForm],
   );
-
-  const assignmentCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const assignment of formAssignments) {
-      counts.set(assignment.combination_id, (counts.get(assignment.combination_id) ?? 0) + 1);
-    }
-    return counts;
-  }, [formAssignments]);
 
   const unassignedStudents = useMemo(
     () =>
@@ -622,30 +620,16 @@ export default function ALevelAllocationPage() {
 
   return (
     <div className="space-y-6">
-      <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex items-start gap-3">
-          <div className="rounded-xl bg-emerald-50 p-2.5 text-emerald-700">
-            <Users className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">Student Combination Allocation</h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Allocate Form V and Form VI students to valid A-Level combinations. Combination
-              subjects are added automatically; optional subjects are assigned separately.
-            </p>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        title="A-Level Allocations"
+        subtitle="Assign students to combinations and optional subjects."
+      />
 
       <div className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-900">Assign one student</h3>
-          <div className="mt-4 space-y-4">
-            <div>
-              <label htmlFor="allocation-form" className="mb-1 block text-sm font-medium text-slate-700">
-                Form
-              </label>
-              <select
+        <Card title="Assign one student" bodyClassName="p-5 pt-4">
+          <div className="space-y-4">
+            <Field label="Form" htmlFor="allocation-form">
+              <Select
                 id="allocation-form"
                 value={selectedForm}
                 onChange={(event) => {
@@ -655,21 +639,18 @@ export default function ALevelAllocationPage() {
                   setOptionalSelection(new Set());
                   setBulkOptionalStudentIds(new Set());
                 }}
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
               >
                 {formOptions.map((option) => (
                   <option key={option} value={option}>{option}</option>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </Field>
 
-            <div>
-              <label htmlFor="student-select" className="mb-1 block text-sm font-medium text-slate-700">Student</label>
-              <select
+            <Field label="Student" htmlFor="student-select">
+              <Select
                 id="student-select"
                 value={selectedStudentId}
                 onChange={(event) => selectStudent(event.target.value)}
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
               >
                 <option value="">
                   {formStudents.length === 0
@@ -683,26 +664,22 @@ export default function ALevelAllocationPage() {
                     {student.admission_no ? ` (${student.admission_no})` : ""}
                   </option>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </Field>
 
-            <div>
-              <label htmlFor="academic-year" className="mb-1 block text-sm font-medium text-slate-700">Academic year</label>
-              <input
+            <Field label="Academic year" htmlFor="academic-year">
+              <Input
                 id="academic-year"
                 value={academicYear}
                 onChange={(event) => setAcademicYear(event.target.value)}
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
               />
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="combination-select" className="mb-1 block text-sm font-medium text-slate-700">Combination</label>
-              <select
+            <Field label="Combination" htmlFor="combination-select">
+              <Select
                 id="combination-select"
                 value={selectedCombinationId}
                 onChange={(event) => setSelectedCombinationId(event.target.value)}
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
               >
                 <option value="">Select a combination</option>
                 {combinations.map((combination) => (
@@ -710,14 +687,15 @@ export default function ALevelAllocationPage() {
                     {combination.name} ({combination.code})
                   </option>
                 ))}
-              </select>
-            </div>
+              </Select>
+            </Field>
 
-            <button
+            <Button
               type="button"
+              variant="primary"
+              className="w-full"
               disabled={saving || !selectedStudentId || !selectedCombinationId}
               onClick={() => void handleSingleAssign()}
-              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
             >
               {saving ? (
                 <>
@@ -730,41 +708,41 @@ export default function ALevelAllocationPage() {
                   Assign combination
                 </>
               )}
-            </button>
+            </Button>
 
             {selectedStudent && (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="rounded-xl border border-line bg-canvas p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                      <BookOpen className="h-4 w-4 text-blue-700" />
+                    <h4 className="flex items-center gap-2 text-sm font-semibold text-ink">
+                      <BookOpen className="h-4 w-4 text-brand" />
                       Optional subjects
                     </h4>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-muted">
                       Subjects outside {selectedStudent.full_name}&apos;s combination.
                     </p>
                   </div>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs font-medium text-muted">
                     {optionalSelection.size} selected
                   </span>
                 </div>
 
                 <div className="mt-3 max-h-52 space-y-2 overflow-y-auto">
                   {optionalSubjectOptions.length === 0 ? (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted">
                       No optional subjects available. Register more active A-Level subjects.
                     </p>
                   ) : (
                     optionalSubjectOptions.map((subject) => (
                       <label
                         key={subject.id}
-                        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+                        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-line bg-white px-3 py-2 text-sm"
                       >
                         <span>
-                          <span className="block font-medium text-slate-800">
+                          <span className="block font-medium text-ink">
                             {subject.name}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-muted">
                             {subject.code} · {subject.subject_type}
                           </span>
                         </span>
@@ -772,7 +750,7 @@ export default function ALevelAllocationPage() {
                           type="checkbox"
                           checked={optionalSelection.has(subject.id)}
                           onChange={() => toggleOptionalSubject(subject.id)}
-                          className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                          className="h-4 w-4 rounded border-line-strong accent-brand"
                         />
                       </label>
                     ))
@@ -780,16 +758,18 @@ export default function ALevelAllocationPage() {
                 </div>
 
                 {!selectedStudentHasCombination && (
-                  <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                  <p className="mt-3 rounded-lg bg-highlight px-3 py-2 text-xs text-highlight-ink">
                     Assign a combination to this student first, then add optional subjects.
                   </p>
                 )}
 
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="mt-3 w-full"
                   disabled={optionalSaving || !selectedStudentHasCombination}
                   onClick={() => void handleSaveOptionalSubjects()}
-                  className="mt-3 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60"
                 >
                   {optionalSaving ? (
                     <>
@@ -799,28 +779,27 @@ export default function ALevelAllocationPage() {
                   ) : (
                     "Save optional subjects"
                   )}
-                </button>
+                </Button>
               </div>
             )}
           </div>
-        </section>
+        </Card>
 
-        <section className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-900">Bulk combination assignment</h3>
-            <p className="mt-1 text-sm text-slate-600">
-              Use entries like: admission_no, combination_code or name | combination_code.
-              Only {selectedForm} students are matched.
+        <div className="space-y-6">
+          <Card title="Bulk combination assignment" bodyClassName="p-5 pt-4">
+            <p className="text-sm text-muted">
+              One per line: admission number, combination code or name.
             </p>
             <textarea
               value={bulkInput}
               onChange={(event) => setBulkInput(event.target.value)}
               rows={8}
-              placeholder="S-001, PCM\nS-002, HGL"
-              className="mt-4 min-h-36 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              placeholder={"S-001, PCM\nS-002, HGL"}
+              className="app-textarea mt-4 min-h-36"
             />
-            <div className="mt-4 flex items-center gap-3">
-              <select
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <Select
+                aria-label="Form for bulk assignment"
                 value={selectedForm}
                 onChange={(event) => {
                   setSelectedForm(event.target.value as FormLevel);
@@ -829,39 +808,39 @@ export default function ALevelAllocationPage() {
                   setOptionalSelection(new Set());
                   setBulkOptionalStudentIds(new Set());
                 }}
-                className="min-h-11 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
               >
                 {formOptions.map((option) => (
                   <option key={option} value={option}>{option}</option>
                 ))}
-              </select>
-              <input
+              </Select>
+              <Input
+                aria-label="Academic year for bulk assignment"
                 value={academicYear}
                 onChange={(event) => setAcademicYear(event.target.value)}
-                className="min-h-11 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
                 placeholder="2026"
               />
             </div>
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              className="mt-4"
               onClick={() => void handleBulkAssign()}
-              className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
             >
               <ArrowRightLeft className="h-4 w-4" />
               Assign bulk list
-            </button>
-          </div>
+            </Button>
+          </Card>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-lg font-semibold text-slate-900">Bulk optional subjects</h3>
-            <p className="mt-1 text-sm text-slate-600">
-              Choose one optional subject, then select the {selectedForm} students who take it.
+          <Card title="Bulk optional subjects" bodyClassName="p-5 pt-4">
+            <p className="text-sm text-muted">
+              Choose one subject, then select the {selectedForm} students who take it.
             </p>
 
-            <select
+            <Select
+              aria-label="Optional subject"
               value={bulkOptionalSubjectId}
               onChange={(event) => setBulkOptionalSubjectId(event.target.value)}
-              className="mt-4 min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
+              className="mt-4"
             >
               <option value="">Select an optional subject</option>
               {subjectOptions
@@ -871,11 +850,11 @@ export default function ALevelAllocationPage() {
                     {subject.name} ({subject.code})
                   </option>
                 ))}
-            </select>
+            </Select>
 
-            <div className="mt-3 max-h-56 space-y-2 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2">
+            <div className="mt-3 max-h-56 space-y-2 overflow-y-auto rounded-xl border border-line bg-canvas p-2">
               {formStudents.length === 0 ? (
-                <p className="px-2 py-3 text-sm text-slate-500">
+                <p className="px-2 py-3 text-sm text-muted">
                   No {selectedForm} students registered.
                 </p>
               ) : (
@@ -890,13 +869,13 @@ export default function ALevelAllocationPage() {
                       key={student.id}
                       className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${
                         alreadyInCombination
-                          ? "border-slate-200 bg-slate-100 text-slate-400"
-                          : "border-slate-200 bg-white"
+                          ? "border-line bg-slate-100 text-slate-400"
+                          : "border-line bg-white"
                       }`}
                     >
                       <span>
                         <span className="block font-medium">{student.full_name}</span>
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-muted">
                           {student.admission_no ?? "No admission number"}
                           {alreadyInCombination ? " · already in combination" : ""}
                         </span>
@@ -906,7 +885,7 @@ export default function ALevelAllocationPage() {
                         disabled={alreadyInCombination}
                         checked={bulkOptionalStudentIds.has(student.id)}
                         onChange={() => toggleBulkOptionalStudent(student.id)}
-                        className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 disabled:opacity-50"
+                        className="h-4 w-4 rounded border-line-strong accent-brand disabled:opacity-50"
                       />
                     </label>
                   );
@@ -914,11 +893,16 @@ export default function ALevelAllocationPage() {
               )}
             </div>
 
-            <button
+            <Button
               type="button"
-              disabled={bulkOptionalSaving || !bulkOptionalSubjectId || bulkOptionalStudentIds.size === 0}
+              variant="secondary"
+              className="mt-4"
+              disabled={
+                bulkOptionalSaving ||
+                !bulkOptionalSubjectId ||
+                bulkOptionalStudentIds.size === 0
+              }
               onClick={() => void handleBulkOptionalAssign()}
-              className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-60"
             >
               {bulkOptionalSaving ? (
                 <>
@@ -931,67 +915,51 @@ export default function ALevelAllocationPage() {
                   Assign optional subject ({bulkOptionalStudentIds.size})
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </Card>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-lg font-semibold text-slate-900">Allocation overview</h3>
-              <span className="text-xs text-slate-500">
+          <Card
+            title="Students not assigned yet"
+            action={
+              <Badge tone="neutral">
                 {selectedForm} · {academicYear}
-              </span>
-            </div>
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
-              {combinations.map((combination) => (
-                <div key={combination.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="font-semibold text-slate-900">{combination.name}</div>
-                      <div className="text-xs text-slate-500">{combination.code}</div>
-                    </div>
-                    <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-                      {assignmentCounts.get(combination.id) ?? 0} students
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-lg font-semibold text-slate-900">Students not assigned yet</h3>
-              <span className="text-xs text-slate-500">
-                {selectedForm} · {academicYear}
-              </span>
-            </div>
-            <div className="mt-3 max-h-80 space-y-2 overflow-y-auto">
-              {unassignedStudents.length === 0 ? (
-                <p className="text-sm text-slate-500">
-                  All registered {selectedForm} students have a combination assigned for {academicYear}.
-                </p>
-              ) : (
-                unassignedStudents.map((student) => (
-                  <div key={student.id} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm">
-                    <div>
-                      <div className="font-medium text-slate-900">{student.full_name}</div>
-                      <div className="text-xs text-slate-500">
+              </Badge>
+            }
+            bodyClassName="p-5 pt-4"
+          >
+            {unassignedStudents.length === 0 ? (
+              <EmptyState
+                icon={Users}
+                title="Everyone is assigned"
+                description={`All registered ${selectedForm} students have a combination for ${academicYear}.`}
+              />
+            ) : (
+              <div className="max-h-80 space-y-2 overflow-y-auto">
+                {unassignedStudents.map((student) => (
+                  <div
+                    key={student.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-line px-3 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate font-medium text-ink">{student.full_name}</div>
+                      <div className="text-xs text-muted">
                         {student.admission_no ?? "No admission number"}
                       </div>
                     </div>
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
+                      size="sm"
                       onClick={() => selectStudent(student.id)}
-                      className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-medium text-slate-700"
                     >
                       Assign
-                    </button>
+                    </Button>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
-        </section>
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
     </div>
   );

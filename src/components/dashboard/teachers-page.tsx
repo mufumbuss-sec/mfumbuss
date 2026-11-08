@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { Pagination } from "@/components/ui/pagination";
+import { PageHeader } from "@/components/ui/page-header";
 import { notify } from "@/lib/notifications";
 
 interface Teacher {
@@ -49,6 +50,15 @@ interface Subject {
 interface TeachersPageProps {
   canManageTeachers: boolean;
 }
+
+const TEACHING_FORMS = [
+  "Form I",
+  "Form II",
+  "Form III",
+  "Form IV",
+  "Form V",
+  "Form VI",
+];
 
 const inputClassName =
   "min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
@@ -422,55 +432,29 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
   );
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6">
-      <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 p-4 text-white shadow-lg sm:p-5">
-        <div className="absolute -right-12 -top-20 h-64 w-64 rounded-full bg-white/5 blur-2xl" />
-        <div className="relative flex flex-col items-start gap-4">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-blue-100">
-              <Users className="h-3.5 w-3.5" />
-              Staff directory
-            </span>
-            <h2 className="mt-2 text-xl font-bold tracking-tight sm:text-2xl">
-              {canManageTeachers ? "Staff accounts" : "Teachers"}
-            </h2>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-blue-100/90 sm:text-base">
-              {canManageTeachers
-                ? "Manage staff profiles, roles, contact information, and teaching assignments."
-                : "Browse the teaching team and manage class subject assignments."}
-            </p>
-          </div>
-          {canManageTeachers && (
+    <div className="mx-auto w-full max-w-7xl space-y-5">
+      <PageHeader
+        title={canManageTeachers ? "Staff accounts" : "Teachers"}
+        subtitle={
+          canManageTeachers
+            ? "Manage staff profiles and teaching assignments."
+            : "Browse teachers and class assignments."
+        }
+        action={
+          canManageTeachers ? (
             <button
               type="button"
               onClick={openAddTeacher}
-              className="inline-flex min-h-12 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-bold text-blue-900 shadow-sm transition hover:bg-blue-50 sm:w-auto"
+              className="app-btn app-btn-primary"
             >
               <Plus className="h-4 w-4" />
               Add staff member
             </button>
-          )}
-        </div>
-      </header>
+          ) : undefined
+        }
+      />
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <p className="text-sm text-slate-500">
-            {canManageTeachers ? "Total staff accounts" : "Total teachers"}
-          </p>
-          <p className="mt-1 text-xl font-bold text-slate-950">{overallTotal}</p>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <p className="text-sm text-slate-500">Teaching assignments</p>
-          <p className="mt-1 text-xl font-bold text-slate-950">{assignmentTotal}</p>
-        </div>
-        <div className="col-span-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:col-span-1 sm:p-5">
-          <p className="text-sm text-slate-500">Showing</p>
-          <p className="mt-1 text-xl font-bold text-slate-950">{total}</p>
-        </div>
-      </section>
-
-      <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+      <section className="app-card space-y-4 p-5">
         <label className="relative block max-w-2xl">
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
@@ -478,28 +462,28 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={`Search by ${canManageTeachers ? "staff" : "teacher"} name, email, or phone`}
-            className="min-h-12 w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+            className="app-input pl-10"
           />
         </label>
 
         {loading || teachersLoading ? (
           <LoadingIndicator
             label={`Loading ${canManageTeachers ? "staff" : "teacher"} information...`}
-            className="rounded-2xl border border-slate-100 bg-slate-50 p-8"
+            className="rounded-[10px] border border-line bg-canvas p-8"
           />
         ) : visibleTeachers.length === 0 ? (
-          <div className="flex flex-col items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-14 text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-800">
-              <Users className="h-7 w-7" />
+          <div className="app-empty">
+            <span className="app-empty-icon">
+              <Users className="h-5 w-5" />
             </span>
-            <h3 className="mt-4 font-semibold text-slate-900">
+            <h3 className="app-empty-title">
               {overallTotal === 0
                 ? canManageTeachers
                   ? "No staff accounts added yet"
                   : "No teachers added yet"
                 : `No matching ${canManageTeachers ? "staff accounts" : "teachers"}`}
             </h3>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="app-empty-text">
               {overallTotal === 0
                 ? canManageTeachers
                   ? "Add a staff account to build your school directory."
@@ -510,10 +494,10 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               <button
                 type="button"
                 onClick={openAddTeacher}
-                className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800"
+                className="app-btn app-btn-primary mt-4"
               >
                 <Plus className="h-4 w-4" />
-                {canManageTeachers ? "Add first staff member" : "Add first teacher"}
+                Add first staff member
               </button>
             )}
           </div>
@@ -538,28 +522,28 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
               return (
                 <article
                   key={teacher.id}
-                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:border-blue-200 hover:shadow-md"
+                  className="overflow-hidden rounded-[14px] border border-line bg-white transition hover:border-brand-light/60"
                 >
                   <div className="flex flex-col gap-4 p-4 sm:p-5">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-700 to-indigo-600 text-sm font-bold text-white shadow-sm">
+                      <div className="app-avatar flex h-12 w-12 shrink-0 text-sm">
                         {initials || <UserRound className="h-5 w-5" />}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="break-words text-base font-bold text-slate-950">
+                          <h3 className="break-words text-base font-bold text-ink">
                             {teacher.full_name}
                           </h3>
-                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                          <span className="app-badge app-badge-neutral">
                             {teacher.sex === "M" ? "Male" : "Female"}
                           </span>
                           {canManageTeachers && (
-                            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold capitalize text-blue-800">
+                            <span className="app-badge app-badge-success capitalize">
                               {teacher.role}
                             </span>
                           )}
                         </div>
-                        <div className="mt-2 grid gap-1.5 text-sm text-slate-600 sm:grid-cols-2">
+                        <div className="mt-2 grid gap-1.5 text-sm text-ink-soft sm:grid-cols-2">
                           <p className="flex min-w-0 items-center gap-2">
                             <Mail className="h-4 w-4 shrink-0 text-slate-400" />
                             <span className="truncate">{teacher.email || "No email provided"}</span>
@@ -573,8 +557,8 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                     </div>
 
                     {teacher.role === "teacher" && (
-                      <div className="rounded-xl bg-slate-50 p-3">
-                        <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                      <div className="rounded-[10px] bg-canvas p-3">
+                        <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-muted">
                           <BookOpen className="h-3.5 w-3.5" />
                           Teaching assignments
                         </p>
@@ -925,8 +909,8 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                 <legend className="text-sm font-semibold text-slate-800">
                   1. Select class forms
                 </legend>
-                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {["Form I", "Form II", "Form III", "Form IV"].map((form) => {
+                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {TEACHING_FORMS.map((form) => {
                     const checked = selectedForms.has(form);
                     const subjectCount = classSubjects.filter(
                       (subject) => subject.form === form,
@@ -986,7 +970,7 @@ export default function TeachersPage({ canManageTeachers }: TeachersPageProps) {
                   </p>
                 ) : (
                   <div className="mt-3 space-y-4">
-                    {["Form I", "Form II", "Form III", "Form IV"]
+                    {TEACHING_FORMS
                       .filter((form) => selectedForms.has(form))
                       .map((form) => {
                         const formSubjects = classSubjects.filter(

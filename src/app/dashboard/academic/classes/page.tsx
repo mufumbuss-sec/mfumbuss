@@ -1,8 +1,9 @@
 ﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BookOpen, Loader2, Plus, Trash2, Users, X } from "lucide-react";
+import { BookOpen, Loader2, Plus, Trash2, X } from "lucide-react";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
 
@@ -94,16 +95,6 @@ export default function ClassesPage() {
     return map;
   }, [students]);
 
-  const studentCountByForm = useMemo(() => {
-    const formByClass = new Map(classes.map((item) => [item.id, item.form]));
-    const map = new Map<FormLevel, number>();
-    for (const student of students) {
-      const form = formByClass.get(student.class_id);
-      if (form) map.set(form, (map.get(form) ?? 0) + 1);
-    }
-    return map;
-  }, [classes, students]);
-
   async function handleAddClass(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const name = stream.trim().toUpperCase();
@@ -175,159 +166,168 @@ export default function ClassesPage() {
 
   return (
     <>
-      <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-bold text-gray-900">Classes</h2>
-        <p className="text-gray-600 mt-1">
-          Manage classes from Form I to Form VI and their streams. Form V and Form VI are used for A-Level.
-        </p>
-      </div>
+      <div className="mx-auto w-full max-w-7xl space-y-5">
+        <PageHeader
+          title="Classes"
+          subtitle="Manage classes and streams from Form I to Form VI."
+        />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        {FORM_LEVELS.map((form) => {
-          const streams = classes.filter((item) => item.form === form);
-          const active = activeForm === form;
-          return (
-            <button
-              key={form}
-              type="button"
-              onClick={() => {
-                setActiveForm(form);
-              }}
-              className={`rounded-lg border p-4 text-left transition-colors ${
-                active
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-gray-200 bg-white text-gray-900 hover:border-blue-300"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{form}</span>
-                <BookOpen className="h-4 w-4 opacity-70" />
-              </div>
-              <p
-                className={`mt-2 text-xs ${
-                  active ? "text-blue-100" : "text-gray-500"
-                }`}
-              >
-                {streams.length} streams &middot; {studentCountByForm.get(form) ?? 0} students
-              </p>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="space-y-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h3 className="text-lg font-semibold text-gray-900">Add Stream</h3>
-          <p className="mt-1 text-sm text-gray-600">{activeForm}</p>
-          <form onSubmit={(e) => void handleAddClass(e)} className="mt-4 space-y-3">
-            <div>
-              <label htmlFor="stream" className="mb-1 block text-sm font-medium text-gray-700">
-                Stream name
-              </label>
-              <input
-                id="stream"
-                value={stream}
-                onChange={(event) => setStream(event.target.value)}
-                placeholder="e.g. A"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
-            >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-              Add Stream
-            </button>
-          </form>
-        </div>
-
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h3 className="text-lg font-semibold text-gray-900">{activeForm} Streams</h3>
-          {loading ? (
-            <LoadingIndicator label="Loading classes..." className="py-4" />
-          ) : formClasses.length ? (
-            <div className="mt-4 space-y-2">
-              {formClasses.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2"
+        <section className="app-card p-2">
+          <div className="flex flex-wrap gap-1.5">
+            {FORM_LEVELS.map((form) => {
+              const active = activeForm === form;
+              return (
+                <button
+                  key={form}
+                  type="button"
+                  onClick={() => {
+                    setActiveForm(form);
+                  }}
+                  className={`min-h-10 rounded-[10px] px-4 text-sm font-semibold transition ${
+                    active ? "bg-brand text-white" : "text-ink-soft hover:bg-brand-tint"
+                  }`}
                 >
-                  <div>
-                    <span className="text-sm font-medium text-gray-900">
-                      {item.form} {item.stream}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      <Users className="h-3.5 w-3.5" />
-                      {studentCountByClass.get(item.id) ?? 0}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setDeleteTarget(item)}
-                      className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
-                      aria-label={`Delete ${item.form} ${item.stream}`}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+                  {form}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
+          <section className="app-card h-fit p-5">
+            <h2 className="app-card-title">Add stream</h2>
+            <p className="app-card-subtitle">{activeForm}</p>
+            <form onSubmit={(e) => void handleAddClass(e)} className="mt-4 space-y-4">
+              <div>
+                <label htmlFor="stream" className="app-label">
+                  Stream name
+                </label>
+                <input
+                  id="stream"
+                  value={stream}
+                  onChange={(event) => setStream(event.target.value)}
+                  placeholder="e.g. A"
+                  className="app-input uppercase"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={saving}
+                className="app-btn app-btn-primary w-full"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                Add Stream
+              </button>
+            </form>
+          </section>
+
+          <section className="app-card min-w-0 overflow-hidden">
+            <div className="app-card-header pb-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-brand-tint text-brand">
+                  <BookOpen className="h-4 w-4" />
+                </span>
+                <div>
+                  <h2 className="app-card-title">{activeForm} streams</h2>
+                  <p className="app-card-subtitle">Streams available for this form.</p>
                 </div>
-              ))}
+              </div>
             </div>
-          ) : (
-            <p className="mt-4 text-sm text-gray-600">No streams yet. Use the form above to add one.</p>
-          )}
+
+            {loading ? (
+              <LoadingIndicator
+                label="Loading classes..."
+                className="border-t border-line p-6"
+              />
+            ) : formClasses.length ? (
+              <div className="border-t border-line p-4">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {formClasses.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between gap-3 rounded-[10px] border border-line px-3 py-2"
+                    >
+                      <span className="text-sm font-semibold text-ink">
+                        {item.form} {item.stream}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteTarget(item)}
+                        className="rounded-lg p-1.5 text-slate-400 transition hover:bg-danger hover:text-danger-ink"
+                        aria-label={`Delete ${item.form} ${item.stream}`}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="border-t border-line p-5">
+                <div className="app-empty">
+                  <span className="app-empty-icon">
+                    <BookOpen className="h-5 w-5" />
+                  </span>
+                  <h3 className="app-empty-title">No streams yet</h3>
+                  <p className="app-empty-text">Add a stream using the form.</p>
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("stream")?.focus()}
+                    className="app-btn app-btn-primary mt-4"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add stream
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
       </div>
-    </div>
 
-    {deleteTarget && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-        <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-          <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-            <h3 className="text-lg font-semibold text-gray-900">Delete Stream</h3>
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(null)}
-              className="rounded p-1 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="px-6 py-4">
-            <p className="text-sm text-gray-700">
-              Are you sure you want to delete <span className="font-medium text-gray-900">{deleteTarget.form} {deleteTarget.stream}</span>?
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-4">
+          <div className="w-full max-w-md rounded-t-[14px] border border-line bg-white p-5 shadow-xl sm:rounded-[14px] sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="app-card-title">Delete stream</h3>
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="rounded-lg p-1.5 text-muted transition hover:bg-canvas hover:text-ink"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="mt-3 text-sm text-ink-soft">
+              Are you sure you want to delete <span className="font-semibold text-ink">{deleteTarget.form} {deleteTarget.stream}</span>?
             </p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-muted">
               {deleteCount > 0
                 ? `This stream has ${deleteCount} student(s). Move or delete them before removing the stream.`
                 : "This action cannot be undone."}
             </p>
-          </div>
-          <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-6 py-4">
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(null)}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => void confirmDeleteClass()}
-              disabled={deleting || deleteCount > 0}
-              className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-              Delete
-            </button>
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="app-btn app-btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => void confirmDeleteClass()}
+                disabled={deleting || deleteCount > 0}
+                className="app-btn app-btn-danger"
+              >
+                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Delete
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
     </>
   );

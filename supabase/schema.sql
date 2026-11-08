@@ -294,14 +294,28 @@ create index if not exists a_level_exam_subjects_exam_id_idx
 
 create table if not exists public.a_level_marks (
   id uuid primary key default uuid_generate_v4(),
+  exam_id uuid not null references public.exams(id) on delete cascade,
   student_id uuid not null references public.students(id) on delete cascade,
   subject_id uuid not null references public.a_level_subjects(id) on delete restrict,
   exam_name text not null,
   academic_year text not null,
+  theory_score numeric(5,2),
+  practical_score numeric(5,2),
+  total_score numeric(5,2),
+  is_absent boolean not null default false,
   score numeric,
   grade text,
-  created_at timestamptz not null default now()
+  entered_by uuid references public.profiles(id),
+  entered_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  created_at timestamptz not null default now(),
+  constraint a_level_marks_exam_student_subject_key unique (exam_id, student_id, subject_id),
+  constraint a_level_marks_theory_score_range check (theory_score is null or theory_score between 0 and 100),
+  constraint a_level_marks_practical_score_range check (practical_score is null or practical_score between 0 and 50)
 );
+
+create index if not exists a_level_marks_exam_id_idx
+  on public.a_level_marks (exam_id);
 
 create table if not exists public.a_level_combination_transfer_logs (
   id uuid primary key default uuid_generate_v4(),
@@ -340,6 +354,8 @@ drop policy if exists "A-level exam subjects are viewable by authenticated users
 drop policy if exists "A-level exam subjects can be managed by headmaster and academic" on public.a_level_exam_subjects;
 drop policy if exists "A-level marks are viewable by authenticated users" on public.a_level_marks;
 drop policy if exists "A-level marks can be managed by headmaster and academic" on public.a_level_marks;
+drop policy if exists "A-level marks can be read by managers and assigned teachers" on public.a_level_marks;
+drop policy if exists "A-level marks can be written by managers and assigned teachers" on public.a_level_marks;
 drop policy if exists "A-level transfer logs are viewable by authenticated users" on public.a_level_combination_transfer_logs;
 drop policy if exists "A-level transfer logs can be managed by headmaster and academic" on public.a_level_combination_transfer_logs;
 
@@ -406,14 +422,48 @@ create policy "A-level exam subjects can be managed by headmaster and academic"
   using (public.can_manage_classes())
   with check (public.can_manage_classes());
 
-create policy "A-level marks are viewable by authenticated users"
-  on public.a_level_marks for select
-  using (auth.uid() is not null);
+create or replace function public.is_assigned_a_level_teacher(
+  p_student_id uuid,
+  p_subject_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.students student
+    join public.classes school_class on school_class.id = student.class_id
+    join public.a_level_subjects a_subject on a_subject.id = p_subject_id
+    join public.teaching_assignments assignment
+      on assignment.teacher_id = auth.uid()
+     and assignment.class_name = school_class.form
+     and lower(trim(assignment.subject_name)) = lower(trim(a_subject.name))
+    where student.id = p_student_id
+  );
+$$;
 
-create policy "A-level marks can be managed by headmaster and academic"
+grant execute on function public.is_assigned_a_level_teacher(uuid, uuid) to authenticated;
+
+create policy "A-level marks can be read by managers and assigned teachers"
+  on public.a_level_marks for select
+  using (
+    public.can_manage_classes()
+    or public.is_assigned_a_level_teacher(student_id, subject_id)
+  );
+
+create policy "A-level marks can be written by managers and assigned teachers"
   on public.a_level_marks for all
-  using (public.can_manage_classes())
-  with check (public.can_manage_classes());
+  using (
+    public.can_manage_classes()
+    or public.is_assigned_a_level_teacher(student_id, subject_id)
+  )
+  with check (
+    public.can_manage_classes()
+    or public.is_assigned_a_level_teacher(student_id, subject_id)
+  );
 
 create policy "A-level transfer logs are viewable by authenticated users"
   on public.a_level_combination_transfer_logs for select

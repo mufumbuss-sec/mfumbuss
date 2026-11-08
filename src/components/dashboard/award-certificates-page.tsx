@@ -2,6 +2,10 @@
 
 import { Fragment, useEffect, useRef, useState } from "react";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
+import { Printer } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field, Input, Select } from "@/components/ui/field";
+import { PageHeader } from "@/components/ui/page-header";
 import "./award-certificates.css";
 
 /* ---------- Data ---------- */
@@ -302,7 +306,7 @@ export default function AwardCertificatesPage() {
   }
 
   return (
-    <div className="vz">
+    <div className="space-y-5">
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
         <defs>
           <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
@@ -313,83 +317,108 @@ export default function AwardCertificatesPage() {
         </defs>
       </svg>
 
-      <div className="ctrl">
-        <label>
-          Award type
-          <select value={cat} onChange={onCat}>
-            {CAT_NAMES.map((k) => (
-              <option key={k} value={k}>{k}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Government
-          <input value={gov} onChange={(e) => setGov(e.target.value)} />
-        </label>
-        <label>
-          District Council
-          <input value={dist} onChange={(e) => setDist(e.target.value)} />
-        </label>
-        <label>
-          School address
-          <input value={addr} onChange={(e) => setAddr(e.target.value)} />
-        </label>
-        <label>
-          School name
-          <input value={school} onChange={(e) => setSchool(e.target.value)} />
-        </label>
-        <label>
-          Year (shown on the seal and date)
-          <input value={year} onChange={(e) => setYear(e.target.value)} />
-        </label>
-        <label>
-          First signature
-          <input value={sig1} onChange={(e) => setSig1(e.target.value)} />
-        </label>
-        <label>
-          Second signature
-          <input value={sig2} onChange={(e) => setSig2(e.target.value)} />
-        </label>
-        <label>
-          Left logo (Union)
-          <input type="file" accept="image/*" onChange={onLogo(setLogoL)} />
-        </label>
-        <label>
-          Right logo (School)
-          <input type="file" accept="image/*" onChange={onLogo(setLogoR)} />
-        </label>
-        <label className="wide">
-          Student names (one name per line – each name gets its own certificate)
-          <textarea
-            value={names}
-            onChange={(e) => setNames(e.target.value)}
-            placeholder={"Example:\nAmina Juma Mrisho\nBaraka Daudi Mwakyusa"}
-          />
-        </label>
-        <label className="wide">
-          Certificate text (changes with the award type; you can edit it)
-          <textarea value={cite} onChange={(e) => setCite(e.target.value)} style={{ minHeight: 60 }} />
-        </label>
-        <div className="wide" style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-          <button type="button" onClick={printSheet}>Print / Save PDF</button>
-          <p className="hint">In the print dialog: A4, Landscape, Margins: None, and enable “Background graphics”.</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Certificates"
+        subtitle="Design and print award certificates."
+        action={
+          <Button type="button" variant="primary" onClick={printSheet}>
+            <Printer className="h-4 w-4" />
+            Print / Save PDF
+          </Button>
+        }
+      />
 
-      <div
-        className="sheet"
-        ref={sheetRef}
-        style={{ "--s": scale } as CSSProperties}
-        onInput={(e) => {
-          const t = e.target as HTMLElement;
-          if (t.classList?.contains("name")) fitOne(t);
-        }}
-      >
-        <Fragment key={sheetKey}>
-          {people.map((n, i) => (
-            <Certificate key={i} name={n} cat={cat} v={v} />
-          ))}
-        </Fragment>
+      <section className="app-card">
+        <div className="app-card-header border-b border-line pb-4">
+          <div className="min-w-0">
+            <h2 className="app-card-title">Certificate details</h2>
+            <p className="app-card-subtitle">Changes update the preview instantly.</p>
+          </div>
+        </div>
+
+        <div className="grid gap-4 p-5 lg:grid-cols-2">
+          <Field label="Award type">
+            <Select value={cat} onChange={onCat}>
+              {CAT_NAMES.map((k) => (
+                <option key={k} value={k}>{k}</option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Government">
+            <Input value={gov} onChange={(e) => setGov(e.target.value)} />
+          </Field>
+          <Field label="District Council">
+            <Input value={dist} onChange={(e) => setDist(e.target.value)} />
+          </Field>
+          <Field label="School address">
+            <Input value={addr} onChange={(e) => setAddr(e.target.value)} />
+          </Field>
+          <Field label="School name">
+            <Input value={school} onChange={(e) => setSchool(e.target.value)} />
+          </Field>
+          <Field label="Year (shown on the seal and date)">
+            <Input value={year} onChange={(e) => setYear(e.target.value)} />
+          </Field>
+          <Field label="First signature">
+            <Input value={sig1} onChange={(e) => setSig1(e.target.value)} />
+          </Field>
+          <Field label="Second signature">
+            <Input value={sig2} onChange={(e) => setSig2(e.target.value)} />
+          </Field>
+          <Field label="Left logo (Union)">
+            <Input type="file" accept="image/*" onChange={onLogo(setLogoL)} className="py-2" />
+          </Field>
+          <Field label="Right logo (School)">
+            <Input type="file" accept="image/*" onChange={onLogo(setLogoR)} className="py-2" />
+          </Field>
+          <Field
+            label="Student names (one name per line – each name gets its own certificate)"
+            className="lg:col-span-2"
+          >
+            <textarea
+              className="app-textarea"
+              value={names}
+              onChange={(e) => setNames(e.target.value)}
+              placeholder={"Example:\nAmina Juma Mrisho\nBaraka Daudi Mwakyusa"}
+            />
+          </Field>
+          <Field
+            label="Certificate text (changes with the award type; you can edit it)"
+            className="lg:col-span-2"
+          >
+            <textarea
+              className="app-textarea"
+              value={cite}
+              onChange={(e) => setCite(e.target.value)}
+              style={{ minHeight: 90 }}
+            />
+          </Field>
+        </div>
+
+        <div className="border-t border-line px-5 py-4">
+          <p className="text-xs leading-relaxed text-muted">
+            In the print dialog: A4, Landscape, Margins: None, and enable
+            “Background graphics”.
+          </p>
+        </div>
+      </section>
+
+      <div className="vz">
+        <div
+          className="sheet"
+          ref={sheetRef}
+          style={{ "--s": scale } as CSSProperties}
+          onInput={(e) => {
+            const t = e.target as HTMLElement;
+            if (t.classList?.contains("name")) fitOne(t);
+          }}
+        >
+          <Fragment key={sheetKey}>
+            {people.map((n, i) => (
+              <Certificate key={i} name={n} cat={cat} v={v} />
+            ))}
+          </Fragment>
+        </div>
       </div>
     </div>
   );

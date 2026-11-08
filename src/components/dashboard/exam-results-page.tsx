@@ -11,6 +11,7 @@ import {
 import { notify } from "@/lib/notifications";
 import { sortStudentsForDisplay } from "@/lib/student-sort";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 
 type SubjectResult = {
   subject_id: string;
@@ -97,8 +98,7 @@ type ResultsResponse = {
 
 const GRADES = ["A", "B", "C", "D", "F"] as const;
 const DIVISIONS = ["DIV I", "DIV II", "DIV III", "DIV IV", "DIV 0"];
-const inputClass =
-  "min-h-9 w-full rounded border border-slate-300 bg-white px-2.5 text-base text-slate-800 outline-none focus:border-slate-600 focus:ring-2 focus:ring-slate-400/20 sm:text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100";
+const inputClass = "app-input";
 
 function gradeFor(percentage: number) {
   const mark = Math.floor(percentage);
@@ -646,11 +646,42 @@ export function ExamResultsPage({
   const addressLine = address ? `P.O. Box ${postalBox?.[1]?.trim() ?? "155"}` : "P.O. Box 155";
 
   return (
-    <div className="exam-report mx-auto w-full min-w-0 max-w-[1600px] space-y-3 overflow-x-clip text-slate-900">
+    <div className="space-y-6">
+      <PageHeader
+        title="Examination Results"
+        subtitle={
+          exam
+            ? `${exam.name} · ${exam.class_form}`
+            : "Processed results and performance summary."
+        }
+        action={
+          <>
+            <button
+              type="button"
+              onClick={printReport}
+              className="app-btn app-btn-primary"
+            >
+              <Printer className="h-4 w-4" />
+              Print / PDF
+            </button>
+            <button
+              type="button"
+              onClick={exportExcel}
+              disabled={loading || !results.length}
+              className="app-btn app-btn-secondary"
+            >
+              <Download className="h-4 w-4" />
+              Export Excel
+            </button>
+          </>
+        }
+      />
+
+      <div className="exam-report mx-auto w-full min-w-0 max-w-[1600px] space-y-3 overflow-x-clip text-slate-900">
       <div className="report-no-print flex flex-wrap items-center justify-between gap-2">
         <Link
           href={examsHref}
-          className="inline-flex min-h-9 items-center gap-2 rounded px-1 text-sm font-semibold text-slate-700 hover:text-slate-950"
+          className="inline-flex min-h-9 items-center gap-2 rounded px-1 text-sm font-semibold text-ink-soft hover:text-ink"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Exams
@@ -949,26 +980,8 @@ export function ExamResultsPage({
       <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 pt-2 text-[11px] text-slate-500 dark:border-slate-700 dark:text-slate-400">
         <span>Generated: {generatedAt || "—"}</span>
         <span>School report · {school?.school_name ?? ""}</span>
-        <div className="report-no-print flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={printReport}
-            className="inline-flex min-h-9 items-center gap-2 rounded bg-slate-800 px-3 text-sm font-semibold text-white hover:bg-slate-900"
-          >
-            <Printer className="h-4 w-4" />
-            Print / PDF
-          </button>
-          <button
-            type="button"
-            onClick={exportExcel}
-            disabled={loading || !results.length}
-            className="inline-flex min-h-9 items-center gap-2 rounded border border-slate-400 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200"
-          >
-            <Download className="h-4 w-4" />
-            Export Excel
-          </button>
-        </div>
       </footer>
+      </div>
     </div>
   );
 }

@@ -25,54 +25,61 @@ export function UserMenu({
   return (
     <div className="relative" ref={ref}>
       <button
+        type="button"
+        aria-label="Account menu"
+        aria-expanded={open}
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex h-11 items-center gap-2.5 rounded-xl bg-white/10 px-2 text-white transition hover:bg-white/15"
       >
-        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+        <span className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full bg-accent text-[13px] font-bold text-accent-ink">
           {user.name.charAt(0).toUpperCase()}
-        </div>
-        <div className="hidden md:flex items-center gap-1 text-left">
-          <p className="text-sm font-medium text-gray-900 truncate max-w-32">
+        </span>
+        <span className="hidden items-center gap-1 md:flex">
+          <span className="max-w-32 truncate text-sm font-medium">
             {user.name}
-          </p>
-          <ChevronDown className="w-4 h-4 text-gray-500" />
-        </div>
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-white/70 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </span>
       </button>
 
-        {open && (
-          <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-            <div className="px-4 py-3 border-b border-gray-100">
-              <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
-            </div>
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-              onClick={() => setOpen(false)}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Dashboard
-            </Link>
-            <Link
-              href="/dashboard/profile"
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-              onClick={() => setOpen(false)}
-            >
-              <User className="w-4 h-4" />
-              Profile
-            </Link>
+      {open && (
+        <div className="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-line bg-white py-1 text-ink shadow-lg">
+          <div className="border-b border-line px-4 py-3">
+            <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
+            <p className="truncate text-xs text-muted">{user.email}</p>
+          </div>
           <Link
-            href="/dashboard/change-password"
-            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            href="/dashboard"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm text-ink-soft hover:bg-brand-tint"
             onClick={() => setOpen(false)}
           >
-            <Lock className="w-4 h-4" />
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Link>
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm text-ink-soft hover:bg-brand-tint"
+            onClick={() => setOpen(false)}
+          >
+            <User className="h-4 w-4" />
+            Profile
+          </Link>
+          <Link
+            href="/dashboard/change-password"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm text-ink-soft hover:bg-brand-tint"
+            onClick={() => setOpen(false)}
+          >
+            <Lock className="h-4 w-4" />
             Change Password
           </Link>
-          <div className="border-t border-gray-100 mt-1">
+          <div className="mt-1 border-t border-line">
             <form action="/auth/signout" method="post">
-              <button className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                <LogOut className="w-4 h-4" />
+              <button className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-danger-ink hover:bg-danger">
+                <LogOut className="h-4 w-4" />
                 Sign Out
               </button>
             </form>

@@ -1,10 +1,8 @@
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import {
-  BookOpen,
   ClipboardList,
   FileText,
-  GraduationCap,
   PenLine,
   Users,
 } from "@/components/ui/lucide-icons";
@@ -214,50 +212,40 @@ export default async function TeacherDashboard() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
       <DashboardHeader
-        eyebrow="Teaching overview"
         title="My dashboard"
         description={
           assignments.length > 0
-            ? `You teach ${subjectNames.length} subject(s) across ${forms.length} class form(s). This overview shows the examinations and marks stored against your account.`
-            : "Your teaching assignments, examinations and saved marks will appear here once they are registered."
+            ? `${subjectNames.length} subject(s) across ${forms.length} class form(s).`
+            : "Your teaching overview will appear once assignments are registered."
         }
-        icon={BookOpen}
       >
         {assignments.length > 0 ? (
-          <span className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold text-white">
-            <PenLine className="h-4 w-4" />
+          <span className="inline-flex min-h-11 items-center gap-2 rounded-[10px] border border-line bg-white px-4 text-sm font-semibold text-ink">
+            <PenLine className="h-4 w-4 text-brand" />
             {formatNumber(marksSavedCount)} marks saved
           </span>
         ) : null}
       </DashboardHeader>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="My classes"
           value={formatNumber(forms.length)}
-          icon={BookOpen}
-          tone="blue"
           hint="Class forms assigned to you"
         />
         <StatCard
           label="My subjects"
           value={formatNumber(subjectNames.length)}
-          icon={ClipboardList}
-          tone="emerald"
           hint="Subjects you teach"
         />
         <StatCard
           label="Students"
           value={formatNumber(totalStudents)}
-          icon={GraduationCap}
-          tone="violet"
-          hint="Learners in your assigned forms"
+          hint="Learners in your forms"
         />
         <StatCard
           label="Marks saved"
           value={formatNumber(marksSavedCount)}
-          icon={FileText}
-          tone="amber"
           hint="Marks entered by your account"
         />
       </section>
@@ -366,49 +354,49 @@ export default async function TeacherDashboard() {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px] text-left text-sm">
+            <table className="app-table min-w-[680px]">
               <thead>
-                <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
-                  <th className="pb-3 pr-4 font-semibold">Student</th>
-                  <th className="pb-3 pr-4 font-semibold">Subject</th>
-                  <th className="pb-3 pr-4 font-semibold">Examination</th>
-                  <th className="pb-3 pr-4 font-semibold">Score</th>
-                  <th className="pb-3 font-semibold">Updated</th>
+                <tr>
+                  <th>Student</th>
+                  <th>Subject</th>
+                  <th>Examination</th>
+                  <th>Score</th>
+                  <th>Updated</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody>
                 {recentMarks.map((mark) => (
                   <tr key={mark.id}>
-                    <td className="py-3 pr-4">
-                      <p className="font-semibold text-slate-900">
+                    <td>
+                      <p className="font-semibold text-ink">
                         {mark.students?.full_name ?? "Unknown student"}
                       </p>
                     </td>
-                    <td className="py-3 pr-4 text-slate-700">
+                    <td className="text-ink-soft">
                       {mark.subjects?.name ?? "—"}
                     </td>
-                    <td className="py-3 pr-4">
-                      <p className="text-slate-700">
+                    <td>
+                      <p className="text-ink-soft">
                         {mark.exams?.name ?? "—"}
                       </p>
-                      <p className="mt-0.5 text-xs text-slate-500">
+                      <p className="mt-0.5 text-xs text-muted">
                         {mark.exams?.class_form ?? ""}
                       </p>
                     </td>
-                    <td className="py-3 pr-4">
+                    <td>
                       {mark.is_absent ? (
-                        <span className="inline-flex rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-rose-200">
+                        <span className="app-badge app-badge-danger">
                           Absent
                         </span>
                       ) : (
-                        <span className="font-semibold text-slate-900">
+                        <span className="font-semibold text-ink">
                           {mark.total_score === null
                             ? "—"
                             : formatNumber(Number(mark.total_score))}
                         </span>
                       )}
                     </td>
-                    <td className="py-3 text-xs text-slate-500">
+                    <td className="text-xs text-muted">
                       {formatDashboardDate(mark.updated_at, {
                         day: "numeric",
                         month: "short",

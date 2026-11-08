@@ -9,7 +9,6 @@ import {
   EyeOff,
   LoaderCircle,
   Lock,
-  ShieldCheck,
 } from "lucide-react";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
@@ -90,86 +89,74 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="relative flex min-h-[100dvh] items-center justify-center overflow-x-hidden bg-slate-50 px-4 py-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-blue-100/70 via-transparent to-transparent" />
-      <div className="relative w-full max-w-md">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
-            <ShieldCheck className="h-5 w-5" />
+    <main className="flex min-h-[100dvh] items-center justify-center bg-canvas px-4 py-8">
+      <div className="w-full max-w-[420px] rounded-[14px] border border-line bg-white p-8 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-accent text-sm font-bold text-accent-ink">
+            NSS
           </div>
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-700">
-              Mufumbu RMS
-            </p>
-            <p className="text-sm font-semibold text-slate-900">Account security</p>
+          <div className="min-w-0">
+            <h1 className="text-base font-bold leading-tight text-ink">
+              Mufumbu Secondary School
+            </h1>
+            <p className="mt-0.5 text-sm text-muted">Exams System</p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_24px_80px_-24px_rgba(15,23,42,0.25)] sm:p-8">
+        <div className="mt-7">
           {checking ? (
             <div className="flex flex-col items-center py-8 text-center">
-              <LoaderCircle className="h-7 w-7 animate-spin text-blue-600" />
-              <p className="mt-3 text-sm text-slate-500">
+              <LoaderCircle className="h-7 w-7 animate-spin text-brand" />
+              <p className="mt-3 text-sm text-muted">
                 Verifying your reset link...
               </p>
             </div>
           ) : done ? (
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success text-success-ink">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
-                Password updated
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
+              <h2 className="mt-4 text-lg font-bold text-ink">Password updated</h2>
+              <p className="mt-2 text-sm leading-6 text-muted">
                 Your password has been changed successfully. Sign in with your
                 new password to continue.
               </p>
-              <Link
-                href="/login"
-                className="mt-6 flex min-h-11 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
-              >
+              <Link href="/login" className="app-btn app-btn-primary mt-6 w-full">
                 Go to sign in
               </Link>
             </div>
           ) : !hasSession ? (
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-highlight text-highlight-ink">
                 <AlertCircle className="h-6 w-6" />
               </div>
-              <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-900">
+              <h2 className="mt-4 text-lg font-bold text-ink">
                 Reset link expired
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-muted">
                 This password reset link is invalid or has already been used.
                 Request a new link to continue.
               </p>
               <Link
                 href="/forgot-password"
-                className="mt-6 flex min-h-11 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="app-btn app-btn-primary mt-6 w-full"
               >
                 Request a new link
               </Link>
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-                Set a new password
-              </h1>
-              <p className="mt-2 text-sm leading-6 text-slate-500">
+              <h2 className="text-lg font-bold text-ink">Set a new password</h2>
+              <p className="mt-1.5 text-sm leading-6 text-muted">
                 Choose a strong password with at least 8 characters.
               </p>
 
-              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              <form onSubmit={handleSubmit} className="mt-5 space-y-4">
                 <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block text-sm font-medium text-slate-700"
-                  >
+                  <label htmlFor="password" className="app-label">
                     New password
                   </label>
                   <div className="relative">
-                    <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <input
                       id="password"
                       type={showPassword ? "text" : "password"}
@@ -179,14 +166,14 @@ export default function ResetPasswordPage() {
                       onChange={(event) => setPassword(event.target.value)}
                       required
                       placeholder="At least 8 characters"
-                      className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2 pl-10 pr-12 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 sm:text-sm"
+                      className="app-input pr-12"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((visible) => !visible)}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                       aria-pressed={showPassword}
-                      className="absolute right-2 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="absolute right-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted transition hover:bg-brand-tint hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -198,14 +185,10 @@ export default function ResetPasswordPage() {
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="confirm-password"
-                    className="mb-2 block text-sm font-medium text-slate-700"
-                  >
+                  <label htmlFor="confirm-password" className="app-label">
                     Confirm new password
                   </label>
                   <div className="relative">
-                    <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     <input
                       id="confirm-password"
                       type={showConfirm ? "text" : "password"}
@@ -217,16 +200,14 @@ export default function ResetPasswordPage() {
                       }
                       required
                       placeholder="Re-enter your new password"
-                      className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/70 py-2 pl-10 pr-12 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 sm:text-sm"
+                      className="app-input pr-12"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirm((visible) => !visible)}
-                      aria-label={
-                        showConfirm ? "Hide password" : "Show password"
-                      }
+                      aria-label={showConfirm ? "Hide password" : "Show password"}
                       aria-pressed={showConfirm}
-                      className="absolute right-2 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="absolute right-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted transition hover:bg-brand-tint hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
                     >
                       {showConfirm ? (
                         <EyeOff className="h-4 w-4" />
@@ -240,7 +221,7 @@ export default function ResetPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="app-btn app-btn-primary w-full"
                 >
                   {loading ? (
                     <>

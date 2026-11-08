@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, Download, FileUp, GraduationCap, Loader2, Plus, Search, Square, SquareCheck, Trash2, Users, X } from "lucide-react";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import Papa from "papaparse";
 import { notify } from "@/lib/notifications";
@@ -77,6 +78,15 @@ const EMPTY_STUDENT: StudentForm = {
   last_name: "",
   sex: "M",
 };
+
+function getInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 function normalizeSex(value: unknown) {
   const v = String(value ?? "").trim().toUpperCase();
@@ -232,7 +242,6 @@ export default function StudentsPage() {
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const [classCounts, setClassCounts] = useState<Record<string, number>>({});
-  const [formCounts, setFormCounts] = useState<Record<string, number>>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -329,7 +338,6 @@ export default function StudentsPage() {
       setClassCounts(
         (data.classCounts ?? {}) as Record<string, number>
       );
-      setFormCounts((data.formCounts ?? {}) as Record<string, number>);
     } catch (error) {
       showToast(
         "error",
@@ -655,100 +663,71 @@ export default function StudentsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6">
-      <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-blue-950 to-blue-800 p-4 text-white shadow-lg sm:p-5">
-        <div className="absolute -right-10 -top-20 h-56 w-56 rounded-full bg-white/5 blur-2xl" />
-        <div className="relative flex flex-col items-start gap-4">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-blue-100">
-            <GraduationCap className="h-3.5 w-3.5" />
-            Student administration
-          </span>
-          <h2 className="mt-2 text-xl font-bold tracking-tight sm:text-2xl">Student Registration</h2>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-blue-100/90 sm:text-base">
-            Register students manually, or import them from Excel/CSV using the class column. Stream is optional.
-          </p>
-        </div>
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-          <button
-            type="button"
-            onClick={() => downloadTemplate(activeForm, classes)}
-            className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-4 text-sm font-semibold text-white transition hover:bg-white/20"
-          >
-            <Download className="h-4 w-4" />
-            Download {activeForm} CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={importing}
-            className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 text-sm font-bold text-blue-900 shadow-sm transition hover:bg-blue-50 disabled:opacity-50"
-          >
-            {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
-            Register by CSV
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,text/csv"
-            className="hidden"
-            onChange={(e) => void handleCsvImport(e)}
-          />
-        </div>
-        </div>
-      </header>
-
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        {FORM_LEVELS.map((form) => {
-          const active = activeForm === form;
-          const formStreamCount = classes.filter(
-            (item) => item.form === form,
-          ).length;
-          const formStudentCount = formCounts[form] ?? 0;
-          return (
+    <div className="mx-auto w-full max-w-7xl space-y-5">
+      <PageHeader
+        title="Student Registration"
+        subtitle="Register students by class or import a CSV."
+        action={
+          <>
             <button
-              key={form}
               type="button"
-              onClick={() => {
-                setActiveForm(form);
-                setSelectedClassId("");
-              }}
-              className={`group rounded-2xl border p-4 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5 ${
-                active
-                  ? "border-blue-700 bg-blue-700 text-white shadow-blue-950/10"
-                  : "border-slate-200 bg-white text-slate-900 hover:border-blue-300"
-              }`}
+              onClick={() => downloadTemplate(activeForm, classes)}
+              className="app-btn app-btn-secondary"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{form}</span>
-                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${active ? "bg-white/15 text-white" : "bg-blue-50 text-blue-700"}`}>
-                  <GraduationCap className="h-4 w-4" />
-                </span>
-              </div>
-              <p className={`mt-3 text-xs ${active ? "text-blue-100" : "text-slate-500"}`}>
-                {formStreamCount} streams <span className="mx-1">·</span> {formStudentCount} students
-              </p>
+              <Download className="h-4 w-4" />
+              {activeForm} CSV
             </button>
-          );
-        })}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={importing}
+              className="app-btn app-btn-primary"
+            >
+              {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileUp className="h-4 w-4" />}
+              Register by CSV
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={(e) => void handleCsvImport(e)}
+            />
+          </>
+        }
+      />
+
+      <section className="app-card p-2">
+        <div className="flex flex-wrap gap-1.5">
+          {FORM_LEVELS.map((form) => {
+            const active = activeForm === form;
+            return (
+              <button
+                key={form}
+                type="button"
+                onClick={() => {
+                  setActiveForm(form);
+                  setSelectedClassId("");
+                }}
+                className={`min-h-10 rounded-[10px] px-4 text-sm font-semibold transition ${
+                  active ? "bg-brand text-white" : "text-ink-soft hover:bg-brand-tint"
+                }`}
+              >
+                {form}
+              </button>
+            );
+          })}
+        </div>
       </section>
 
-      <div className="space-y-5">
-        <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Step 1</p>
-              <h3 className="mt-1 text-lg font-bold text-slate-950">Choose a stream</h3>
-              <p className="mt-1 text-sm text-slate-500">{activeForm}</p>
-            </div>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-              <Users className="h-5 w-5" />
-            </span>
-          </div>
+      <div className="grid gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <aside className="app-card h-fit p-5">
+          <h2 className="app-card-title">Streams</h2>
+          <p className="app-card-subtitle">{activeForm}</p>
           {loading ? (
             <LoadingIndicator label="Loading classes..." className="py-4" />
           ) : formClasses.length ? (
-            <div className="mt-4 grid max-h-40 grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-4 space-y-1.5">
               {formClasses.map((item) => {
                 const active = effectiveClassId === item.id;
                 return (
@@ -758,58 +737,54 @@ export default function StudentsPage() {
                     onClick={() => {
                       setSelectedClassId(item.id);
                     }}
-                    className={`flex min-h-12 w-full items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition ${
+                    className={`flex min-h-11 w-full items-center justify-between gap-2 rounded-[10px] border px-3 text-left text-sm font-semibold transition ${
                       active
-                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-500/10"
-                        : "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50"
+                        ? "border-brand bg-brand-soft text-brand-dark"
+                        : "border-line text-ink-soft hover:bg-brand-tint"
                     }`}
                   >
-                    <span className="text-sm font-medium text-gray-900">
+                    <span>
                       {item.form} {item.stream}
                     </span>
-                    <span className="flex shrink-0 items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-                      <Users className="h-3.5 w-3.5" />
-                      {classCounts[item.id] ?? 0}
-                    </span>
+                    {active && <Check className="h-4 w-4 shrink-0" />}
                   </button>
                 );
               })}
             </div>
           ) : (
-            <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm leading-5 text-amber-800">No streams found. Add streams under Classes first.</p>
+            <p className="mt-4 rounded-[10px] bg-highlight p-3 text-sm leading-5 text-highlight-ink">
+              No streams found. Add streams under Classes first.
+            </p>
           )}
         </aside>
 
         <div className="min-w-0">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-slate-50/80 px-4 py-4 sm:px-5">
+          <div className="app-card overflow-hidden">
+            <div className="app-card-header pb-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-blue-700">Step 2</p>
-                <h3 className="mt-1 flex items-center gap-2 text-lg font-bold text-slate-950">
-                  <GraduationCap className="h-5 w-5 text-blue-700" />
+                <h2 className="app-card-title">
                   {selectedClass ? `${selectedClass.form} ${selectedClass.stream}` : "Select a stream"}
-                </h3>
-                <p className="mt-1 text-sm text-slate-500">
-                  {selectedClass ? `${classTotal} registered student(s)` : "Choose a stream to begin registration"}
+                </h2>
+                <p className="app-card-subtitle">
+                  {selectedClass
+                    ? "Register and manage students in this stream."
+                    : "Choose a stream to begin registration."}
                 </p>
               </div>
             </div>
 
             {selectedClass ? (
               <>
-                <form onSubmit={handleAddStudent} className="border-b border-slate-200 p-4 sm:p-5">
+                <form onSubmit={handleAddStudent} className="border-t border-line p-5">
                   <div className="mb-4 flex items-start justify-between gap-3">
-                    <div>
-                      <h4 className="text-base font-bold text-slate-950">Add student manually</h4>
-                      <p className="mt-1 text-sm text-slate-500">Enter the student&apos;s basic details below.</p>
-                    </div>
-                    <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 sm:inline-flex">
+                    <h3 className="text-[15px] font-bold text-ink">Add student</h3>
+                    <span className="app-badge app-badge-neutral hidden sm:inline-flex">
                       Manual entry
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-4 min-[1024px]:grid-cols-2">
                     <div>
-                      <label htmlFor="first_name" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                      <label htmlFor="first_name" className="app-label">
                         First name
                       </label>
                       <input
@@ -819,11 +794,11 @@ export default function StudentsPage() {
                           setStudentForm((current) => ({ ...current, first_name: event.target.value }))
                         }
                         required
-                        className="min-h-11 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                        className="app-input"
                       />
                     </div>
                     <div>
-                      <label htmlFor="middle_name" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                      <label htmlFor="middle_name" className="app-label">
                         Middle name (optional)
                       </label>
                       <input
@@ -832,11 +807,11 @@ export default function StudentsPage() {
                         onChange={(event) =>
                           setStudentForm((current) => ({ ...current, middle_name: event.target.value }))
                         }
-                        className="min-h-11 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                        className="app-input"
                       />
                     </div>
                     <div>
-                      <label htmlFor="last_name" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                      <label htmlFor="last_name" className="app-label">
                         Last name
                       </label>
                       <input
@@ -846,11 +821,11 @@ export default function StudentsPage() {
                           setStudentForm((current) => ({ ...current, last_name: event.target.value }))
                         }
                         required
-                        className="min-h-11 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                        className="app-input"
                       />
                     </div>
                     <div>
-                      <label htmlFor="sex" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                      <label htmlFor="sex" className="app-label">
                         Gender
                       </label>
                       <select
@@ -859,17 +834,17 @@ export default function StudentsPage() {
                         onChange={(event) =>
                           setStudentForm((current) => ({ ...current, sex: event.target.value as "M" | "F" }))
                         }
-                        className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                        className="app-select"
                       >
                         <option value="M">Male</option>
                         <option value="F">Female</option>
                       </select>
                     </div>
-                    <div className="flex items-end">
+                    <div className="min-[1024px]:col-span-2">
                       <button
                         type="submit"
                         disabled={saving}
-                        className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 disabled:opacity-50"
+                        className="app-btn app-btn-primary w-full sm:w-auto"
                       >
                         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                         Add Student
@@ -878,42 +853,38 @@ export default function StudentsPage() {
                   </div>
                 </form>
 
-                <div>
-                  <div className="flex flex-col gap-3 border-b border-slate-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                      <div className="relative w-full max-w-sm">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                        <input
-                          value={search}
-                          onChange={(event) => setSearch(event.target.value)}
-                          placeholder="Search by name"
-                          className="min-h-11 w-full rounded-xl border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-                        />
-                      </div>
-                      <p className="text-sm text-slate-500">
-                        Showing {filteredStudents.length} of {total}
-                      </p>
-                    </div>
+                <div className="border-t border-line">
+                  <div className="p-5 pb-3">
+                    <label className="relative block w-full max-w-sm">
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                      <input
+                        type="search"
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        placeholder="Search students"
+                        className="app-input pl-9"
+                      />
+                    </label>
                   </div>
 
-                  <div className="border-b border-slate-200 bg-slate-50/70 px-4 py-4 sm:px-5">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="mx-5 mb-4 rounded-[10px] bg-canvas p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <h4 className="text-sm font-bold text-slate-900">Bulk optional subject assignment</h4>
-                        <p className="mt-1 text-xs leading-5 text-slate-500">
-                          Choose one or more subjects, select students, then assign or unassign them together.
+                        <h4 className="text-sm font-bold text-ink">Bulk optional subjects</h4>
+                        <p className="mt-1 text-xs leading-5 text-muted">
+                          Select subjects and students, then assign or unassign together.
                         </p>
                       </div>
                       {optionalSubjects.length === 0 && (
-                        <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
-                          No optional subjects set for {selectedClass.form}
+                        <span className="app-badge app-badge-warning">
+                          No optional subjects for {selectedClass.form}
                         </span>
                       )}
                     </div>
                     {optionalSubjects.length > 0 && (
                       <div className="mt-4 space-y-4">
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="text-xs font-semibold text-slate-700">
+                          <p className="text-xs font-semibold text-muted">
                             Optional subjects ({selectedOptionalSubjectIds.size} selected)
                           </p>
                           <div className="flex gap-3 text-xs font-semibold">
@@ -924,14 +895,14 @@ export default function StudentsPage() {
                                   new Set(optionalSubjects.map((subject) => subject.id)),
                                 )
                               }
-                              className="text-blue-700 hover:text-blue-900"
+                              className="text-brand hover:text-brand-dark"
                             >
                               Select all
                             </button>
                             <button
                               type="button"
                               onClick={() => setSelectedOptionalSubjectIds(new Set())}
-                              className="text-slate-600 hover:text-slate-900"
+                              className="text-muted hover:text-ink"
                             >
                               Clear
                             </button>
@@ -943,10 +914,10 @@ export default function StudentsPage() {
                             return (
                               <label
                                 key={subject.id}
-                                className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm transition ${
+                                className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-[10px] border px-3 text-sm transition ${
                                   isSubjectSelected
-                                    ? "border-blue-300 bg-blue-50 text-blue-900"
-                                    : "border-slate-200 bg-white text-slate-700 hover:border-blue-200"
+                                    ? "border-brand bg-brand-soft text-brand-dark"
+                                    : "border-line bg-white text-ink-soft hover:border-brand-light"
                                 }`}
                               >
                                 <input
@@ -960,16 +931,16 @@ export default function StudentsPage() {
                                       return next;
                                     })
                                   }
-                                  className="h-4 w-4 rounded border-slate-300 text-blue-700 focus:ring-blue-600"
+                                  className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                                 />
                                 <span className="min-w-0 flex-1 font-medium">{subject.name}</span>
-                                <span className="shrink-0 text-xs text-slate-500">{subject.subject_code}</span>
+                                <span className="shrink-0 text-xs text-muted">{subject.subject_code}</span>
                               </label>
                             );
                           })}
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 pt-3">
-                          <span className="text-xs font-medium text-slate-500">
+                        <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
+                          <span className="text-xs font-medium text-muted">
                             {selectedStudentIds.size} student(s) selected
                           </span>
                           <div className="ml-auto flex flex-wrap items-center gap-2">
@@ -977,7 +948,7 @@ export default function StudentsPage() {
                             type="button"
                             onClick={() => void handleBulkOptionalAssignment("assign")}
                             disabled={bulkSaving || selectedStudentIds.size === 0 || selectedOptionalSubjectIds.size === 0}
-                            className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                            className="app-btn app-btn-primary app-btn-sm"
                           >
                             {bulkSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                             Assign selected
@@ -986,7 +957,7 @@ export default function StudentsPage() {
                             type="button"
                             onClick={() => void handleBulkOptionalAssignment("unassign")}
                             disabled={bulkSaving || selectedStudentIds.size === 0 || selectedOptionalSubjectIds.size === 0}
-                            className="flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-white disabled:opacity-50"
+                            className="app-btn app-btn-secondary app-btn-sm"
                           >
                             {bulkSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
                             Unassign selected
@@ -997,167 +968,191 @@ export default function StudentsPage() {
                     )}
                   </div>
 
-                  <div className="hidden max-h-[60vh] overflow-auto md:block">
-                  <table className="w-full min-w-[760px]">
-                    <thead className="sticky top-0 z-10 bg-slate-50">
-                      <tr className="border-b border-gray-200">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">
-                          <button
-                            type="button"
-                            onClick={toggleSelectAllVisible}
-                            className="inline-flex items-center gap-2"
-                            aria-label="Select all visible students"
-                          >
-                            {filteredStudents.length > 0 && filteredStudents.every((s) => selectedStudentIds.has(s.id)) ? (
-                              <SquareCheck className="h-4 w-4 text-blue-600" />
-                            ) : (
-                              <Square className="h-4 w-4 text-gray-400" />
-                            )}
-                            <span className="sr-only">Select all</span>
-                          </button>
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">#</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Full name</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Gender</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Optional status</th>
-                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredStudents.map((student, index) => {
-                        const enrolledCount = [...selectedOptionalSubjectIds].filter((subjectId) =>
-                          enrolledSubjects.has(`${student.id}:${subjectId}`),
-                        ).length;
-                        const isSelected = selectedStudentIds.has(student.id);
-                        return (
-                          <tr key={student.id} className={`border-b border-gray-100 last:border-0 ${isSelected ? "bg-blue-50/40" : ""}`}>
-                            <td className="px-4 py-3">
-                              <button
-                                type="button"
-                                onClick={() => toggleStudentSelection(student.id)}
-                                aria-label={`Select ${student.full_name}`}
-                              >
-                                {isSelected ? (
-                                  <SquareCheck className="h-4 w-4 text-blue-600" />
-                                ) : (
-                                  <Square className="h-4 w-4 text-gray-400" />
-                                )}
-                              </button>
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-500">{(page - 1) * pageSize + index + 1}</td>
-                            <td className="px-4 py-3 text-sm font-medium text-gray-900">{student.full_name}</td>
-                            <td className="px-4 py-3 text-sm text-gray-700">{student.sex === "M" ? "Male" : "Female"}</td>
-                            <td className="px-4 py-3 text-sm">
-                              {selectedOptionalSubjectIds.size > 0 ? (
-                                <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${
-                                  enrolledCount === selectedOptionalSubjectIds.size
-                                    ? "bg-green-50 text-green-700 ring-green-200"
-                                    : enrolledCount > 0
-                                      ? "bg-amber-50 text-amber-700 ring-amber-200"
-                                      : "bg-gray-100 text-gray-600 ring-gray-200"
-                                }`}>
-                                  {enrolledCount}/{selectedOptionalSubjectIds.size} assigned
-                                </span>
-                              ) : (
-                                <span className="text-xs text-gray-400">-</span>
-                              )}
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <button
-                                type="button"
-                                onClick={() => setDeleteTarget(student)}
-                                className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
-                                aria-label={`Delete ${student.full_name}`}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                      {!filteredStudents.length && (
-                        <tr>
-                          <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-600">
-                            {classTotal ? "No students match your search." : "No students yet in this stream."}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                  </div>
-
-                  <div className="max-h-[60vh] divide-y divide-slate-100 overflow-y-auto md:hidden">
-                    {filteredStudents.map((student, index) => {
-                      const enrolledCount = [...selectedOptionalSubjectIds].filter((subjectId) =>
-                        enrolledSubjects.has(`${student.id}:${subjectId}`),
-                      ).length;
-                      const isSelected = selectedStudentIds.has(student.id);
-                      return (
-                        <article
-                          key={student.id}
-                          className={`space-y-3 p-4 ${isSelected ? "bg-blue-50/70" : "bg-white"}`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <button
-                              type="button"
-                              onClick={() => toggleStudentSelection(student.id)}
-                              aria-label={`${isSelected ? "Deselect" : "Select"} ${student.full_name}`}
-                              className="mt-0.5 shrink-0 rounded-md"
-                            >
-                              {isSelected ? (
-                                <SquareCheck className="h-5 w-5 text-blue-700" />
-                              ) : (
-                                <Square className="h-5 w-5 text-slate-400" />
-                              )}
-                            </button>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="min-w-0">
-                                  <h4 className="break-words text-sm font-bold text-slate-950">
-                                    {student.full_name}
-                                  </h4>
-                                </div>
-                                <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
-                                  {student.sex === "M" ? "Male" : "Female"}
-                                </span>
-                              </div>
-                              <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                                {selectedOptionalSubjectIds.size > 0 ? (
-                                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                                    enrolledCount === selectedOptionalSubjectIds.size
-                                      ? "bg-emerald-50 text-emerald-700"
-                                      : enrolledCount > 0
-                                        ? "bg-amber-50 text-amber-700"
-                                        : "bg-slate-100 text-slate-600"
-                                  }`}>
-                                    {enrolledCount}/{selectedOptionalSubjectIds.size} subjects assigned
-                                  </span>
-                                ) : (
-                                  <span className="text-xs text-slate-400">Student {(page - 1) * pageSize + index + 1}</span>
-                                )}
+                  {filteredStudents.length ? (
+                    <>
+                      <div className="hidden max-h-[60vh] overflow-auto md:block">
+                        <table className="app-table min-w-[760px]">
+                          <thead className="sticky top-0 z-10 bg-canvas">
+                            <tr>
+                              <th className="w-10">
                                 <button
                                   type="button"
-                                  onClick={() => setDeleteTarget(student)}
-                                  aria-label={`Delete ${student.full_name}`}
-                                  className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-rose-200 px-3 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+                                  onClick={toggleSelectAllVisible}
+                                  className="inline-flex items-center gap-2"
+                                  aria-label="Select all visible students"
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                  Delete
+                                  {filteredStudents.length > 0 && filteredStudents.every((s) => selectedStudentIds.has(s.id)) ? (
+                                    <SquareCheck className="h-4 w-4 text-brand" />
+                                  ) : (
+                                    <Square className="h-4 w-4 text-slate-400" />
+                                  )}
+                                  <span className="sr-only">Select all</span>
                                 </button>
-                              </div>
-                            </div>
-                          </div>
-                        </article>
-                      );
-                    })}
-                    {!filteredStudents.length && (
-                      <div className="px-4 py-10 text-center text-sm text-slate-500">
-                        {classTotal
-                          ? "No students match your search."
-                          : "No students are registered in this stream yet."}
+                              </th>
+                              <th>#</th>
+                              <th>Full name</th>
+                              <th>Gender</th>
+                              <th>Optional status</th>
+                              <th className="text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredStudents.map((student, index) => {
+                              const enrolledCount = [...selectedOptionalSubjectIds].filter((subjectId) =>
+                                enrolledSubjects.has(`${student.id}:${subjectId}`),
+                              ).length;
+                              const isSelected = selectedStudentIds.has(student.id);
+                              return (
+                                <tr key={student.id} className={isSelected ? "bg-brand-tint" : undefined}>
+                                  <td>
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleStudentSelection(student.id)}
+                                      aria-label={`Select ${student.full_name}`}
+                                    >
+                                      {isSelected ? (
+                                        <SquareCheck className="h-4 w-4 text-brand" />
+                                      ) : (
+                                        <Square className="h-4 w-4 text-slate-400" />
+                                      )}
+                                    </button>
+                                  </td>
+                                  <td className="text-muted">{(page - 1) * pageSize + index + 1}</td>
+                                  <td>
+                                    <div className="flex items-center gap-3">
+                                      <span className="app-avatar h-8 w-8 shrink-0 text-xs">
+                                        {getInitials(student.full_name)}
+                                      </span>
+                                      <span className="font-semibold text-ink">{student.full_name}</span>
+                                    </div>
+                                  </td>
+                                  <td className="text-ink-soft">{student.sex === "M" ? "Male" : "Female"}</td>
+                                  <td>
+                                    {selectedOptionalSubjectIds.size > 0 ? (
+                                      <span className={`app-badge ${
+                                        enrolledCount === selectedOptionalSubjectIds.size
+                                          ? "app-badge-success"
+                                          : enrolledCount > 0
+                                            ? "app-badge-warning"
+                                            : "app-badge-neutral"
+                                      }`}>
+                                        {enrolledCount}/{selectedOptionalSubjectIds.size} assigned
+                                      </span>
+                                    ) : (
+                                      <span className="text-xs text-slate-400">—</span>
+                                    )}
+                                  </td>
+                                  <td className="text-right">
+                                    <button
+                                      type="button"
+                                      onClick={() => setDeleteTarget(student)}
+                                      className="rounded-lg p-1.5 text-slate-400 transition hover:bg-danger hover:text-danger-ink"
+                                      aria-label={`Delete ${student.full_name}`}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       </div>
-                    )}
-                  </div>
+
+                      <div className="max-h-[60vh] divide-y divide-slate-100 overflow-y-auto md:hidden">
+                        {filteredStudents.map((student, index) => {
+                          const enrolledCount = [...selectedOptionalSubjectIds].filter((subjectId) =>
+                            enrolledSubjects.has(`${student.id}:${subjectId}`),
+                          ).length;
+                          const isSelected = selectedStudentIds.has(student.id);
+                          return (
+                            <article
+                              key={student.id}
+                              className={`space-y-3 p-4 ${isSelected ? "bg-brand-tint" : "bg-white"}`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => toggleStudentSelection(student.id)}
+                                  aria-label={`${isSelected ? "Deselect" : "Select"} ${student.full_name}`}
+                                  className="mt-0.5 shrink-0 rounded-md"
+                                >
+                                  {isSelected ? (
+                                    <SquareCheck className="h-5 w-5 text-brand" />
+                                  ) : (
+                                    <Square className="h-5 w-5 text-slate-400" />
+                                  )}
+                                </button>
+                                <span className="app-avatar h-9 w-9 shrink-0 text-xs">
+                                  {getInitials(student.full_name)}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-start justify-between gap-2">
+                                    <h4 className="break-words text-sm font-bold text-ink">
+                                      {student.full_name}
+                                    </h4>
+                                    <span className="app-badge app-badge-neutral shrink-0">
+                                      {student.sex === "M" ? "Male" : "Female"}
+                                    </span>
+                                  </div>
+                                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                                    {selectedOptionalSubjectIds.size > 0 ? (
+                                      <span className={`app-badge ${
+                                        enrolledCount === selectedOptionalSubjectIds.size
+                                          ? "app-badge-success"
+                                          : enrolledCount > 0
+                                            ? "app-badge-warning"
+                                            : "app-badge-neutral"
+                                      }`}>
+                                        {enrolledCount}/{selectedOptionalSubjectIds.size} subjects assigned
+                                      </span>
+                                    ) : (
+                                      <span className="text-xs text-slate-400">Student {(page - 1) * pageSize + index + 1}</span>
+                                    )}
+                                    <button
+                                      type="button"
+                                      onClick={() => setDeleteTarget(student)}
+                                      aria-label={`Delete ${student.full_name}`}
+                                      className="app-btn app-btn-danger app-btn-sm"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                      Delete
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="border-t border-line p-5">
+                      <div className="app-empty">
+                        <span className="app-empty-icon">
+                          <Users className="h-5 w-5" />
+                        </span>
+                        <h3 className="app-empty-title">
+                          {classTotal ? "No matching students" : "No students in this stream"}
+                        </h3>
+                        <p className="app-empty-text">
+                          {classTotal
+                            ? "Try searching with a different name."
+                            : "Register a student to get started."}
+                        </p>
+                        {!classTotal && (
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="app-btn app-btn-primary mt-4"
+                          >
+                            <FileUp className="h-4 w-4" />
+                            Register by CSV
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   <Pagination
                     page={page}
@@ -1170,11 +1165,16 @@ export default function StudentsPage() {
                 </div>
               </>
             ) : (
-              <div className="p-10 text-center">
-                <GraduationCap className="mx-auto h-10 w-10 text-gray-300" />
-                <p className="mt-3 text-sm text-gray-600">
-                  Select a stream on the left to register and view students.
-                </p>
+              <div className="border-t border-line p-5">
+                <div className="app-empty">
+                  <span className="app-empty-icon">
+                    <GraduationCap className="h-5 w-5" />
+                  </span>
+                  <h3 className="app-empty-title">Select a stream</h3>
+                  <p className="app-empty-text">
+                    Choose a stream on the left to register and view students.
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -1182,29 +1182,27 @@ export default function StudentsPage() {
       </div>
 
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-lg bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h3 className="text-lg font-semibold text-gray-900">Delete Student</h3>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-4">
+          <div className="w-full max-w-md rounded-t-[14px] border border-line bg-white p-5 shadow-xl sm:rounded-[14px] sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="app-card-title">Delete student</h3>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded p-1 text-gray-400 hover:text-gray-600"
+                className="rounded-lg p-1.5 text-muted transition hover:bg-canvas hover:text-ink"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="px-6 py-4">
-              <p className="text-sm text-gray-700">
-                Are you sure you want to delete <span className="font-medium text-gray-900">{deleteTarget.full_name}</span>?
-              </p>
-              <p className="mt-1 text-xs text-gray-500">This action cannot be undone.</p>
-            </div>
-            <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-6 py-4">
+            <p className="mt-3 text-sm text-ink-soft">
+              Are you sure you want to delete <span className="font-semibold text-ink">{deleteTarget.full_name}</span>?
+            </p>
+            <p className="mt-1 text-xs text-muted">This action cannot be undone.</p>
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="app-btn app-btn-secondary"
               >
                 Cancel
               </button>
@@ -1212,7 +1210,7 @@ export default function StudentsPage() {
                 type="button"
                 onClick={() => void confirmDeleteStudent()}
                 disabled={deleting}
-                className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+                className="app-btn app-btn-danger"
               >
                 {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 Delete

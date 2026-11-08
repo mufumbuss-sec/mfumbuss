@@ -1,12 +1,9 @@
 import {
-  BookOpen,
   CalendarDays,
   ClipboardList,
   Database,
   FileText,
-  GraduationCap,
   Layers,
-  Users,
 } from "@/components/ui/lucide-icons";
 import {
   DashboardHeader,
@@ -178,48 +175,38 @@ export default async function AcademicDashboard() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6">
       <DashboardHeader
-        eyebrow="Academic overview"
         title="Academic dashboard"
         description={
           period
-            ? `Live academic data for the ${period.academic_year} ${period.term} academic period. Counts and recent activity come straight from the database.`
-            : "Live academic data read directly from the database."
+            ? `Live academic data for ${period.academic_year} · ${period.term}.`
+            : "Live academic data from the database."
         }
-        icon={GraduationCap}
       >
-        <span className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold text-white">
-          <CalendarDays className="h-4 w-4" />
+        <span className="inline-flex min-h-11 items-center gap-2 rounded-[10px] border border-line bg-white px-4 text-sm font-semibold text-ink">
+          <CalendarDays className="h-4 w-4 text-brand" />
           {period ? `${period.academic_year} · ${period.term}` : "No active period"}
         </span>
       </DashboardHeader>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="mb-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Classes"
           value={formatNumber(classCount)}
-          icon={BookOpen}
-          tone="blue"
           hint="Forms and streams"
         />
         <StatCard
           label="Subjects"
           value={formatNumber(subjectCount)}
-          icon={ClipboardList}
-          tone="emerald"
           hint="Curriculum subjects"
         />
         <StatCard
           label="Teachers"
           value={formatNumber(teacherCount)}
-          icon={Users}
-          tone="violet"
           hint="Registered teaching staff"
         />
         <StatCard
           label="Students"
           value={formatNumber(studentCount)}
-          icon={GraduationCap}
-          tone="amber"
           hint="All registered learners"
         />
       </section>
@@ -243,37 +230,35 @@ export default async function AcademicDashboard() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[620px] text-left text-sm">
+              <table className="app-table min-w-[620px]">
                 <thead>
-                  <tr className="border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
-                    <th className="pb-3 pr-4 font-semibold">Examination</th>
-                    <th className="pb-3 pr-4 font-semibold">Class</th>
-                    <th className="pb-3 pr-4 font-semibold">Period</th>
-                    <th className="pb-3 pr-4 font-semibold">Dates</th>
-                    <th className="pb-3 font-semibold">Status</th>
+                  <tr>
+                    <th>Examination</th>
+                    <th>Class</th>
+                    <th>Period</th>
+                    <th>Dates</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody>
                   {recentExams.map((exam) => (
-                    <tr key={exam.id} className="align-top">
-                      <td className="py-3 pr-4">
-                        <p className="font-semibold text-slate-900">
+                    <tr key={exam.id}>
+                      <td>
+                        <p className="font-semibold text-ink">
                           {exam.name}
                         </p>
-                        <p className="mt-0.5 text-xs text-slate-500">
+                        <p className="mt-0.5 text-xs text-muted">
                           {exam.academic_year} · {exam.term}
                         </p>
                       </td>
-                      <td className="py-3 pr-4 text-slate-700">
-                        {exam.class_form}
-                      </td>
-                      <td className="py-3 pr-4 text-slate-700">{exam.term}</td>
-                      <td className="py-3 pr-4 text-xs leading-5 text-slate-500">
+                      <td className="text-ink-soft">{exam.class_form}</td>
+                      <td className="text-ink-soft">{exam.term}</td>
+                      <td className="text-xs leading-5 text-muted">
                         {formatDashboardDate(exam.start_date)}
                         <br />
                         {formatDashboardDate(exam.end_date)}
                       </td>
-                      <td className="py-3">
+                      <td>
                         <ExamStatusBadge status={exam.status} />
                       </td>
                     </tr>

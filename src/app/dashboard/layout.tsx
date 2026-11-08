@@ -54,37 +54,27 @@ export default async function DashboardLayout({
       ? "/dashboard/headmaster/settings"
       : "/dashboard/academic/settings";
 
+  const schoolName = schoolSettings?.school_name || "Mufumbu Secondary School";
+
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gray-50">
-      <Sidebar
-        role={role}
-        school={{
-          name: schoolSettings?.school_name || "Mufumbu Secondary School",
-          logoUrl: schoolSettings?.school_logo_url ?? null,
-          unionLogoUrl: schoolSettings?.union_logo_url ?? null,
-        }}
+    <div className="min-h-screen overflow-x-hidden bg-canvas">
+      <Header
+        schoolName={schoolName}
         user={{
           name: profile?.full_name || user.email || "",
           email: profile?.email || user.email || "",
           role: role,
         }}
       />
-      <div className="overflow-x-hidden lg:pl-72">
-        <Header
-          title="Dashboard"
-          user={{
-            name: profile?.full_name || user.email || "",
-            email: profile?.email || user.email || "",
-            role: role,
-          }}
-        />
+      <Sidebar role={role} />
+      <div className="overflow-x-hidden pt-16 min-[820px]:pl-60">
         <AcademicPeriodBanner
           role={role}
           academicPeriod={academicPeriod ?? null}
           academicPeriodError={academicPeriodError ?? null}
           academicSettingsHref={academicSettingsHref}
         />
-        <main className="overflow-x-hidden p-4 sm:p-6">{children}</main>
+        <main className="overflow-x-hidden p-4 sm:p-7">{children}</main>
       </div>
     </div>
   );

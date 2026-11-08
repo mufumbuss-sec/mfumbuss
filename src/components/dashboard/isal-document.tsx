@@ -439,11 +439,11 @@ export function ISALDocument({
         }
       `}</style>
 
-      <div className="isal-print-shell mx-auto w-full max-w-6xl space-y-3 pb-6">
-        <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+      <div className="isal-print-shell mx-auto w-full max-w-6xl space-y-4 pb-6">
+        <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-white p-3">
           <Link
             href={`${dashboardBase}/exams/${exam.id}/isal`}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="app-btn app-btn-secondary"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to ISAL list
@@ -451,7 +451,7 @@ export function ISALDocument({
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+            className="app-btn app-btn-primary"
           >
             <Printer className="h-4 w-4" />
             Print

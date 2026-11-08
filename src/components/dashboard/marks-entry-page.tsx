@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ClipboardList, LoaderCircle, Save, Search } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { notify } from "@/lib/notifications";
 
@@ -50,8 +53,14 @@ type SaveMark = {
   is_absent: boolean;
 };
 
-const inputClass =
-  "min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 async function readResponse<T>(response: Response): Promise<T> {
   const result = (await response.json()) as T & { error?: string };
@@ -356,12 +365,17 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
   }).length;
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6">
-      <section className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 sm:p-5">
-        <label className="space-y-1.5 text-sm font-semibold text-slate-700">
+    <div className="space-y-6">
+      <PageHeader
+        title="Marks Entry"
+        subtitle="Record marks for an active examination."
+      />
+
+      <section className="app-card grid gap-4 p-5 sm:grid-cols-2">
+        <label className="app-label">
           Active examination
           <select
-            className={inputClass}
+            className="app-select mt-1.5"
             value={examId}
             disabled={loadingExams}
             onChange={(event) => void selectExam(event.target.value)}
@@ -376,10 +390,10 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
             ))}
           </select>
         </label>
-        <label className="space-y-1.5 text-sm font-semibold text-slate-700">
+        <label className="app-label">
           Subject
           <select
-            className={inputClass}
+            className="app-select mt-1.5"
             value={subjectId}
             disabled={!examId || loadingSubjects || subjects.length === 0}
             onChange={(event) => void selectSubject(event.target.value)}
@@ -398,13 +412,11 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
           </select>
         </label>
         {exam && (
-          <div className="flex flex-wrap items-center gap-2 text-sm sm:col-span-2">
-            <span className="rounded-full bg-indigo-50 px-3 py-1.5 font-semibold text-indigo-800">
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+            <Badge tone="neutral">
               {exam.class_form} · {exam.academic_year} · {exam.term}
-            </span>
-            <span className="rounded-full bg-emerald-50 px-3 py-1.5 font-semibold text-emerald-800">
-              Mark entry open until results are processed
-            </span>
+            </Badge>
+            <Badge tone="success">Mark entry open until results are processed</Badge>
           </div>
         )}
       </section>
@@ -412,15 +424,13 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
       {loadingStudents ? (
         <LoadingIndicator label="Loading students and marks..." className="py-10" />
       ) : subjectId ? (
-        <section className="space-y-3">
+        <section className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h3 className="text-lg font-bold text-slate-900">
+              <h2 className="app-card-title">
                 {selectedSubject?.name ?? "Students"}
-              </h3>
-              <p className="text-sm text-slate-500">
-                {total} student(s)
-                {overallTotal !== total ? ` (filtered from ${overallTotal})` : ""}.
+              </h2>
+              <p className="mt-1 text-sm text-muted">
                 Enter marks for the class, then save once at the end.
               </p>
             </div>
@@ -431,33 +441,40 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search student name"
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                className="app-input pl-9"
               />
             </label>
           </div>
           {students.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-white px-5 py-12 text-center text-sm text-slate-500">
-              {overallTotal === 0
-                ? "No students are enrolled in this subject for the selected class."
-                : "No students match your search."}
-            </div>
+            <EmptyState
+              icon={ClipboardList}
+              title={overallTotal === 0 ? "No students enrolled" : "No students found"}
+              description={
+                overallTotal === 0
+                  ? "No students are enrolled in this subject for the selected class."
+                  : "No students match your search."
+              }
+            />
           ) : (
-            <div className="grid gap-3">
+            <div className="space-y-3">
               {students.map((student) => {
                 const entry = entries[student.id];
                 return (
                   <article
                     key={student.id}
-                    className="rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm sm:p-4"
+                    className="app-card p-4"
                   >
-                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-2 lg:flex lg:justify-between">
-                      <div className="min-w-0 lg:w-56">
-                        <h4 className="truncate font-semibold text-slate-900">
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 lg:flex lg:justify-between">
+                      <div className="flex min-w-0 items-center gap-3 lg:w-64">
+                        <span className="app-avatar h-9 w-9 shrink-0 text-xs">
+                          {getInitials(student.full_name)}
+                        </span>
+                        <h3 className="truncate font-semibold text-ink">
                           {student.full_name}
-                        </h4>
+                        </h3>
                       </div>
 
-                      <label className="inline-flex min-h-9 items-center gap-1.5 justify-self-end text-xs font-medium text-slate-600 sm:gap-2 sm:text-sm">
+                      <label className="inline-flex min-h-9 items-center gap-2 justify-self-end text-xs font-medium text-ink-soft sm:text-sm">
                         <input
                           type="checkbox"
                           disabled={savingAll}
@@ -467,7 +484,7 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
                               absent: event.target.checked,
                             })
                           }
-                          className="h-4 w-4 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
+                          className="h-4 w-4 rounded border-line-strong accent-brand"
                         />
                         Absent
                       </label>
@@ -478,7 +495,7 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
                             subjectHasPractical ? "grid-cols-2" : "grid-cols-1"
                           } lg:max-w-xl`}
                         >
-                          <label className="min-w-0 space-y-1 text-[11px] font-semibold text-slate-600 sm:text-xs">
+                          <label className="min-w-0 text-[11px] font-semibold text-muted sm:text-xs">
                             Theory /100
                             <input
                               type="number"
@@ -491,11 +508,11 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
                               onChange={(event) =>
                                 updateEntry(student.id, { theory: event.target.value })
                               }
-                              className={`${inputClass} min-h-9 px-2 sm:min-h-11 sm:px-3`}
+                              className="app-input mt-1"
                             />
                           </label>
                           {subjectHasPractical && (
-                            <label className="min-w-0 space-y-1 text-[11px] font-semibold text-slate-600 sm:text-xs">
+                            <label className="min-w-0 text-[11px] font-semibold text-muted sm:text-xs">
                               Practical /50
                               <input
                                 type="number"
@@ -510,7 +527,7 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
                                     practical: event.target.value,
                                   })
                                 }
-                                className={`${inputClass} min-h-9 px-2 sm:min-h-11 sm:px-3`}
+                                className="app-input mt-1"
                               />
                             </label>
                           )}
@@ -532,15 +549,15 @@ export function MarksEntryPage({ dashboardBase }: { dashboardBase: string }) {
             loading={loadingStudents}
           />
           {students.length > 0 && (
-            <div className="sticky bottom-2 z-20 flex flex-col gap-2 rounded-xl border border-slate-200 bg-white/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-slate-600">
-                {readyToSaveCount} student(s) ready to save
+            <div className="sticky bottom-2 z-20 flex flex-col gap-2 rounded-xl border border-line bg-white/95 p-3 shadow-lg backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-muted">
+                Review entries, then save all marks.
               </p>
               <button
                 type="button"
                 onClick={() => void saveAllMarks()}
                 disabled={savingAll || loadingStudents || readyToSaveCount === 0}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                className="app-btn app-btn-primary w-full sm:w-auto"
               >
                 {savingAll ? (
                   <LoaderCircle className="h-4 w-4 animate-spin" />

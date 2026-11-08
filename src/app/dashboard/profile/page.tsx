@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, LoaderCircle, Mail, Phone, Save, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/field";
+import { PageHeader } from "@/components/ui/page-header";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
@@ -130,7 +133,7 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+      <div className="app-card p-6 text-sm text-muted">
         Your profile could not be found. Make sure your account has a record in
         the profiles table.
       </div>
@@ -138,86 +141,70 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-5 sm:space-y-6">
-      <div>
-        <h2 className="text-lg font-bold text-slate-900 sm:text-xl">My Profile</h2>
-        <p className="mt-1 text-sm text-slate-600 sm:text-base">
-          Update your personal information.
-        </p>
-      </div>
+    <div className="mx-auto w-full max-w-3xl space-y-5">
+      <PageHeader
+        title="My Profile"
+        subtitle="Update your personal information."
+      />
 
-      <form
-        onSubmit={handleSave}
-        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-      >
-        <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-4 sm:gap-4 sm:px-6 sm:py-5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-700 text-xl font-semibold text-white sm:h-14 sm:w-14">
+      <form onSubmit={handleSave} className="app-card overflow-hidden">
+        <div className="flex items-center gap-4 border-b border-line px-5 py-5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-soft text-lg font-bold text-brand-dark">
             {profile.full_name?.charAt(0).toUpperCase() || <User />}
           </div>
           <div className="min-w-0">
-            <h3 className="truncate text-lg font-semibold text-slate-900">
+            <h3 className="truncate text-base font-bold text-ink">
               {profile.full_name}
             </h3>
-            <p className="text-sm capitalize text-slate-500">{profile.role}</p>
+            <p className="text-sm capitalize text-muted">{profile.role}</p>
           </div>
         </div>
 
-        <div className="grid gap-4 p-4 sm:gap-5 sm:p-6 md:grid-cols-2">
-          <label className="space-y-1.5 text-sm font-medium text-slate-700">
-            First name
-            <input
+        <div className="grid gap-4 p-5 lg:grid-cols-2">
+          <Field label="First name">
+            <Input
               required
               maxLength={80}
               value={firstName}
               onChange={(event) => setFirstName(event.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
-          </label>
-          <label className="space-y-1.5 text-sm font-medium text-slate-700">
-            Middle name
-            <input
+          </Field>
+          <Field label="Middle name">
+            <Input
               maxLength={80}
               value={middleName}
               onChange={(event) => setMiddleName(event.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
-          </label>
-          <label className="space-y-1.5 text-sm font-medium text-slate-700">
-            Last name
-            <input
+          </Field>
+          <Field label="Last name">
+            <Input
               required
               maxLength={80}
               value={lastName}
               onChange={(event) => setLastName(event.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
-          </label>
-          <label className="space-y-1.5 text-sm font-medium text-slate-700">
-            Phone number
-            <span className="relative block">
-              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                type="tel"
-                maxLength={30}
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-              />
-            </span>
-          </label>
+          </Field>
+          <Field label="Phone number">
+            <Input
+              type="tel"
+              maxLength={30}
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+            />
+          </Field>
 
-          <div className="space-y-1.5 text-sm md:col-span-2">
-            <p className="font-medium text-slate-700">Email address</p>
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-slate-600">
+          <div className="lg:col-span-2">
+            <p className="app-label">Email address</p>
+            <div className="flex min-h-11 items-center gap-2 rounded-[10px] border border-line bg-canvas px-3 text-sm text-muted">
               <Mail className="h-4 w-4 text-slate-400" />
               <span className="break-all">{email || "Not provided"}</span>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="mt-1.5 text-xs text-muted">
               Change your email address through your authentication account settings.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500 md:col-span-2">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted lg:col-span-2">
             <Calendar className="h-4 w-4" />
             Account created{" "}
             {new Date(profile.created_at).toLocaleDateString("en-TZ")}
@@ -225,11 +212,12 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="border-t border-slate-200 bg-slate-50 px-4 py-4 sm:flex sm:justify-end sm:px-6">
-          <button
+        <div className="flex justify-end border-t border-line px-5 py-4">
+          <Button
             type="submit"
+            variant="primary"
             disabled={saving}
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            className="w-full sm:w-auto"
           >
             {saving ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -237,7 +225,7 @@ export default function ProfilePage() {
               <Save className="h-4 w-4" />
             )}
             {saving ? "Saving..." : "Save profile"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

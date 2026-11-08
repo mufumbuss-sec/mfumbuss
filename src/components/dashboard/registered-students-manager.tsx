@@ -15,7 +15,10 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
@@ -65,6 +68,15 @@ function classLabel(schoolClass: SchoolClass) {
   return `${schoolClass.form} ${schoolClass.stream}`;
 }
 
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 function deleteStudentError(error: unknown, multiple = false) {
   if (
     typeof error === "object" &&
@@ -104,8 +116,6 @@ export function RegisteredStudentsManager({
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const [overallTotal, setOverallTotal] = useState(0);
-  const [classCounts, setClassCounts] = useState<Record<string, number>>({});
-  const [formCounts, setFormCounts] = useState<Record<string, number>>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [saving, setSaving] = useState(false);
   const [studentToEdit, setStudentToEdit] = useState<Student | null>(null);
@@ -189,8 +199,6 @@ export function RegisteredStudentsManager({
       setStudents((data.students ?? []) as Student[]);
       setTotal(data.total ?? 0);
       setOverallTotal(data.overallTotal ?? 0);
-      setClassCounts((data.classCounts ?? {}) as Record<string, number>);
-      setFormCounts((data.formCounts ?? {}) as Record<string, number>);
     } catch (error) {
       notify(
         "error",
@@ -656,89 +664,62 @@ export function RegisteredStudentsManager({
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6">
-      <header className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-        <h2 className="text-lg font-bold tracking-tight text-slate-900">
-          Registered Students
-        </h2>
-          <Link
-            href={registrationHref}
-            className="inline-flex min-h-9 items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 text-sm font-semibold text-white transition hover:bg-blue-800"
-          >
+    <div className="space-y-6">
+      <PageHeader
+        title="Registered Students"
+        subtitle="Browse, edit and manage enrolled students."
+        action={
+          <Link href={registrationHref} className="app-btn app-btn-primary">
             <GraduationCap className="h-4 w-4" />
             Student registration
             <ArrowRight className="h-4 w-4" />
           </Link>
-      </header>
+        }
+      />
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <p className="text-sm text-slate-500">Total registered</p>
-          <p className="mt-1 text-xl font-bold text-slate-950">
-            {loading || studentsLoading ? "-" : overallTotal}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <p className="text-sm text-slate-500">Classes</p>
-          <p className="mt-1 text-xl font-bold text-slate-950">
-            {loading ? "-" : classes.length}
-          </p>
-        </div>
-        <div className="col-span-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:col-span-1 sm:p-5">
-          <p className="text-sm text-slate-500">Showing</p>
-          <p className="mt-1 text-xl font-bold text-slate-950">
-            {loading || studentsLoading ? "-" : total}
-          </p>
-        </div>
-      </section>
-
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="space-y-4 border-b border-slate-200 p-4 sm:p-5">
-          <div className="flex flex-wrap gap-2">
+      <section className="app-card overflow-hidden">
+        <div className="space-y-4 border-b border-line p-5">
+          <div className="flex flex-wrap gap-1.5">
             {(["All", ...FORMS] as const).map((form) => {
-              const count =
-                form === "All" ? overallTotal : formCounts[form] ?? 0;
               const active = selectedForm === form;
               return (
                 <button
                   key={form}
                   type="button"
                   onClick={() => selectForm(form)}
-                  className={`min-h-10 rounded-xl border px-3 text-sm font-semibold transition ${
+                  className={`min-h-10 rounded-[10px] px-4 text-sm font-semibold transition ${
                     active
-                      ? "border-blue-700 bg-blue-700 text-white"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:text-blue-700"
+                      ? "bg-brand text-white"
+                      : "text-ink-soft hover:bg-brand-tint"
                   }`}
                 >
                   {form}
-                  <span className={`ml-2 text-xs ${active ? "text-blue-100" : "text-slate-400"}`}>
-                    {count}
-                  </span>
                 </button>
               );
             })}
           </div>
 
-          <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <label className="relative block">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by name"
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                className="app-input pl-9"
               />
             </label>
             <select
               value={selectedClassId}
               onChange={(event) => setSelectedClassId(event.target.value)}
-              className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+              className="app-select"
+              aria-label="Filter by class"
             >
               <option value="All">All classes</option>
               {classesForForm.map((schoolClass) => (
                 <option key={schoolClass.id} value={schoolClass.id}>
-                  {classLabel(schoolClass)} ({classCounts[schoolClass.id] ?? 0})
+                  {classLabel(schoolClass)}
                 </option>
               ))}
             </select>
@@ -746,21 +727,21 @@ export function RegisteredStudentsManager({
         </div>
 
         {!loading && visibleStudents.length > 0 && (
-          <div className="flex flex-col gap-3 border-b border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+          <div className="flex flex-col gap-3 border-b border-line bg-canvas p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={toggleVisibleStudentSelection}
-                className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="app-btn app-btn-secondary app-btn-sm"
               >
                 {allVisibleSelected ? (
-                  <SquareCheck className="h-4 w-4 text-blue-700" />
+                  <SquareCheck className="h-4 w-4 text-brand" />
                 ) : (
                   <Square className="h-4 w-4" />
                 )}
                 {allVisibleSelected ? "Deselect visible" : "Select visible"}
               </button>
-              <span className="text-sm font-medium text-slate-600">
+              <span className="text-sm font-medium text-muted">
                 {selectedStudentIds.size} selected
                 {canBulkManageSameForm &&
                   selectedFormForBulk &&
@@ -780,7 +761,7 @@ export function RegisteredStudentsManager({
                       ? "Assign or remove an optional subject"
                       : "Selected students must belong to the same form"
                   }
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 text-sm font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="app-btn app-btn-secondary app-btn-sm"
                 >
                   <BookOpen className="h-4 w-4" />
                   Bulk optional subjects
@@ -811,7 +792,7 @@ export function RegisteredStudentsManager({
                       ? "Form IV students cannot be promoted"
                       : "Promote selected students to the next form"
                   }
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-3 text-sm font-semibold text-blue-800 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="app-btn app-btn-secondary app-btn-sm"
                 >
                   <GraduationCap className="h-4 w-4" />
                   Bulk upgrade
@@ -820,7 +801,7 @@ export function RegisteredStudentsManager({
                   type="button"
                   onClick={() => setBulkDialog("delete")}
                   disabled={saving}
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-50"
+                  className="app-btn app-btn-danger app-btn-sm"
                 >
                   <Trash2 className="h-4 w-4" />
                   Bulk delete
@@ -828,7 +809,7 @@ export function RegisteredStudentsManager({
                 <button
                   type="button"
                   onClick={clearSelection}
-                  className="inline-flex min-h-10 items-center justify-center rounded-lg px-3 text-sm font-semibold text-slate-600 hover:bg-white"
+                  className="min-h-9 rounded-[10px] px-3 text-sm font-semibold text-muted transition hover:bg-white"
                 >
                   Clear selection
                 </button>
@@ -842,97 +823,102 @@ export function RegisteredStudentsManager({
             <LoadingIndicator label="Loading registered students..." />
           </div>
         ) : visibleStudents.length === 0 ? (
-          <div className="flex flex-col items-center px-6 py-14 text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-              <GraduationCap className="h-7 w-7" />
-            </span>
-            <h3 className="mt-4 font-semibold text-slate-900">
-              {overallTotal === 0 ? "No students registered yet" : "No students found"}
-            </h3>
-            <p className="mt-1 max-w-md text-sm text-slate-500">
-              {overallTotal === 0
-                ? "Register students first. They will appear here for ongoing management."
-                : "Try a different search or class filter."}
-            </p>
-            {overallTotal === 0 && (
-              <Link
-                href={registrationHref}
-                className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800"
-              >
-                Go to student registration
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            )}
+          <div className="p-5">
+            <EmptyState
+              icon={GraduationCap}
+              title={overallTotal === 0 ? "No students registered yet" : "No students found"}
+              description={
+                overallTotal === 0
+                  ? "Register students first. They will appear here for ongoing management."
+                  : "Try a different search or class filter."
+              }
+              action={
+                overallTotal === 0 ? (
+                  <Link href={registrationHref} className="app-btn app-btn-primary">
+                    Go to student registration
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                ) : undefined
+              }
+            />
           </div>
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
-              <table className="w-full min-w-[760px]">
-                <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+              <table className="app-table min-w-[760px]">
+                <thead className="bg-canvas">
                   <tr>
-                    <th className="w-12 px-4 py-3">
+                    <th className="w-12">
                       <input
                         type="checkbox"
                         checked={allVisibleSelected}
                         onChange={toggleVisibleStudentSelection}
                         aria-label="Select all visible students"
-                        className="h-4 w-4 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
+                        className="h-4 w-4 rounded border-line-strong accent-brand"
                       />
                     </th>
-                    <th className="px-5 py-3 font-semibold">Student</th>
-                    <th className="px-5 py-3 font-semibold">Class</th>
-                    <th className="px-5 py-3 font-semibold">Gender</th>
-                    <th className="px-5 py-3 text-right font-semibold">Actions</th>
+                    <th>Student</th>
+                    <th>Class</th>
+                    <th>Gender</th>
+                    <th className="text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {visibleStudents.map((student) => (
-                    <tr
-                      key={student.id}
-                      className={`hover:bg-slate-50/70 ${selectedStudentIds.has(student.id) ? "bg-blue-50/60" : ""}`}
-                    >
-                      <td className="px-4 py-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedStudentIds.has(student.id)}
-                          onChange={() => toggleStudentSelection(student)}
-                          aria-label={`Select ${student.full_name}`}
-                          className="h-4 w-4 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="font-semibold text-slate-900">
-                          {student.full_name}
-                        </div>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                          {classes.find((item) => item.id === student.class_id)
-                            ? classLabel(
-                                classes.find((item) => item.id === student.class_id)!,
-                              )
-                            : "Class unavailable"}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-sm text-slate-600">
-                        {student.sex === "M" ? "Male" : "Female"}
-                      </td>
-                      <td className="px-5 py-4">
-                        <StudentActions
-                          student={student}
-                          onEdit={() => openEdit(student)}
-                          onSubjects={() => void openOptionalSubjects(student)}
-                          onPromote={() => openPromote(student)}
-                          onDelete={() => setStudentToDelete(student)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                <tbody>
+                  {visibleStudents.map((student) => {
+                    const schoolClass = classes.find(
+                      (item) => item.id === student.class_id,
+                    );
+                    return (
+                      <tr
+                        key={student.id}
+                        className={
+                          selectedStudentIds.has(student.id) ? "bg-brand-tint" : undefined
+                        }
+                      >
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={selectedStudentIds.has(student.id)}
+                            onChange={() => toggleStudentSelection(student)}
+                            aria-label={`Select ${student.full_name}`}
+                            className="h-4 w-4 rounded border-line-strong accent-brand"
+                          />
+                        </td>
+                        <td>
+                          <div className="flex items-center gap-3">
+                            <span className="app-avatar h-8 w-8 shrink-0 text-xs">
+                              {getInitials(student.full_name)}
+                            </span>
+                            <span className="font-semibold text-ink">
+                              {student.full_name}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <Badge tone="neutral">
+                            {schoolClass ? classLabel(schoolClass) : "Class unavailable"}
+                          </Badge>
+                        </td>
+                        <td className="text-ink-soft">
+                          {student.sex === "M" ? "Male" : "Female"}
+                        </td>
+                        <td>
+                          <StudentActions
+                            student={student}
+                            onEdit={() => openEdit(student)}
+                            onSubjects={() => void openOptionalSubjects(student)}
+                            onPromote={() => openPromote(student)}
+                            onDelete={() => setStudentToDelete(student)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
-            <div className="divide-y divide-slate-100 md:hidden">
+            <div className="divide-y divide-[#eef3f1] md:hidden">
               {visibleStudents.map((student) => {
                 const schoolClass = classes.find(
                   (item) => item.id === student.class_id,
@@ -940,7 +926,7 @@ export function RegisteredStudentsManager({
                 return (
                   <article
                     key={student.id}
-                    className={`space-y-3 p-4 ${selectedStudentIds.has(student.id) ? "bg-blue-50/60" : ""}`}
+                    className={`space-y-3 p-4 ${selectedStudentIds.has(student.id) ? "bg-brand-tint" : ""}`}
                   >
                     <div className="flex items-start gap-3">
                       <input
@@ -948,29 +934,30 @@ export function RegisteredStudentsManager({
                         checked={selectedStudentIds.has(student.id)}
                         onChange={() => toggleStudentSelection(student)}
                         aria-label={`Select ${student.full_name}`}
-                        className="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-700 focus:ring-blue-500"
+                        className="mt-1 h-4 w-4 shrink-0 rounded border-line-strong accent-brand"
                       />
-                      <div className="min-w-0">
-                        <h3 className="break-words font-semibold text-slate-900">
+                      <span className="app-avatar h-8 w-8 shrink-0 text-xs">
+                        {getInitials(student.full_name)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="break-words font-semibold text-ink">
                           {student.full_name}
                         </h3>
+                        <p className="text-xs text-muted">
+                          {student.sex === "M" ? "Male" : "Female"}
+                        </p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+                      <Badge tone="neutral" className="shrink-0">
                         {schoolClass ? classLabel(schoolClass) : "Class unavailable"}
-                      </span>
+                      </Badge>
                     </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-slate-500">
-                        {student.sex === "M" ? "Male" : "Female"}
-                      </span>
-                      <StudentActions
-                        student={student}
-                        onEdit={() => openEdit(student)}
-                        onSubjects={() => void openOptionalSubjects(student)}
-                        onPromote={() => openPromote(student)}
-                        onDelete={() => setStudentToDelete(student)}
-                      />
-                    </div>
+                    <StudentActions
+                      student={student}
+                      onEdit={() => openEdit(student)}
+                      onSubjects={() => void openOptionalSubjects(student)}
+                      onPromote={() => openPromote(student)}
+                      onDelete={() => setStudentToDelete(student)}
+                    />
                   </article>
                 );
               })}
@@ -1015,7 +1002,7 @@ export function RegisteredStudentsManager({
                 }
                 required
               />
-              <label className="space-y-1.5 text-sm font-medium text-slate-700">
+              <label className="app-label">
                 Gender
                 <select
                   value={editForm.sex}
@@ -1025,7 +1012,7 @@ export function RegisteredStudentsManager({
                       sex: event.target.value as Sex,
                     }))
                   }
-                  className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                  className="app-select mt-1.5"
                 >
                   <option value="M">Male</option>
                   <option value="F">Female</option>
@@ -1050,7 +1037,7 @@ export function RegisteredStudentsManager({
           {loadingSubjects ? (
             <LoadingIndicator label="Loading optional subjects..." className="py-6" />
           ) : optionalSubjects.length === 0 ? (
-            <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
+            <p className="rounded-xl bg-highlight p-4 text-sm text-highlight-ink">
               No optional subjects are configured for this form. Set them up in
               the subject assignments page first.
             </p>
@@ -1062,20 +1049,18 @@ export function RegisteredStudentsManager({
                 return (
                   <div
                     key={subject.id}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 p-3"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-line p-3"
                   >
                     <div className="min-w-0">
-                      <p className="font-medium text-slate-900">{subject.name}</p>
-                      <p className="text-xs text-slate-500">{subject.subject_code}</p>
+                      <p className="font-medium text-ink">{subject.name}</p>
+                      <p className="text-xs text-muted">{subject.subject_code}</p>
                     </div>
                     <button
                       type="button"
                       disabled={updatingSubjectId !== null}
                       onClick={() => void toggleOptionalSubject(subject)}
-                      className={`inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold disabled:opacity-50 ${
-                        enrolled
-                          ? "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-                          : "bg-blue-700 text-white hover:bg-blue-800"
+                      className={`app-btn app-btn-sm shrink-0 ${
+                        enrolled ? "app-btn-secondary" : "app-btn-primary"
                       }`}
                     >
                       {busy ? (
@@ -1102,12 +1087,12 @@ export function RegisteredStudentsManager({
           onClose={() => setStudentToPromote(null)}
         >
           <div className="space-y-4">
-            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+            <label className="app-label">
               Destination class
               <select
                 value={targetClassId}
                 onChange={(event) => setTargetClassId(event.target.value)}
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                className="app-select mt-1.5"
               >
                 {classes
                   .filter((schoolClass) => {
@@ -1127,7 +1112,7 @@ export function RegisteredStudentsManager({
                   ))}
               </select>
             </label>
-            <p className="text-xs leading-5 text-slate-500">
+            <p className="text-xs leading-5 text-muted">
               The current form&apos;s subject assignments are added to the
               destination form, and existing destination assignments are kept.
               Compulsory subjects will be updated automatically. Examination
@@ -1167,18 +1152,18 @@ export function RegisteredStudentsManager({
           onClose={() => setBulkDialog(null)}
         >
           {bulkSubjects.length === 0 ? (
-            <p className="rounded-xl bg-amber-50 p-4 text-sm leading-6 text-amber-800">
+            <p className="rounded-xl bg-highlight p-4 text-sm leading-6 text-highlight-ink">
               No optional subjects are configured for this form. Configure
               optional subjects in the class subject assignments page first.
             </p>
           ) : (
             <div className="space-y-4">
-              <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+              <label className="app-label">
                 Optional subject
                 <select
                   value={bulkSubjectId}
                   onChange={(event) => setBulkSubjectId(event.target.value)}
-                  className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                  className="app-select mt-1.5"
                 >
                   {bulkSubjects.map((subject) => (
                     <option key={subject.id} value={subject.id}>
@@ -1187,12 +1172,12 @@ export function RegisteredStudentsManager({
                   ))}
                 </select>
               </label>
-              <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
+              <div className="flex flex-col-reverse gap-2 border-t border-line pt-4 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={() => setBulkDialog(null)}
                   disabled={saving}
-                  className="min-h-11 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  className="app-btn app-btn-secondary"
                 >
                   Cancel
                 </button>
@@ -1200,7 +1185,7 @@ export function RegisteredStudentsManager({
                   type="button"
                   onClick={() => void updateSelectedOptionalSubject("unassign")}
                   disabled={saving || !bulkSubjectId}
-                  className="min-h-11 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  className="app-btn app-btn-secondary"
                 >
                   Remove from selected
                 </button>
@@ -1208,7 +1193,7 @@ export function RegisteredStudentsManager({
                   type="button"
                   onClick={() => void updateSelectedOptionalSubject("assign")}
                   disabled={saving || !bulkSubjectId}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-50"
+                  className="app-btn app-btn-primary"
                 >
                   {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                   Assign to selected
@@ -1226,12 +1211,12 @@ export function RegisteredStudentsManager({
           onClose={() => setBulkDialog(null)}
         >
           <div className="space-y-4">
-            <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+            <label className="app-label">
               Destination class
               <select
                 value={targetClassId}
                 onChange={(event) => setTargetClassId(event.target.value)}
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                className="app-select mt-1.5"
               >
                 {bulkPromotionClasses.map((schoolClass) => (
                   <option key={schoolClass.id} value={schoolClass.id}>
@@ -1240,7 +1225,7 @@ export function RegisteredStudentsManager({
                 ))}
               </select>
             </label>
-            <p className="text-xs leading-5 text-slate-500">
+            <p className="text-xs leading-5 text-muted">
               All selected students will move to this class. The current
               form&apos;s subject assignments are added to the destination
               form, and existing destination assignments are kept. Compulsory
@@ -1339,10 +1324,10 @@ function ActionButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className={`inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
+      className={`inline-flex min-h-9 min-w-9 items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-1 ${
         destructive
-          ? "border-rose-200 text-rose-700 hover:bg-rose-50"
-          : "border-slate-200 text-slate-700 hover:bg-slate-50"
+          ? "border-danger-line text-danger-ink hover:bg-danger"
+          : "border-line text-ink-soft hover:bg-brand-tint"
       }`}
     >
       {children}
@@ -1362,14 +1347,14 @@ function TextField({
   required?: boolean;
 }) {
   return (
-    <label className="block space-y-1.5 text-sm font-medium text-slate-700">
+    <label className="app-label">
       {label}
       <input
         value={value}
         required={required}
         maxLength={100}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 w-full rounded-xl border border-slate-300 px-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+        className="app-input mt-1.5"
       />
     </label>
   );
@@ -1397,18 +1382,18 @@ function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="student-management-modal-title"
-        className="max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:max-w-lg sm:rounded-2xl sm:p-6"
+        className="max-h-[92dvh] w-full overflow-y-auto rounded-t-3xl border border-line bg-white p-5 shadow-2xl sm:max-w-lg sm:rounded-2xl sm:p-6"
       >
         <div className="mb-5 flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h3
               id="student-management-modal-title"
-              className="text-lg font-bold text-slate-950"
+              className="text-lg font-bold text-ink"
             >
               {title}
             </h3>
             {description && (
-              <p className="mt-1 text-sm leading-5 text-slate-500">
+              <p className="mt-1 text-sm leading-5 text-muted">
                 {description}
               </p>
             )}
@@ -1417,7 +1402,7 @@ function Modal({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-muted hover:bg-canvas"
           >
             <X className="h-5 w-5" />
           </button>
@@ -1442,12 +1427,12 @@ function ModalActions({
   destructive?: boolean;
 }) {
   return (
-    <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
+    <div className="flex flex-col-reverse gap-2 border-t border-line pt-4 sm:flex-row sm:justify-end">
       <button
         type="button"
         onClick={onCancel}
         disabled={busy}
-        className="min-h-11 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+        className="app-btn app-btn-secondary"
       >
         Cancel
       </button>
@@ -1455,11 +1440,7 @@ function ModalActions({
         type={onConfirm ? "button" : "submit"}
         onClick={onConfirm}
         disabled={busy}
-        className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold text-white disabled:opacity-50 ${
-          destructive
-            ? "bg-rose-600 hover:bg-rose-700"
-            : "bg-blue-700 hover:bg-blue-800"
-        }`}
+        className={`app-btn ${destructive ? "app-btn-danger" : "app-btn-primary"}`}
       >
         {busy && <LoaderCircle className="h-4 w-4 animate-spin" />}
         {submitLabel}

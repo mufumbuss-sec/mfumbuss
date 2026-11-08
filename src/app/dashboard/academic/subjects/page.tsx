@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BookOpen, Edit, Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
+import { PageHeader } from "@/components/ui/page-header";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
 
@@ -172,22 +173,20 @@ export default function SubjectsPage() {
 
   return (
     <>
-      <div className="space-y-4 sm:space-y-6">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 sm:text-xl">Subjects</h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Register subjects with a unique code and indicate whether they have practical.
-          </p>
-        </div>
+      <div className="mx-auto w-full max-w-7xl space-y-5">
+        <PageHeader
+          title="Subjects"
+          subtitle="Register subjects with a unique code."
+        />
 
-        <div className="space-y-4">
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900">Add Subject</h3>
-            <p className="mt-1 text-sm text-gray-600">New subject details</p>
+        <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
+          <section className="app-card h-fit p-5">
+            <h2 className="app-card-title">Add subject</h2>
+            <p className="app-card-subtitle">New subject details.</p>
             <form onSubmit={handleAddSubject} className="mt-4 space-y-4">
-              <div className="rounded-lg border border-blue-200 bg-blue-50/50 p-3 sm:p-4">
-                <label htmlFor="subject_code" className="mb-1 block text-sm font-semibold text-gray-800">
-                  Subject code <span className="text-red-600">*</span>
+              <div>
+                <label htmlFor="subject_code" className="app-label">
+                  Subject code <span className="text-danger-ink">*</span>
                 </label>
                 <input
                   id="subject_code"
@@ -199,15 +198,15 @@ export default function SubjectsPage() {
                   onChange={(event) => setSubjectCode(event.target.value.toUpperCase())}
                   placeholder="e.g. CHEM"
                   aria-describedby="subject_code_help"
-                  className="min-h-11 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-base uppercase focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                  className="app-input uppercase"
                 />
-                <p id="subject_code_help" className="mt-1 text-xs text-gray-600">
+                <p id="subject_code_help" className="mt-1 text-xs text-muted">
                   Enter a unique code for this subject.
                 </p>
               </div>
               <div>
-                <label htmlFor="subject_name" className="mb-1 block text-sm font-medium text-gray-700">
-                  Subject name <span className="text-red-600">*</span>
+                <label htmlFor="subject_name" className="app-label">
+                  Subject name <span className="text-danger-ink">*</span>
                 </label>
                 <input
                   id="subject_name"
@@ -217,82 +216,84 @@ export default function SubjectsPage() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="e.g. Chemistry"
-                  className="min-h-11 w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                  className="app-input"
                 />
               </div>
-              <label className="flex min-h-11 items-center gap-3 rounded-lg border border-gray-200 px-3 text-sm text-gray-700">
+              <label className="flex min-h-11 items-center gap-3 rounded-[10px] border border-line px-3 text-sm text-ink-soft">
                 <input
                   type="checkbox"
                   checked={hasPractical}
                   onChange={(event) => setHasPractical(event.target.checked)}
-                  className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                 />
                 Has practical
               </label>
               <button
                 type="submit"
                 disabled={saving}
-                className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                className="app-btn app-btn-primary w-full"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                 Register Subject
               </button>
             </form>
-          </div>
+          </section>
 
-          <div className="min-w-0">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-              <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-4 sm:px-6">
+          <section className="app-card min-w-0 overflow-hidden">
+            <div className="app-card-header pb-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-brand-tint text-brand">
+                  <BookOpen className="h-4 w-4" />
+                </span>
                 <div>
-                  <h3 className="flex items-center gap-2 text-base font-semibold text-gray-900 sm:text-lg">
-                    <BookOpen className="h-5 w-5 shrink-0 text-blue-600" />
-                    Subjects List
-                  </h3>
-                  <p className="mt-0.5 text-sm text-gray-600">{subjects.length} subject(s)</p>
+                  <h2 className="app-card-title">Subject list</h2>
+                  <p className="app-card-subtitle">All registered subjects.</p>
                 </div>
               </div>
-              {loading ? (
-                <LoadingIndicator
-                  label="Loading subjects..."
-                  className="p-5 sm:p-6"
-                />
-              ) : subjects.length ? (
-                <>
-                <div className="divide-y divide-gray-100 md:hidden">
+            </div>
+
+            {loading ? (
+              <LoadingIndicator
+                label="Loading subjects..."
+                className="border-t border-line p-6"
+              />
+            ) : subjects.length ? (
+              <>
+                <div className="divide-y divide-slate-100 border-t border-line md:hidden">
                   {subjects.map((subject, index) => (
                     <article key={subject.id} className="space-y-3 p-4">
                       {editId === subject.id ? (
                         <>
                           <div className="grid grid-cols-1 gap-3">
                             <div>
-                              <label htmlFor={`mobile-subject-name-${subject.id}`} className="mb-1 block text-xs font-medium text-gray-600">
+                              <label htmlFor={`mobile-subject-name-${subject.id}`} className="app-label">
                                 Subject name
                               </label>
                               <input
                                 id={`mobile-subject-name-${subject.id}`}
                                 value={editName}
                                 onChange={(event) => setEditName(event.target.value)}
-                                className="min-h-11 w-full rounded-lg border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                className="app-input"
                               />
                             </div>
                             <div>
-                              <label htmlFor={`mobile-subject-code-${subject.id}`} className="mb-1 block text-xs font-medium text-gray-600">
+                              <label htmlFor={`mobile-subject-code-${subject.id}`} className="app-label">
                                 Subject code
                               </label>
                               <input
                                 id={`mobile-subject-code-${subject.id}`}
                                 value={editSubjectCode}
                                 onChange={(event) => setEditSubjectCode(event.target.value.toUpperCase())}
-                                className="min-h-11 w-full rounded-lg border border-gray-300 px-3 py-2 text-base uppercase focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+                                className="app-input uppercase"
                               />
                             </div>
                           </div>
-                          <label className="flex min-h-11 items-center gap-3 rounded-lg border border-gray-200 px-3 text-sm text-gray-700">
+                          <label className="flex min-h-11 items-center gap-3 rounded-[10px] border border-line px-3 text-sm text-ink-soft">
                             <input
                               type="checkbox"
                               checked={editPractical}
                               onChange={(event) => setEditPractical(event.target.checked)}
-                              className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                             />
                             Has practical
                           </label>
@@ -301,7 +302,7 @@ export default function SubjectsPage() {
                               type="button"
                               onClick={() => void handleUpdateSubject()}
                               disabled={updating}
-                              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                              className="app-btn app-btn-primary flex-1"
                             >
                               {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                               Save
@@ -309,7 +310,7 @@ export default function SubjectsPage() {
                             <button
                               type="button"
                               onClick={cancelEdit}
-                              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 px-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                              className="app-btn app-btn-secondary flex-1"
                             >
                               <X className="h-4 w-4" />
                               Cancel
@@ -320,28 +321,24 @@ export default function SubjectsPage() {
                         <>
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <h4 className="break-words font-semibold text-gray-900">{subject.name}</h4>
-                              <p className="mt-1 text-xs text-gray-500">Subject {index + 1}</p>
+                              <h4 className="break-words text-sm font-bold text-ink">{subject.name}</h4>
+                              <p className="mt-1 text-xs text-muted">Subject {index + 1}</p>
                             </div>
-                            <span className="shrink-0 rounded-md bg-blue-50 px-2.5 py-1 font-mono text-xs font-semibold text-blue-800">
+                            <span className="app-badge app-badge-neutral shrink-0 font-mono">
                               {subject.subject_code}
                             </span>
                           </div>
                           <div className="flex items-center justify-between gap-3">
-                            <span className="text-sm text-gray-500">Practical</span>
-                            <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                              subject.has_practical
-                                ? "bg-green-50 text-green-700"
-                                : "bg-gray-100 text-gray-600"
-                            }`}>
+                            <span className="text-sm text-muted">Practical</span>
+                            <span className={`app-badge ${subject.has_practical ? "app-badge-success" : "app-badge-neutral"}`}>
                               {subject.has_practical ? "Yes" : "No"}
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 gap-2 border-t border-gray-100 pt-3">
+                          <div className="grid grid-cols-2 gap-2 border-t border-line pt-3">
                             <button
                               type="button"
                               onClick={() => startEdit(subject)}
-                              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 text-sm font-medium text-blue-700 hover:bg-blue-100"
+                              className="app-btn app-btn-secondary app-btn-sm"
                             >
                               <Edit className="h-4 w-4" />
                               Edit
@@ -349,7 +346,7 @@ export default function SubjectsPage() {
                             <button
                               type="button"
                               onClick={() => setDeleteTarget(subject)}
-                              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 text-sm font-medium text-red-700 hover:bg-red-100"
+                              className="app-btn app-btn-danger app-btn-sm"
                             >
                               <Trash2 className="h-4 w-4" />
                               Delete
@@ -360,71 +357,80 @@ export default function SubjectsPage() {
                     </article>
                   ))}
                 </div>
-                <div className="hidden overflow-x-auto md:block">
-                  <table className="w-full">
+
+                <div className="hidden overflow-x-auto border-t border-line md:block">
+                  <table className="app-table min-w-[640px]">
                     <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">#</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Subject</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Subject code</th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Practical</th>
-                        <th className="px-4 py-3 text-right text-sm font-medium text-gray-600">Actions</th>
+                      <tr>
+                        <th className="w-12">#</th>
+                        <th>Subject</th>
+                        <th>Code</th>
+                        <th>Practical</th>
+                        <th className="text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {subjects.map((subject, index) => (
-                        <tr key={subject.id} className="border-b border-gray-100 last:border-0">
-                          <td className="px-4 py-3 text-sm text-gray-500">{index + 1}</td>
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        <tr key={subject.id}>
+                          <td className="text-muted">{index + 1}</td>
+                          <td>
                             {editId === subject.id ? (
                               <input
                                 value={editName}
                                 onChange={(event) => setEditName(event.target.value)}
-                                className="w-full max-w-xs rounded-lg border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="app-input min-h-9 max-w-xs py-1 text-sm"
+                                aria-label="Subject name"
                               />
                             ) : (
-                              subject.name
+                              <div className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-tint text-brand">
+                                  <BookOpen className="h-4 w-4" />
+                                </span>
+                                <span className="font-semibold text-ink">{subject.name}</span>
+                              </div>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-700">
+                          <td>
                             {editId === subject.id ? (
                               <input
                                 value={editSubjectCode}
                                 onChange={(event) =>
                                   setEditSubjectCode(event.target.value.toUpperCase())
                                 }
-                                className="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="app-input min-h-9 w-28 py-1 text-sm uppercase"
                                 aria-label="Subject code"
                               />
                             ) : (
-                              subject.subject_code
+                              <span className="app-badge app-badge-neutral font-mono">
+                                {subject.subject_code}
+                              </span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-700">
+                          <td>
                             {editId === subject.id ? (
-                              <label className="flex items-center gap-2">
+                              <label className="flex items-center gap-2 text-sm text-ink-soft">
                                 <input
                                   type="checkbox"
                                   checked={editPractical}
                                   onChange={(event) => setEditPractical(event.target.checked)}
-                                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                                 />
                                 <span>Yes</span>
                               </label>
-                            ) : subject.has_practical ? (
-                              "Yes"
                             ) : (
-                              "No"
+                              <span className={`app-badge ${subject.has_practical ? "app-badge-success" : "app-badge-neutral"}`}>
+                                {subject.has_practical ? "Yes" : "No"}
+                              </span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="text-right">
                             {editId === subject.id ? (
                               <div className="flex items-center justify-end gap-1">
                                 <button
                                   type="button"
                                   onClick={() => void handleUpdateSubject()}
                                   disabled={updating}
-                                  className="rounded p-1 text-green-600 hover:bg-green-50 disabled:opacity-50"
+                                  className="rounded-lg p-1.5 text-success-ink transition hover:bg-success disabled:opacity-50"
                                   aria-label="Save"
                                 >
                                   {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -432,7 +438,7 @@ export default function SubjectsPage() {
                                 <button
                                   type="button"
                                   onClick={cancelEdit}
-                                  className="rounded p-1 text-gray-400 hover:bg-gray-50 hover:text-gray-600"
+                                  className="rounded-lg p-1.5 text-muted transition hover:bg-canvas hover:text-ink"
                                   aria-label="Cancel"
                                 >
                                   <X className="h-4 w-4" />
@@ -443,7 +449,7 @@ export default function SubjectsPage() {
                                 <button
                                   type="button"
                                   onClick={() => startEdit(subject)}
-                                  className="rounded p-1 text-gray-400 hover:bg-blue-50 hover:text-blue-600"
+                                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-brand-tint hover:text-brand"
                                   aria-label="Edit"
                                 >
                                   <Edit className="h-4 w-4" />
@@ -451,7 +457,7 @@ export default function SubjectsPage() {
                                 <button
                                   type="button"
                                   onClick={() => setDeleteTarget(subject)}
-                                  className="rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-600"
+                                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-danger hover:text-danger-ink"
                                   aria-label="Delete"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -464,41 +470,52 @@ export default function SubjectsPage() {
                     </tbody>
                   </table>
                 </div>
-                </>
-              ) : (
-                <div className="p-6 text-center text-sm text-gray-600 sm:p-8">
-                  No subjects yet. Add one using the form.
+              </>
+            ) : (
+              <div className="border-t border-line p-5">
+                <div className="app-empty">
+                  <span className="app-empty-icon">
+                    <BookOpen className="h-5 w-5" />
+                  </span>
+                  <h3 className="app-empty-title">No subjects yet</h3>
+                  <p className="app-empty-text">Add a subject using the form.</p>
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("subject_name")?.focus()}
+                    className="app-btn app-btn-primary mt-4"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add subject
+                  </button>
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            )}
+          </section>
         </div>
       </div>
 
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4">
-          <div className="max-h-[90dvh] w-full overflow-y-auto rounded-t-2xl bg-white shadow-xl sm:max-w-md sm:rounded-xl">
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-              <h3 className="text-lg font-semibold text-gray-900">Delete Subject</h3>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-4">
+          <div className="w-full max-w-md rounded-t-[14px] border border-line bg-white p-5 shadow-xl sm:rounded-[14px] sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="app-card-title">Delete subject</h3>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded p-1 text-gray-400 hover:text-gray-600"
+                className="rounded-lg p-1.5 text-muted transition hover:bg-canvas hover:text-ink"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="px-5 py-4 sm:px-6">
-              <p className="text-sm text-gray-700">
-                Are you sure you want to delete <span className="font-medium text-gray-900">{deleteTarget.name}</span>?
-              </p>
-              <p className="mt-1 text-xs text-gray-500">This action cannot be undone.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 border-t border-gray-200 px-5 py-4 sm:flex sm:justify-end sm:px-6">
+            <p className="mt-3 text-sm text-ink-soft">
+              Are you sure you want to delete <span className="font-semibold text-ink">{deleteTarget.name}</span>?
+            </p>
+            <p className="mt-1 text-xs text-muted">This action cannot be undone.</p>
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="min-h-11 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="app-btn app-btn-secondary"
               >
                 Cancel
               </button>
@@ -506,7 +523,7 @@ export default function SubjectsPage() {
                 type="button"
                 onClick={() => void confirmDeleteSubject()}
                 disabled={deleting}
-                className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+                className="app-btn app-btn-danger"
               >
                 {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 Delete

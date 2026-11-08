@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
@@ -148,11 +147,8 @@ const navByRole: Record<string, RoleNavigation> = {
 
 export function Sidebar({
   role,
-  school,
 }: {
   role: "headmaster" | "academic" | "teacher";
-  school: { name: string; logoUrl: string | null; unionLogoUrl: string | null };
-  user: { name: string; email: string; role: string };
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -194,7 +190,7 @@ export function Sidebar({
   return (
     <>
       <div
-        className={`fixed inset-0 z-40 bg-slate-950/50 transition-opacity duration-200 lg:hidden ${
+        className={`fixed inset-0 z-40 bg-brand-deep/40 transition-opacity duration-200 min-[820px]:hidden ${
           mobileOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={closeMobileNav}
@@ -202,54 +198,25 @@ export function Sidebar({
       />
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-72 flex-col bg-slate-900 text-white shadow-2xl transition-transform duration-200 ease-out lg:translate-x-0 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        className={`fixed bottom-0 left-0 top-16 z-50 flex w-60 flex-col border-r border-line bg-white transition-transform duration-200 ease-out min-[820px]:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-slate-800 p-5">
-          <div className="flex min-w-0 items-center gap-3">
-            {school.logoUrl ? (
-              <Image
-                src={school.logoUrl}
-                alt=""
-                width={44}
-                height={44}
-                unoptimized
-                className="h-11 w-11 shrink-0 rounded-lg bg-white object-contain p-1"
-              />
-            ) : (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-                NSS
-              </div>
-            )}
-            <div className="min-w-0">
-              <h2 className="truncate text-sm font-semibold">{school.name}</h2>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-slate-400">
-                Exams System
-              </p>
-            </div>
-            {school.unionLogoUrl && (
-              <Image
-                src={school.unionLogoUrl}
-                alt="Union logo"
-                width={32}
-                height={32}
-                unoptimized
-                className="h-8 w-8 shrink-0 rounded-md bg-white object-contain p-0.5"
-              />
-            )}
-          </div>
+        <div className="flex items-center justify-between px-4 py-3 min-[820px]:hidden">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
+            Menu
+          </span>
           <button
             type="button"
             aria-label="Close navigation"
-            className="rounded-lg p-2 text-slate-300 transition hover:bg-slate-800 hover:text-white lg:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] text-muted transition hover:bg-brand-tint hover:text-ink"
             onClick={closeMobileNav}
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
-        <nav className="flex-1 space-y-2 overflow-y-auto p-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {(() => {
             const Icon = dashboard.icon;
             const active = pathname === dashboard.href;
@@ -257,13 +224,13 @@ export function Sidebar({
               <Link
                 href={dashboard.href}
                 onClick={closeMobileNav}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3.5 text-[15px] transition-colors ${
                   active
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                    ? "bg-brand-soft font-bold text-brand-dark"
+                    : "font-medium text-ink-soft hover:bg-brand-tint"
                 }`}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-5 w-5 shrink-0" />
                 {dashboard.label}
               </Link>
             );
@@ -288,15 +255,15 @@ export function Sidebar({
                         group: expanded ? null : group.label,
                       })
                     }
-                    className={`flex min-h-10 w-full items-center justify-between rounded-lg px-3 text-left text-xs font-semibold uppercase tracking-wider transition-colors ${
+                    className={`flex min-h-11 w-full items-center justify-between rounded-[10px] px-3.5 text-left text-xs font-bold uppercase tracking-[0.06em] transition-colors ${
                       groupActive
-                        ? "text-blue-300"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                        ? "text-brand-dark"
+                        : "text-muted hover:bg-brand-tint hover:text-ink-soft"
                     }`}
                   >
                     {group.label}
                     <ChevronDown
-                      className={`h-4 w-4 transition-transform ${
+                      className={`h-4 w-4 shrink-0 transition-transform ${
                         expanded ? "rotate-180" : ""
                       }`}
                     />
@@ -313,13 +280,13 @@ export function Sidebar({
                             key={item.href}
                             href={item.href}
                             onClick={closeMobileNav}
-                            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                            className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3.5 text-sm transition-colors ${
                               active
-                                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
-                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                                ? "bg-brand-soft font-bold text-brand-dark"
+                                : "font-medium text-ink-soft hover:bg-brand-tint"
                             }`}
                           >
-                            <Icon className="h-4 w-4" />
+                            <Icon className="h-4 w-4 shrink-0" />
                             {item.label}
                           </Link>
                         );

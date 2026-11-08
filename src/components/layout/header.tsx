@@ -4,10 +4,10 @@ import { Menu } from "lucide-react";
 import { UserMenu } from "./user-menu";
 
 export function Header({
-  title,
+  schoolName = "Mufumbu Secondary School",
   user,
 }: {
-  title: string;
+  schoolName?: string;
   user: { name: string; email: string; role: string };
 }) {
   const toggleMenu = () => {
@@ -16,18 +16,31 @@ export function Header({
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur-sm sm:px-6">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+    <header className="fixed inset-x-0 top-0 z-40 h-16 bg-brand text-white">
+      <div className="flex h-full items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             aria-label="Toggle navigation menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition hover:bg-gray-100 lg:hidden"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] text-white transition hover:bg-white/10 min-[820px]:hidden"
             onClick={toggleMenu}
           >
             <Menu className="h-5 w-5" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900 sm:text-xl">{title}</h1>
+
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-accent text-[13px] font-bold text-accent-ink">
+              NSS
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-base font-bold leading-tight sm:text-[18px]">
+                {schoolName}
+              </p>
+              <p className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.14em] text-white/70 sm:block">
+                Exams System
+              </p>
+            </div>
+          </div>
         </div>
 
         <UserMenu user={user} />

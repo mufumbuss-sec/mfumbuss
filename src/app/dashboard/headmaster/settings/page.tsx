@@ -2,14 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Building2,
-  ImagePlus,
-  LoaderCircle,
-  MapPin,
-  Save,
-  Trash2,
-} from "lucide-react";
+import { ImagePlus, LoaderCircle, Save, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/field";
+import { PageHeader } from "@/components/ui/page-header";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { AcademicPeriodSettings } from "@/components/dashboard/academic-period-settings";
 import { notify } from "@/lib/notifications";
@@ -205,86 +201,61 @@ export default function SchoolSettingsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-5 sm:space-y-6">
-      <div>
-        <h2 className="text-lg font-bold text-slate-900 sm:text-xl">School Settings</h2>
-        <p className="mt-1 text-sm text-slate-600 sm:text-base">
-          Manage the school address, location, and logos.
-        </p>
-      </div>
+    <div className="mx-auto w-full max-w-5xl space-y-5">
+      <PageHeader
+        title="School Settings"
+        subtitle="Manage the school profile and logos."
+      />
 
-      <form
-        onSubmit={handleSave}
-        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-      >
-        <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-4 sm:px-6 sm:py-5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700 sm:h-11 sm:w-11">
-            <Building2 className="h-5 w-5" />
-          </span>
-          <div>
-            <h3 className="font-semibold text-slate-900">School information</h3>
-            <p className="text-sm text-slate-500">
-              This information is shared across the school.
-            </p>
+      <form onSubmit={handleSave} className="app-card overflow-hidden">
+        <div className="app-card-header border-b border-line pb-4">
+          <div className="min-w-0">
+            <h2 className="app-card-title">School information</h2>
+            <p className="app-card-subtitle">Shared across the school.</p>
           </div>
         </div>
 
-        <div className="grid gap-4 p-4 sm:gap-5 sm:p-6 md:grid-cols-2">
-          <label className="space-y-1.5 text-sm font-medium text-slate-700 md:col-span-2">
-            School name
-            <input
+        <div className="grid gap-4 p-5 lg:grid-cols-2">
+          <Field label="School name" className="lg:col-span-2">
+            <Input
               required
               maxLength={150}
               value={settings.school_name}
               onChange={(event) => updateField("school_name", event.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
             />
-          </label>
-          <label className="space-y-1.5 text-sm font-medium text-slate-700">
-            Region
-            <span className="relative block">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                maxLength={100}
-                value={settings.region}
-                onChange={(event) => updateField("region", event.target.value)}
-                placeholder="For example: Mbeya"
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-              />
-            </span>
-          </label>
-          <label className="space-y-1.5 text-sm font-medium text-slate-700">
-            District
-            <span className="relative block">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <input
-                maxLength={100}
-                value={settings.district}
-                onChange={(event) => updateField("district", event.target.value)}
-                placeholder="Enter district"
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
-              />
-            </span>
-          </label>
-          <label className="space-y-1.5 text-sm font-medium text-slate-700 md:col-span-2">
-            School address
+          </Field>
+          <Field label="Region">
+            <Input
+              maxLength={100}
+              value={settings.region}
+              onChange={(event) => updateField("region", event.target.value)}
+              placeholder="For example: Mbeya"
+            />
+          </Field>
+          <Field label="District">
+            <Input
+              maxLength={100}
+              value={settings.district}
+              onChange={(event) => updateField("district", event.target.value)}
+              placeholder="Enter district"
+            />
+          </Field>
+          <Field label="School address" className="lg:col-span-2">
             <textarea
               rows={3}
               maxLength={500}
               value={settings.address}
               onChange={(event) => updateField("address", event.target.value)}
               placeholder="Village/street, ward, postal address, or other address details"
-              className="w-full resize-y rounded-xl border border-slate-300 px-3 py-2.5 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+              className="app-textarea"
             />
-          </label>
+          </Field>
         </div>
 
-        <div className="border-t border-slate-200 px-4 py-5 sm:px-6 sm:py-6">
-          <h3 className="font-semibold text-slate-900">Logos</h3>
-          <p className="mt-1 text-sm text-slate-500">
-            Upload JPG, PNG, or WEBP images up to 3 MB.
-          </p>
-          <div className="mt-5 grid gap-4 md:grid-cols-2 sm:gap-5">
+        <div className="border-t border-line p-5">
+          <h3 className="app-card-title">Logos</h3>
+          <p className="app-card-subtitle">JPG, PNG, or WEBP up to 3 MB.</p>
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
             {(
               [
                 ["school_logo_url", "School logo"],
@@ -296,10 +267,10 @@ export default function SchoolSettingsPage() {
               return (
                 <div
                   key={field}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                  className="rounded-xl border border-line bg-canvas p-4"
                 >
-                  <div className="flex min-w-0 flex-col items-start gap-3 sm:min-h-28 sm:flex-row sm:items-center sm:gap-4">
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2 sm:h-24 sm:w-24">
+                  <div className="flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:items-center">
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-line bg-white p-2">
                       {imageUrl ? (
                         <Image
                           src={imageUrl}
@@ -310,43 +281,46 @@ export default function SchoolSettingsPage() {
                           className="h-full w-full object-contain"
                         />
                       ) : (
-                        <ImagePlus className="h-8 w-8 text-slate-300" />
+                        <ImagePlus className="h-8 w-8 text-slate-400" />
                       )}
                     </div>
                     <div className="min-w-0 w-full">
-                      <p className="font-medium text-slate-800">{label}</p>
-                      <p className="mt-1 text-xs text-slate-500">
+                      <p className="text-sm font-semibold text-ink">{label}</p>
+                      <p className="mt-1 text-xs text-muted">
                         {imageUrl ? "Logo selected" : "No logo uploaded"}
                       </p>
-                      <label className="mt-3 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
-                        {isUploading ? (
-                          <LoaderCircle className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <ImagePlus className="h-4 w-4" />
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <label className="app-btn app-btn-secondary app-btn-sm cursor-pointer">
+                          {isUploading ? (
+                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <ImagePlus className="h-4 w-4" />
+                          )}
+                          {isUploading ? "Uploading..." : "Choose image"}
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="sr-only"
+                            disabled={uploading !== null}
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              event.target.value = "";
+                              void handleLogoUpload(field, file);
+                            }}
+                          />
+                        </label>
+                        {imageUrl && (
+                          <Button
+                            type="button"
+                            variant="danger"
+                            size="sm"
+                            onClick={() => updateField(field, null)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Remove
+                          </Button>
                         )}
-                        {isUploading ? "Uploading..." : "Choose image"}
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          className="sr-only"
-                          disabled={uploading !== null}
-                          onChange={(event) => {
-                            const file = event.target.files?.[0];
-                            event.target.value = "";
-                            void handleLogoUpload(field, file);
-                          }}
-                        />
-                      </label>
-                      {imageUrl && (
-                        <button
-                          type="button"
-                          onClick={() => updateField(field, null)}
-                          className="ml-2 inline-flex min-h-10 items-center gap-1 rounded-lg px-2 text-sm font-medium text-rose-700 hover:bg-rose-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Remove
-                        </button>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -355,11 +329,12 @@ export default function SchoolSettingsPage() {
           </div>
         </div>
 
-        <div className="flex justify-end border-t border-slate-200 bg-slate-50 px-6 py-4">
-          <button
+        <div className="flex justify-end border-t border-line px-5 py-4">
+          <Button
             type="submit"
+            variant="primary"
             disabled={saving || uploading !== null}
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            className="w-full sm:w-auto"
           >
             {saving ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -367,7 +342,7 @@ export default function SchoolSettingsPage() {
               <Save className="h-4 w-4" />
             )}
             {saving ? "Saving..." : "Save settings"}
-          </button>
+          </Button>
         </div>
       </form>
       <AcademicPeriodSettings />

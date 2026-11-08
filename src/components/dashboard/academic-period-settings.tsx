@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, LoaderCircle, Save } from "lucide-react";
+import { LoaderCircle, Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field, Select } from "@/components/ui/field";
 import { LoadingIndicator } from "@/components/ui/loading-indicator";
 import { notify } from "@/lib/notifications";
 
@@ -20,9 +22,6 @@ const CURRENT_YEAR = String(new Date().getFullYear());
 const DEFAULT_ACADEMIC_YEAR = ACADEMIC_YEARS.includes(CURRENT_YEAR)
   ? CURRENT_YEAR
   : String(MIN_ACADEMIC_YEAR);
-
-const inputClass =
-  "min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm text-slate-800 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
 
 export function AcademicPeriodSettings() {
   const [period, setPeriod] = useState<AcademicPeriod>({
@@ -110,30 +109,20 @@ export function AcademicPeriodSettings() {
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-4 sm:px-6 sm:py-5">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 sm:h-11 sm:w-11">
-          <CalendarDays className="h-5 w-5" />
-        </span>
-        <div>
-          <h3 className="font-semibold text-slate-900">Active Academic Period</h3>
-          <p className="text-sm text-slate-500">
-            All new examinations will use this academic year and term.
+    <section className="app-card overflow-hidden">
+      <div className="app-card-header border-b border-line pb-4">
+        <div className="min-w-0">
+          <h2 className="app-card-title">Active Academic Period</h2>
+          <p className="app-card-subtitle">
+            Used by all new examinations.
           </p>
         </div>
       </div>
 
-      <p className="border-b border-slate-200 bg-blue-50 px-4 py-3 text-xs leading-5 text-blue-800 sm:px-6">
-        Examinations and results remain grouped under the academic year they
-        were created in. Changing the active year starts a fresh examination
-        workspace; previous years stay available through the year filter.
-      </p>
-
       <form onSubmit={(event) => void savePeriod(event)}>
-        <div className="grid gap-4 p-4 sm:grid-cols-2 sm:gap-5 sm:p-6">
-          <label className="space-y-1.5 text-sm font-semibold text-slate-700">
-            Academic year
-            <select
+        <div className="grid gap-4 p-5 lg:grid-cols-2">
+          <Field label="Academic year">
+            <Select
               required
               value={period.academic_year}
               onChange={(event) => {
@@ -144,18 +133,16 @@ export function AcademicPeriodSettings() {
                   }));
                 }
               }}
-              className={inputClass}
             >
               {ACADEMIC_YEARS.map((year) => (
                 <option key={year} value={year}>
                   {year}
                 </option>
               ))}
-            </select>
-          </label>
-          <label className="space-y-1.5 text-sm font-semibold text-slate-700">
-            Active term
-            <select
+            </Select>
+          </Field>
+          <Field label="Active term">
+            <Select
               value={period.term}
               onChange={(event) => {
                 const term = event.target.value;
@@ -163,18 +150,18 @@ export function AcademicPeriodSettings() {
                   setPeriod((current) => ({ ...current, term }));
                 }
               }}
-              className={inputClass}
             >
               <option value="Term I">Term I</option>
               <option value="Term II">Term II</option>
-            </select>
-          </label>
+            </Select>
+          </Field>
         </div>
-        <div className="flex justify-end border-t border-slate-200 bg-slate-50 px-4 py-4 sm:px-6">
-          <button
+        <div className="flex justify-end border-t border-line px-5 py-4">
+          <Button
             type="submit"
+            variant="primary"
             disabled={saving}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            className="w-full sm:w-auto"
           >
             {saving ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -182,7 +169,7 @@ export function AcademicPeriodSettings() {
               <Save className="h-4 w-4" />
             )}
             {saving ? "Saving..." : "Save active period"}
-          </button>
+          </Button>
         </div>
       </form>
     </section>

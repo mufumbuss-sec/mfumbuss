@@ -15,6 +15,34 @@ type MarkInput = {
 
 type StudentMarkInput = Omit<MarkInput, "marks">;
 
+type StudentRow = {
+  id: string;
+  full_name: string;
+  class_id: string;
+  sex: "F" | "M";
+};
+
+type SubjectView = {
+  id: string;
+  name: string;
+  subject_code: string;
+  has_practical: boolean;
+};
+
+type ValidatedMark = {
+  studentId: string;
+  theoryScore: number | null;
+  practicalScore: number | null;
+  totalScore: number | null;
+  isAbsent: boolean;
+};
+
+const A_LEVEL_FORMS = new Set(["Form V", "Form VI"]);
+
+function isALevelForm(classForm: string) {
+  return A_LEVEL_FORMS.has(classForm);
+}
+
 function isStudentMarkInput(value: unknown): value is StudentMarkInput {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -56,7 +84,7 @@ async function getEligibleStudents(
   admin: ReturnType<typeof createAdminClient>,
   classForm: string,
   subjectId: string,
-) {
+): Promise<StudentRow[]> {
   const { data: schoolClasses, error: classesError } = await admin
     .from("classes")
     .select("id")
@@ -97,6 +125,116 @@ async function getEligibleStudents(
   if (enrollmentsError) throw new Error(enrollmentsError.message);
   const enrolledIds = new Set((enrollments ?? []).map((item) => item.student_id));
   return (students ?? []).filter((student) => enrolledIds.has(student.id));
+}
+
+async function getEligibleALevelStudents(
+  admin: ReturnType<typeof createAdminClient>,
+  classForm: string,
+  subjectId: string,
+): Promise<StudentRow[]> {
+  const { data: schoolClasses, error: classesError } = await admin
+    .from("classes")
+    .select("id")
+    .eq("form", classForm);
+  if (classesError) throw new Error(classesError.message);
+
+  const classIds = (schoolClasses ?? []).map((schoolClass) => schoolClass.id);
+  if (classIds.length === 0) return [];
+
+  const { data: students, error: studentsError } = await admin
+    .from("students")
+    .select("id, full_name, class_id, sex")
+    .in("class_id", classIds)
+    .order("first_name")
+    .order("middle_name")
+    .order("last_name")
+    .order("id");
+  if (studentsError) throw new Error(studentsError.message);
+
+  const studentIds = (students ?? []).map((student) => student.id);
+  if (studentIds.length === 0) return [];
+
+  const { data: enrollments, error: enrollmentsError } = await admin
+    .from("a_level_student_subjects")
+    .select("student_id")
+    .eq("subject_id", subjectId)
+    .in("student_id", studentIds);
+  if (enrollmentsError) throw new Error(enrollmentsError.message);
+
+  const enrolledIds = new Set((enrollments ?? []).map((item) => item.student_id));
+  return (students ?? []).filter((student) => enrolledIds.has(student.id));
+}
+
+function validateStudentMarks(
+  studentMarks: StudentMarkInput[],
+  eligibleStudentIds: Set<string>,
+  subjectHasPractical: boolean,
+): { error: string; status: 400 | 403 } | { marks: ValidatedMark[] } {
+  const marks: ValidatedMark[] = [];
+
+  for (const mark of studentMarks) {
+    const studentId = mark.student_id as string;
+    if (!eligibleStudentIds.has(studentId)) {
+      return {
+        error: `Student ${studentId} is not enrolled in the selected subject.`,
+        status: 403,
+      };
+    }
+
+    const isAbsent = mark.is_absent === true;
+    const theory = isAbsent ? null : mark.theory_score;
+    const practical = isAbsent ? null : mark.practical_score;
+    if (!isAbsent && !isScore(theory, 100)) {
+      return {
+        error: `Theory marks must be between 0 and 100 for student ${studentId}.`,
+        status: 400,
+      };
+    }
+    if (subjectHasPractical) {
+      if (!isAbsent && !isScore(practical, 50)) {
+        return {
+          error: `Practical marks must be between 0 and 50 for student ${studentId}.`,
+          status: 400,
+        };
+      }
+    } else if (mark.practical_score !== undefined && mark.practical_score !== null) {
+      return {
+        error: "This examination does not include practical marks.",
+        status: 400,
+      };
+    }
+
+    const theoryScore = isAbsent ? null : isScore(theory, 100) ? theory : null;
+    const practicalScore =
+      subjectHasPractical && !isAbsent && isScore(practical, 50)
+        ? practical
+        : null;
+    if (!isAbsent && theoryScore === null) {
+      return {
+        error: `Theory marks are required for student ${studentId}.`,
+        status: 400,
+      };
+    }
+    if (subjectHasPractical && !isAbsent && practicalScore === null) {
+      return {
+        error: `Practical marks are required for student ${studentId}.`,
+        status: 400,
+      };
+    }
+
+    marks.push({
+      studentId,
+      theoryScore,
+      practicalScore,
+      totalScore:
+        isAbsent || theoryScore === null
+          ? null
+          : theoryScore + (practicalScore ?? 0),
+      isAbsent,
+    });
+  }
+
+  return { marks };
 }
 
 export async function GET(request: Request) {
@@ -190,8 +328,11 @@ export async function GET(request: Request) {
       (assignments ?? []).map((assignment) => assignment.subject_name.trim().toLowerCase()),
     );
   }
+
+  const aLevel = isALevelForm(exam.class_form);
+
   const { data: examSubjects, error: examSubjectsError } = await admin
-    .from("exam_subjects")
+    .from(aLevel ? "a_level_exam_subjects" : "exam_subjects")
     .select("subject_id")
     .eq("exam_id", exam.id);
   if (examSubjectsError) {
@@ -202,20 +343,45 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "No subjects are attached to this examination." }, { status: 409 });
   }
 
-  const { data: subjectRows, error: subjectsError } = await admin
-    .from("subjects")
-    .select("id, name, subject_code, has_practical")
-    .in("id", examSubjectIds)
-    .order("name");
-  if (subjectsError) {
-    return NextResponse.json({ error: subjectsError.message }, { status: 500 });
+  let subjects: SubjectView[];
+  if (aLevel) {
+    const { data: subjectRows, error: subjectsError } = await admin
+      .from("a_level_subjects")
+      .select("id, name, code, has_practical")
+      .in("id", examSubjectIds)
+      .order("name");
+    if (subjectsError) {
+      return NextResponse.json({ error: subjectsError.message }, { status: 500 });
+    }
+    const mapped = (subjectRows ?? []).map((subject) => ({
+      id: subject.id,
+      name: subject.name,
+      subject_code: subject.code,
+      has_practical: subject.has_practical,
+    }));
+    subjects =
+      role === "teacher"
+        ? mapped.filter((subject) =>
+            assignedSubjects?.has(subject.name.trim().toLowerCase()),
+          )
+        : mapped;
+  } else {
+    const { data: subjectRows, error: subjectsError } = await admin
+      .from("subjects")
+      .select("id, name, subject_code, has_practical")
+      .in("id", examSubjectIds)
+      .order("name");
+    if (subjectsError) {
+      return NextResponse.json({ error: subjectsError.message }, { status: 500 });
+    }
+    subjects =
+      role === "teacher"
+        ? (subjectRows ?? []).filter((subject) =>
+            assignedSubjects?.has(subject.name.trim().toLowerCase()),
+          )
+        : subjectRows ?? [];
   }
-  const subjects =
-    role === "teacher"
-      ? (subjectRows ?? []).filter((subject) =>
-          assignedSubjects?.has(subject.name.trim().toLowerCase()),
-        )
-      : subjectRows ?? [];
+
   if (subjects.length === 0) {
     return NextResponse.json({ exam, subjects: [] });
   }
@@ -241,6 +407,60 @@ export async function GET(request: Request) {
     .replace(/\s+/g, " ")
     .trim();
   const from = (page - 1) * pageSize;
+
+  if (aLevel) {
+    try {
+      const eligibleStudents = await getEligibleALevelStudents(
+        admin,
+        exam.class_form,
+        subjectId,
+      );
+      const needle = search.toLowerCase();
+      const matched = needle
+        ? eligibleStudents.filter((student) =>
+            student.full_name.toLowerCase().includes(needle),
+          )
+        : eligibleStudents;
+      const sorted = sortStudentsForDisplay(matched as StudentRow[]);
+      const total = sorted.length;
+      const pageStudents = sorted.slice(from, from + pageSize);
+      const studentIds = pageStudents.map((student) => student.id);
+
+      const { data: marks, error: marksError } = studentIds.length
+        ? await admin
+            .from("a_level_marks")
+            .select("student_id, theory_score, practical_score, is_absent")
+            .eq("exam_id", exam.id)
+            .eq("subject_id", subjectId)
+            .in("student_id", studentIds)
+        : { data: [], error: null };
+      if (marksError) {
+        return NextResponse.json({ error: marksError.message }, { status: 500 });
+      }
+
+      return NextResponse.json({
+        exam,
+        subjects,
+        students: pageStudents,
+        marks: marks ?? [],
+        total,
+        overallTotal: eligibleStudents.length,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      });
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error:
+            error instanceof Error
+              ? error.message
+              : "Unable to load students for this subject.",
+        },
+        { status: 500 },
+      );
+    }
+  }
 
   try {
     const { data: schoolClasses, error: classesError } = await admin
@@ -290,13 +510,6 @@ export async function GET(request: Request) {
         totalPages: 1,
       });
     }
-
-    type StudentRow = {
-      id: string;
-      full_name: string;
-      class_id: string;
-      sex: "F" | "M";
-    };
 
     let students: StudentRow[] = [];
     let total = 0;
@@ -469,7 +682,7 @@ export async function POST(request: Request) {
 
   const { data: exam, error: examError } = await admin
     .from("exams")
-    .select("id, class_form, start_date, end_date, has_practical, status")
+    .select("id, name, class_form, academic_year, start_date, end_date, has_practical, status")
     .eq("id", examId)
     .maybeSingle();
   if (examError) return NextResponse.json({ error: examError.message }, { status: 500 });
@@ -494,6 +707,99 @@ export async function POST(request: Request) {
       (assignments ?? []).map((assignment) => assignment.subject_name.trim().toLowerCase()),
     );
   }
+
+  if (isALevelForm(exam.class_form)) {
+    const { data: examSubject, error: examSubjectError } = await admin
+      .from("a_level_exam_subjects")
+      .select("subject_id")
+      .eq("exam_id", examId)
+      .eq("subject_id", subjectId)
+      .maybeSingle();
+    if (examSubjectError) {
+      return NextResponse.json({ error: examSubjectError.message }, { status: 500 });
+    }
+    if (!examSubject) {
+      return NextResponse.json({ error: "This subject is not included in the examination." }, { status: 400 });
+    }
+
+    const { data: subject, error: subjectError } = await admin
+      .from("a_level_subjects")
+      .select("name, has_practical")
+      .eq("id", subjectId)
+      .maybeSingle();
+    if (subjectError) return NextResponse.json({ error: subjectError.message }, { status: 500 });
+    if (!subject) {
+      return NextResponse.json({ error: "This subject is not included in the examination." }, { status: 400 });
+    }
+    if (
+      role === "teacher" &&
+      !assignedSubjects?.has(subject.name.trim().toLowerCase())
+    ) {
+      return NextResponse.json(
+        { error: "You are not assigned to teach this subject in this class." },
+        { status: 403 },
+      );
+    }
+    const subjectHasPractical = Boolean(exam.has_practical && subject.has_practical);
+
+    let eligibleStudents: StudentRow[];
+    try {
+      eligibleStudents = await getEligibleALevelStudents(
+        admin,
+        exam.class_form,
+        subjectId,
+      );
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : "Unable to verify student enrollment." },
+        { status: 500 },
+      );
+    }
+    const eligibleStudentIds = new Set(eligibleStudents.map((student) => student.id));
+    const validation = validateStudentMarks(
+      studentMarks,
+      eligibleStudentIds,
+      subjectHasPractical,
+    );
+    if ("error" in validation) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: validation.status },
+      );
+    }
+
+    const rows = validation.marks.map((mark) => ({
+      exam_id: examId,
+      student_id: mark.studentId,
+      subject_id: subjectId,
+      exam_name: exam.name,
+      academic_year: exam.academic_year,
+      theory_score: mark.theoryScore,
+      practical_score: mark.practicalScore,
+      total_score: mark.totalScore,
+      score: mark.totalScore,
+      is_absent: mark.isAbsent,
+      entered_by: user.id,
+      updated_at: new Date().toISOString(),
+    }));
+
+    const { data: marks, error: markError } = await admin
+      .from("a_level_marks")
+      .upsert(rows, { onConflict: "exam_id,student_id,subject_id" })
+      .select("student_id, theory_score, practical_score, is_absent");
+    if (markError) {
+      return NextResponse.json({ error: markError.message }, { status: 500 });
+    }
+    if (!marks || marks.length !== rows.length) {
+      return NextResponse.json(
+        { error: "Not all student marks were saved. Please check and try again." },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json(isBatch ? { marks } : { mark: marks[0] });
+  }
+
   const { data: examSubject, error: examSubjectError } = await admin
     .from("exam_subjects")
     .select("subject_id")
@@ -527,7 +833,7 @@ export async function POST(request: Request) {
   }
   const subjectHasPractical = exam.has_practical && subject.has_practical;
 
-  let eligibleStudents;
+  let eligibleStudents: StudentRow[];
   try {
     eligibleStudents = await getEligibleStudents(admin, exam.class_form, subjectId);
   } catch (error) {
@@ -537,71 +843,29 @@ export async function POST(request: Request) {
     );
   }
   const eligibleStudentIds = new Set(eligibleStudents.map((student) => student.id));
-  const rows = [];
-  for (const mark of studentMarks) {
-    const studentId = mark.student_id as string;
-    if (!eligibleStudentIds.has(studentId)) {
-      return NextResponse.json(
-        { error: `Student ${studentId} is not enrolled in the selected subject.` },
-        { status: 403 },
-      );
-    }
-
-    const isAbsent = mark.is_absent === true;
-    const theory = isAbsent ? null : mark.theory_score;
-    const practical = isAbsent ? null : mark.practical_score;
-    if (!isAbsent && !isScore(theory, 100)) {
-      return NextResponse.json(
-        { error: `Theory marks must be between 0 and 100 for student ${studentId}.` },
-        { status: 400 },
-      );
-    }
-    if (subjectHasPractical) {
-      if (!isAbsent && !isScore(practical, 50)) {
-        return NextResponse.json(
-          { error: `Practical marks must be between 0 and 50 for student ${studentId}.` },
-          { status: 400 },
-        );
-      }
-    } else if (mark.practical_score !== undefined && mark.practical_score !== null) {
-      return NextResponse.json(
-        { error: "This examination does not include practical marks." },
-        { status: 400 },
-      );
-    }
-
-    const theoryScore = isAbsent ? null : isScore(theory, 100) ? theory : null;
-    const practicalScore =
-      subjectHasPractical && !isAbsent && isScore(practical, 50)
-        ? practical
-        : null;
-    if (!isAbsent && theoryScore === null) {
-      return NextResponse.json(
-        { error: `Theory marks are required for student ${studentId}.` },
-        { status: 400 },
-      );
-    }
-    if (subjectHasPractical && !isAbsent && practicalScore === null) {
-      return NextResponse.json(
-        { error: `Practical marks are required for student ${studentId}.` },
-        { status: 400 },
-      );
-    }
-    rows.push({
-      exam_id: examId,
-      subject_id: subjectId,
-      student_id: studentId,
-      theory_score: theoryScore,
-      practical_score: practicalScore,
-      total_score:
-        isAbsent || theoryScore === null
-          ? null
-          : theoryScore + (practicalScore ?? 0),
-      is_absent: isAbsent,
-      entered_by: user.id,
-      updated_at: new Date().toISOString(),
-    });
+  const validation = validateStudentMarks(
+    studentMarks,
+    eligibleStudentIds,
+    subjectHasPractical,
+  );
+  if ("error" in validation) {
+    return NextResponse.json(
+      { error: validation.error },
+      { status: validation.status },
+    );
   }
+
+  const rows = validation.marks.map((mark) => ({
+    exam_id: examId,
+    subject_id: subjectId,
+    student_id: mark.studentId,
+    theory_score: mark.theoryScore,
+    practical_score: mark.practicalScore,
+    total_score: mark.totalScore,
+    is_absent: mark.isAbsent,
+    entered_by: user.id,
+    updated_at: new Date().toISOString(),
+  }));
 
   const { data: marks, error: markError } = await admin
     .from("marks")

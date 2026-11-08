@@ -29,7 +29,7 @@ export async function POST(_request: Request, { params }: RouteContext) {
   const admin = createAdminClient();
   const { data: exam, error: examError } = await admin
     .from("exams")
-    .select("id, status")
+    .select("id, status, class_form")
     .eq("id", id)
     .maybeSingle();
   if (examError) return NextResponse.json({ error: examError.message }, { status: 500 });
@@ -41,8 +41,12 @@ export async function POST(_request: Request, { params }: RouteContext) {
     );
   }
 
+  const isALevel = exam.class_form === "Form V" || exam.class_form === "Form VI";
+  const subjectLinkTable = isALevel
+    ? "a_level_exam_subjects"
+    : "exam_subjects";
   const { count, error: subjectsError } = await admin
-    .from("exam_subjects")
+    .from(subjectLinkTable)
     .select("id", { count: "exact", head: true })
     .eq("exam_id", id);
   if (subjectsError) {

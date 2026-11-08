@@ -3,6 +3,9 @@
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, LoaderCircle, Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field, Input } from "@/components/ui/field";
+import { PageHeader } from "@/components/ui/page-header";
 import { notify } from "@/lib/notifications";
 
 export default function ChangePasswordPage() {
@@ -83,39 +86,35 @@ export default function ChangePasswordPage() {
     }
   }
 
+  const toggleClass =
+    "absolute inset-y-0 right-1 flex w-11 items-center justify-center rounded-lg text-muted hover:bg-brand-tint focus:outline-none focus:ring-2 focus:ring-brand/30";
+
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-5 sm:space-y-6">
-      <div>
-        <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-          Change password
-        </h2>
-        <p className="mt-1 text-sm text-gray-600 sm:text-base">
-          Update your account password securely.
-        </p>
-      </div>
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 bg-gray-50 px-4 py-4 sm:px-6">
-          <h3 className="text-base font-semibold text-gray-900 sm:text-lg">
-            Account security
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Verify your current password before setting a new one.
-          </p>
+    <div className="mx-auto w-full max-w-2xl space-y-5">
+      <PageHeader
+        title="Change password"
+        subtitle="Update your account password securely."
+      />
+      <div className="app-card overflow-hidden">
+        <div className="app-card-header border-b border-line pb-4">
+          <div className="min-w-0">
+            <h2 className="app-card-title">Account security</h2>
+            <p className="app-card-subtitle">
+              Verify your current password before setting a new one.
+            </p>
+          </div>
         </div>
-        <form onSubmit={handleChangePassword} className="space-y-5 p-4 sm:p-6">
-          <div>
-            <label htmlFor="current-password" className="mb-1.5 block text-sm font-medium text-gray-700">
-              Current password
-            </label>
+        <form onSubmit={handleChangePassword} className="space-y-4 p-5">
+          <Field label="Current password" htmlFor="current-password">
             <div className="relative">
-              <input
+              <Input
                 id="current-password"
                 type={visiblePasswords.current ? "text" : "password"}
                 autoComplete="current-password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 required
-                className="min-h-12 w-full rounded-xl border border-gray-300 px-3 py-2 pr-12 text-base outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm"
+                className="pr-12"
                 placeholder="Enter your current password"
               />
               <button
@@ -123,18 +122,15 @@ export default function ChangePasswordPage() {
                 onClick={() => togglePasswordVisibility("current")}
                 aria-label={visiblePasswords.current ? "Hide current password" : "Show current password"}
                 aria-pressed={visiblePasswords.current}
-                className="absolute inset-y-0 right-1 flex w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={toggleClass}
               >
                 {visiblePasswords.current ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
-          </div>
-          <div>
-            <label htmlFor="new-password" className="mb-1.5 block text-sm font-medium text-gray-700">
-              New password
-            </label>
+          </Field>
+          <Field label="New password" htmlFor="new-password">
             <div className="relative">
-              <input
+              <Input
                 id="new-password"
                 type={visiblePasswords.new ? "text" : "password"}
                 autoComplete="new-password"
@@ -142,7 +138,7 @@ export default function ChangePasswordPage() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 required
-                className="min-h-12 w-full rounded-xl border border-gray-300 px-3 py-2 pr-12 text-base outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm"
+                className="pr-12"
                 placeholder="At least 8 characters"
               />
               <button
@@ -150,18 +146,15 @@ export default function ChangePasswordPage() {
                 onClick={() => togglePasswordVisibility("new")}
                 aria-label={visiblePasswords.new ? "Hide new password" : "Show new password"}
                 aria-pressed={visiblePasswords.new}
-                className="absolute inset-y-0 right-1 flex w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={toggleClass}
               >
                 {visiblePasswords.new ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
-          </div>
-          <div>
-            <label htmlFor="confirm-password" className="mb-1.5 block text-sm font-medium text-gray-700">
-              Confirm new password
-            </label>
+          </Field>
+          <Field label="Confirm new password" htmlFor="confirm-password">
             <div className="relative">
-              <input
+              <Input
                 id="confirm-password"
                 type={visiblePasswords.confirm ? "text" : "password"}
                 autoComplete="new-password"
@@ -169,7 +162,7 @@ export default function ChangePasswordPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="min-h-12 w-full rounded-xl border border-gray-300 px-3 py-2 pr-12 text-base outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 sm:text-sm"
+                className="pr-12"
                 placeholder="Re-enter your new password"
               />
               <button
@@ -177,26 +170,30 @@ export default function ChangePasswordPage() {
                 onClick={() => togglePasswordVisibility("confirm")}
                 aria-label={visiblePasswords.confirm ? "Hide password confirmation" : "Show password confirmation"}
                 aria-pressed={visiblePasswords.confirm}
-                className="absolute inset-y-0 right-1 flex w-11 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={toggleClass}
               >
                 {visiblePasswords.confirm ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
+          </Field>
+          <div className="pt-1">
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              {loading ? (
+                <LoaderCircle className="h-4 w-4 animate-spin" />
+              ) : (
+                <Lock className="h-4 w-4" />
+              )}
+              {loading ? "Updating..." : "Change password"}
+            </Button>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-          >
-            {loading ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : (
-              <Lock className="h-4 w-4" />
-            )}
-            {loading ? "Updating..." : "Change password"}
-          </button>
         </form>
       </div>
     </div>
   );
+}
 }

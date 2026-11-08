@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { BookOpen, Loader2, Pencil, Save, Trash2, X } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
 import { notify } from "@/lib/notifications";
 import { createClient } from "@/lib/supabase/client";
 
@@ -357,29 +358,24 @@ export default function ALevelCombinationsPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex items-start gap-3">
-          <div className="rounded-xl bg-violet-50 p-2.5 text-violet-700">
-            <BookOpen className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">A-Level Combinations Builder</h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Every combination needs the configured number of CORE subjects and at least one compulsory SUBSIDIARY. ADDITIONAL CORE subjects can be attached where needed.
-            </p>
-          </div>
-        </div>
-      </header>
+    <div className="mx-auto w-full max-w-7xl space-y-5">
+      <PageHeader
+        title="A-Level Combinations"
+        subtitle="Build subject combinations for A-Level students."
+      />
 
-      <div className="grid gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-slate-900">
+      <div className="grid gap-5 xl:grid-cols-[420px_minmax(0,1fr)]">
+        <section className="app-card h-fit p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="app-card-title">
               {form.id ? "Edit combination" : "Create combination"}
-            </h3>
+            </h2>
             {form.id && (
-              <button type="button" onClick={resetForm} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700">
+              <button
+                type="button"
+                onClick={resetForm}
+                className="app-btn app-btn-secondary app-btn-sm"
+              >
                 <X className="h-4 w-4" />
                 Cancel
               </button>
@@ -388,52 +384,54 @@ export default function ALevelCombinationsPage() {
 
           <form onSubmit={handleSave} className="space-y-4">
             <div>
-              <label htmlFor="combo-name" className="mb-1 block text-sm font-medium text-slate-700">Combination name</label>
+              <label htmlFor="combo-name" className="app-label">Combination name</label>
               <input
                 id="combo-name"
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                 placeholder="Physics, Chemistry, Mathematics"
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                className="app-input"
               />
             </div>
 
             <div>
-              <label htmlFor="combo-code" className="mb-1 block text-sm font-medium text-slate-700">Combination code</label>
+              <label htmlFor="combo-code" className="app-label">Combination code</label>
               <input
                 id="combo-code"
                 value={form.code}
                 onChange={(event) => setForm((current) => ({ ...current, code: event.target.value.toUpperCase() }))}
                 placeholder="PCM"
-                className="min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm uppercase focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                className="app-input uppercase"
               />
             </div>
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-              <div className="font-medium text-slate-900">Required CORE count</div>
-              <div className="mt-1">{form.coreSubjectIds.length} / {requiredCoreCount} selected</div>
+            <div className="flex items-center justify-between gap-3 rounded-[10px] border border-line bg-canvas px-3 py-2.5 text-sm text-ink-soft">
+              <span className="font-medium text-ink">Required CORE count</span>
+              <span className="app-badge app-badge-neutral">
+                {form.coreSubjectIds.length} / {requiredCoreCount} selected
+              </span>
             </div>
 
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <h4 className="font-semibold text-slate-900">CORE subjects</h4>
-                <span className="text-xs text-slate-500">{form.coreSubjectIds.length}/{requiredCoreCount}</span>
+                <h3 className="text-sm font-bold text-ink">CORE subjects</h3>
+                <span className="text-xs text-muted">{form.coreSubjectIds.length}/{requiredCoreCount}</span>
               </div>
-              <div className="grid max-h-52 gap-2 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2">
+              <div className="grid max-h-52 gap-2 overflow-y-auto rounded-[10px] border border-line bg-canvas p-2">
                 {activeCoreSubjects.length === 0 ? (
-                  <p className="px-2 py-3 text-sm text-slate-500">No active CORE subjects registered.</p>
+                  <p className="px-2 py-3 text-sm text-muted">No active CORE subjects registered.</p>
                 ) : (
                   activeCoreSubjects.map((subject) => (
-                    <label key={subject.id} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+                    <label key={subject.id} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-line bg-white px-3 py-2 text-sm">
                       <div>
-                        <div className="font-medium text-slate-800">{subject.name}</div>
-                        <div className="text-xs text-slate-500">{subject.code}</div>
+                        <div className="font-medium text-ink">{subject.name}</div>
+                        <div className="text-xs text-muted">{subject.code}</div>
                       </div>
                       <input
                         type="checkbox"
                         checked={form.coreSubjectIds.includes(subject.id)}
                         onChange={() => toggleSubject(subject.id, "coreSubjectIds")}
-                        className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                        className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                       />
                     </label>
                   ))
@@ -444,26 +442,26 @@ export default function ALevelCombinationsPage() {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold text-slate-900">SUBSIDIARY subjects</h4>
-                  <p className="text-xs text-amber-700">Compulsory — select at least one.</p>
+                  <h3 className="text-sm font-bold text-ink">SUBSIDIARY subjects</h3>
+                  <p className="text-xs text-highlight-ink">Compulsory — select at least one.</p>
                 </div>
-                <span className="text-xs text-slate-500">{form.subsidiarySubjectIds.length} selected</span>
+                <span className="text-xs text-muted">{form.subsidiarySubjectIds.length} selected</span>
               </div>
-              <div className="grid max-h-52 gap-2 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2">
+              <div className="grid max-h-52 gap-2 overflow-y-auto rounded-[10px] border border-line bg-canvas p-2">
                 {activeSubsidiarySubjects.length === 0 ? (
-                  <p className="px-2 py-3 text-sm text-slate-500">No active SUBSIDIARY subjects registered.</p>
+                  <p className="px-2 py-3 text-sm text-muted">No active SUBSIDIARY subjects registered.</p>
                 ) : (
                   activeSubsidiarySubjects.map((subject) => (
-                    <label key={subject.id} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+                    <label key={subject.id} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-line bg-white px-3 py-2 text-sm">
                       <div>
-                        <div className="font-medium text-slate-800">{subject.name}</div>
-                        <div className="text-xs text-slate-500">{subject.code} · {subject.subsidiary_rule ?? "Compulsory for all students"}</div>
+                        <div className="font-medium text-ink">{subject.name}</div>
+                        <div className="text-xs text-muted">{subject.code} · {subject.subsidiary_rule ?? "Compulsory for all students"}</div>
                       </div>
                       <input
                         type="checkbox"
                         checked={form.subsidiarySubjectIds.includes(subject.id)}
                         onChange={() => toggleSubject(subject.id, "subsidiarySubjectIds")}
-                        className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                        className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                       />
                     </label>
                   ))
@@ -474,26 +472,26 @@ export default function ALevelCombinationsPage() {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold text-slate-900">ADDITIONAL CORE subjects</h4>
-                  <p className="text-xs text-slate-500">Optional — attach to this combination when needed.</p>
+                  <h3 className="text-sm font-bold text-ink">ADDITIONAL CORE subjects</h3>
+                  <p className="text-xs text-muted">Optional — attach to this combination when needed.</p>
                 </div>
-                <span className="text-xs text-slate-500">{form.additionalCoreSubjectIds.length} selected</span>
+                <span className="text-xs text-muted">{form.additionalCoreSubjectIds.length} selected</span>
               </div>
-              <div className="grid max-h-52 gap-2 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2">
+              <div className="grid max-h-52 gap-2 overflow-y-auto rounded-[10px] border border-line bg-canvas p-2">
                 {activeAdditionalCoreSubjects.length === 0 ? (
-                  <p className="px-2 py-3 text-sm text-slate-500">No active ADDITIONAL CORE subjects registered.</p>
+                  <p className="px-2 py-3 text-sm text-muted">No active ADDITIONAL CORE subjects registered.</p>
                 ) : (
                   activeAdditionalCoreSubjects.map((subject) => (
-                    <label key={subject.id} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+                    <label key={subject.id} className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-line bg-white px-3 py-2 text-sm">
                       <div>
-                        <div className="font-medium text-slate-800">{subject.name}</div>
-                        <div className="text-xs text-slate-500">{subject.code}</div>
+                        <div className="font-medium text-ink">{subject.name}</div>
+                        <div className="text-xs text-muted">{subject.code}</div>
                       </div>
                       <input
                         type="checkbox"
                         checked={form.additionalCoreSubjectIds.includes(subject.id)}
                         onChange={() => toggleSubject(subject.id, "additionalCoreSubjectIds")}
-                        className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                        className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
                       />
                     </label>
                   ))
@@ -501,21 +499,21 @@ export default function ALevelCombinationsPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div className="flex items-center gap-3 rounded-[10px] border border-line bg-canvas p-3">
               <input
                 id="combo-active"
                 type="checkbox"
                 checked={form.active}
                 onChange={(event) => setForm((current) => ({ ...current, active: event.target.checked }))}
-                className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                className="h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
               />
-              <label htmlFor="combo-active" className="text-sm text-slate-700">Active</label>
+              <label htmlFor="combo-active" className="text-sm text-ink-soft">Active</label>
             </div>
 
             <button
               type="submit"
               disabled={saving}
-              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-60"
+              className="app-btn app-btn-primary w-full"
             >
               {saving ? (
                 <>
@@ -532,41 +530,54 @@ export default function ALevelCombinationsPage() {
           </form>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900">Existing combinations</h3>
-              <p className="text-sm text-slate-500">{combinations.length} combination(s)</p>
+        <section className="app-card min-w-0 overflow-hidden">
+          <div className="app-card-header pb-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-brand-tint text-brand">
+                <BookOpen className="h-4 w-4" />
+              </span>
+              <div>
+                <h2 className="app-card-title">Existing combinations</h2>
+                <p className="app-card-subtitle">All defined A-Level combinations.</p>
+              </div>
             </div>
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center gap-2 px-5 py-12 text-sm text-slate-500">
+            <div className="flex items-center justify-center gap-2 border-t border-line px-5 py-12 text-sm text-muted">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading combinations...
             </div>
           ) : combinations.length === 0 ? (
-            <div className="px-5 py-12 text-center text-sm text-slate-500">No combinations created yet.</div>
+            <div className="border-t border-line p-5">
+              <div className="app-empty">
+                <span className="app-empty-icon">
+                  <BookOpen className="h-5 w-5" />
+                </span>
+                <h3 className="app-empty-title">No combinations yet</h3>
+                <p className="app-empty-text">Create a combination using the form.</p>
+              </div>
+            </div>
           ) : (
-            <div className="space-y-3 p-4">
+            <div className="space-y-3 border-t border-line p-4">
               {combinations.map((combination) => (
-                <div key={combination.id} className="rounded-xl border border-slate-200 p-4">
-                  <div className="flex items-start justify-between gap-4">
+                <div key={combination.id} className="rounded-[10px] border border-line p-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-slate-900">{combination.name}</h4>
-                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${combination.active ? "bg-emerald-50 text-emerald-700" : "bg-slate-200 text-slate-700"}`}>
+                        <h3 className="font-bold text-ink">{combination.name}</h3>
+                        <span className={`app-badge ${combination.active ? "app-badge-success" : "app-badge-neutral"}`}>
                           {combination.active ? "Active" : "Inactive"}
                         </span>
                       </div>
-                      <div className="mt-1 font-mono text-xs text-slate-500">{combination.code}</div>
+                      <div className="mt-1 font-mono text-xs text-muted">{combination.code}</div>
                     </div>
                     <div className="flex gap-2">
-                      <button type="button" onClick={() => loadCombinationForEdit(combination)} className="inline-flex items-center gap-1 rounded-lg border border-violet-200 bg-violet-50 px-2.5 py-1.5 text-xs font-medium text-violet-700 hover:bg-violet-100">
+                      <button type="button" onClick={() => loadCombinationForEdit(combination)} className="app-btn app-btn-secondary app-btn-sm">
                         <Pencil className="h-3.5 w-3.5" />
                         Edit
                       </button>
-                      <button type="button" onClick={() => setDeleteTarget(combination)} className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100">
+                      <button type="button" onClick={() => setDeleteTarget(combination)} className="app-btn app-btn-danger app-btn-sm">
                         <Trash2 className="h-3.5 w-3.5" />
                         Delete
                       </button>
@@ -574,15 +585,15 @@ export default function ALevelCombinationsPage() {
                   </div>
                   <div className="mt-3 grid gap-3 md:grid-cols-3">
                     <div>
-                      <div className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">CORE</div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">CORE</div>
                       <div className="flex flex-wrap gap-2">
                         {combination.coreSubjectIds.length === 0 ? (
-                          <span className="text-xs text-slate-500">None selected</span>
+                          <span className="text-xs text-muted">None selected</span>
                         ) : (
                           subjects
                             .filter((subject) => combination.coreSubjectIds.includes(subject.id))
                             .map((subject) => (
-                              <span key={subject.id} className="rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
+                              <span key={subject.id} className="app-badge app-badge-neutral">
                                 {subject.code}
                               </span>
                             ))
@@ -590,15 +601,15 @@ export default function ALevelCombinationsPage() {
                       </div>
                     </div>
                     <div>
-                      <div className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">SUBSIDIARY</div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">SUBSIDIARY</div>
                       <div className="flex flex-wrap gap-2">
                         {combination.subsidiarySubjectIds.length === 0 ? (
-                          <span className="text-xs text-slate-500">None selected</span>
+                          <span className="text-xs text-muted">None selected</span>
                         ) : (
                           subjects
                             .filter((subject) => combination.subsidiarySubjectIds.includes(subject.id))
                             .map((subject) => (
-                              <span key={subject.id} className="rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700">
+                              <span key={subject.id} className="app-badge app-badge-warning">
                                 {subject.code}
                               </span>
                             ))
@@ -606,15 +617,15 @@ export default function ALevelCombinationsPage() {
                       </div>
                     </div>
                     <div>
-                      <div className="mb-1 text-[11px] uppercase tracking-wide text-slate-500">ADDITIONAL CORE</div>
+                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">ADDITIONAL CORE</div>
                       <div className="flex flex-wrap gap-2">
                         {combination.additionalCoreSubjectIds.length === 0 ? (
-                          <span className="text-xs text-slate-500">None selected</span>
+                          <span className="text-xs text-muted">None selected</span>
                         ) : (
                           subjects
                             .filter((subject) => combination.additionalCoreSubjectIds.includes(subject.id))
                             .map((subject) => (
-                              <span key={subject.id} className="rounded-full bg-violet-50 px-2 py-1 text-xs font-medium text-violet-700">
+                              <span key={subject.id} className="app-badge app-badge-neutral">
                                 {subject.code}
                               </span>
                             ))
@@ -630,15 +641,15 @@ export default function ALevelCombinationsPage() {
       </div>
 
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl">
-            <h3 className="text-lg font-semibold text-slate-900">Delete combination</h3>
-            <p className="mt-2 text-sm text-slate-600">
-              Are you sure you want to delete <span className="font-semibold text-slate-900">{deleteTarget.name}</span>? This removes the combination definition from the system.
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-0 sm:items-center sm:p-4">
+          <div className="w-full max-w-md rounded-t-[14px] border border-line bg-white p-5 shadow-xl sm:rounded-[14px] sm:p-6">
+            <h3 className="app-card-title">Delete combination</h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              Are you sure you want to delete <span className="font-semibold text-ink">{deleteTarget.name}</span>? This removes the combination definition from the system.
             </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setDeleteTarget(null)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">Cancel</button>
-              <button type="button" onClick={() => void handleDelete(deleteTarget)} disabled={deleting} className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white disabled:opacity-60">
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button type="button" onClick={() => setDeleteTarget(null)} className="app-btn app-btn-secondary">Cancel</button>
+              <button type="button" onClick={() => void handleDelete(deleteTarget)} disabled={deleting} className="app-btn app-btn-danger">
                 {deleting ? "Deleting..." : "Delete"}
               </button>
             </div>

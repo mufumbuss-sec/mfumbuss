@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { ArrowRight, ClipboardList } from "@/components/ui/lucide-icons";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sortStudentsForDisplay } from "@/lib/student-sort";
 import { ISALDocument } from "@/components/dashboard/isal-document";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 async function ensureAuthorized() {
   await connection();
@@ -119,61 +122,65 @@ export async function ISALListPage({
 
   if (subjectsError) throw new Error(subjectsError.message);
 
-  const subjectCounts: Record<string, number> = {};
-  for (const subject of subjects ?? []) {
-    const students = await getEligibleStudents(admin, exam.class_form, subject.id);
-    subjectCounts[subject.id] = students.length;
-  }
-
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-4 px-4 py-5">
-      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-        <Link
-          href={`${dashboardBase}/exams`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
-          Back to exams
-        </Link>
-      </div>
+    <div className="mx-auto w-full max-w-6xl space-y-5">
+      <PageHeader
+        title="ISAL"
+        subtitle="Subject attendance lists for this examination."
+        action={
+          <Link
+            href={`${dashboardBase}/exams`}
+            className="app-btn app-btn-secondary"
+          >
+            <ArrowRight className="h-4 w-4 rotate-180" />
+            Back to exams
+          </Link>
+        }
+      />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">ISAL</p>
-        <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-900">{exam.name}</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          {exam.class_form} · {exam.term} · {exam.academic_year}
-        </p>
-
-        {(!subjects || subjects.length === 0) ? (
-          <div className="mt-6 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-600">
-            No subjects are registered for this examination.
+      <section className="app-card">
+        <div className="app-card-header border-b border-line pb-4">
+          <div className="min-w-0">
+            <h2 className="app-card-title">{exam.name}</h2>
+            <p className="app-card-subtitle">
+              {exam.class_form} · {exam.term} · {exam.academic_year}
+            </p>
           </div>
-        ) : (
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {subjects.map((subject) => (
-              <Link
-                key={subject.id}
-                href={`${dashboardBase}/exams/${exam.id}/isal/${subject.id}`}
-                className="group rounded-xl border border-slate-200 bg-slate-50 p-4 text-left transition hover:border-blue-300 hover:bg-blue-50/40"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
-                      {subject.subject_code ?? "SUBJECT"}
+        </div>
+
+        <div className="app-card-body">
+          {!subjects || subjects.length === 0 ? (
+            <EmptyState
+              icon={ClipboardList}
+              title="No subjects registered"
+              description="Add subjects to this examination to open attendance lists."
+            />
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {subjects.map((subject) => (
+                <Link
+                  key={subject.id}
+                  href={`${dashboardBase}/exams/${exam.id}/isal/${subject.id}`}
+                  className="group flex flex-col justify-between rounded-xl border border-line bg-white p-4 text-left transition hover:border-brand-light hover:bg-brand-tint"
+                >
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
+                      {subject.subject_code ?? "Subject"}
                     </p>
-                    <h2 className="mt-1 text-base font-bold text-slate-900 group-hover:text-blue-800">
+                    <h3 className="mt-1 text-[15px] font-bold text-ink group-hover:text-brand-dark">
                       {subject.name}
-                    </h2>
+                    </h3>
                   </div>
-                  <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-slate-700 ring-1 ring-slate-200">
-                    {subjectCounts[subject.id] ?? 0}
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand">
+                    Open attendance list
+                    <ArrowRight className="h-4 w-4" />
                   </span>
-                </div>
-                <p className="mt-4 text-sm text-slate-600">Open attendance list</p>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

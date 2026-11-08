@@ -1,23 +1,271 @@
 @import "tailwindcss";
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* --------------------------------------------------------------------------
+   Mufumbu design tokens
+   Every visual value in the app comes from this single block.
+   -------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f7f6;
+  --foreground: #17332e;
+
+  --brand: #0f5c50;
+  --brand-dark: #0b4f43;
+  --brand-deep: #083d34;
+  --brand-soft: #dcf1ea;
+  --brand-tint: #eef6f4;
+  --brand-mid: #0f7a68;
+  --brand-light: #4fb3a0;
+
+  --ink: #17332e;
+  --ink-soft: #2f4a45;
+  --muted: #4b6560;
+  --line: #dce6e3;
+  --line-strong: #c5d4d0;
+  --canvas: #f3f7f6;
+
+  --accent: #f2a33a;
+  --accent-ink: #3b2400;
+  --highlight: #fdf0d5;
+  --highlight-line: #f2d9a0;
+  --highlight-ink: #6b4300;
+
+  --success: #dcf3e8;
+  --success-ink: #0b5a3a;
+  --danger: #fdecea;
+  --danger-ink: #9b1c1c;
+  --danger-line: #f5bdb7;
+
+  --chart-1: #0f7a68;
+  --chart-2: #4fb3a0;
+  --chart-3: #f2a33a;
+  --chart-4: #c9622f;
+
+  --radius-control: 10px;
+  --radius-card: 14px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  /* Brand and semantic colours */
+  --color-brand: #0f5c50;
+  --color-brand-dark: #0b4f43;
+  --color-brand-deep: #083d34;
+  --color-brand-soft: #dcf1ea;
+  --color-brand-tint: #eef6f4;
+  --color-brand-mid: #0f7a68;
+  --color-brand-light: #4fb3a0;
+  --color-ink: #17332e;
+  --color-ink-soft: #2f4a45;
+  --color-muted: #4b6560;
+  --color-line: #dce6e3;
+  --color-line-strong: #c5d4d0;
+  --color-canvas: #f3f7f6;
+  --color-accent: #f2a33a;
+  --color-accent-ink: #3b2400;
+  --color-highlight: #fdf0d5;
+  --color-highlight-line: #f2d9a0;
+  --color-highlight-ink: #6b4300;
+  --color-success: #dcf3e8;
+  --color-success-ink: #0b5a3a;
+  --color-danger: #fdecea;
+  --color-danger-ink: #9b1c1c;
+  --color-danger-line: #f5bdb7;
+
+  /* Neutral scale (slate + gray share the teal-tinted neutral ramp) */
+  --color-slate-50: #f3f7f6;
+  --color-slate-100: #eef3f1;
+  --color-slate-200: #dce6e3;
+  --color-slate-300: #c5d4d0;
+  --color-slate-400: #8fa5a0;
+  --color-slate-500: #4b6560;
+  --color-slate-600: #3f5a54;
+  --color-slate-700: #2f4a45;
+  --color-slate-800: #23403a;
+  --color-slate-900: #17332e;
+  --color-slate-950: #102722;
+
+  --color-gray-50: #f3f7f6;
+  --color-gray-100: #eef3f1;
+  --color-gray-200: #dce6e3;
+  --color-gray-300: #c5d4d0;
+  --color-gray-400: #8fa5a0;
+  --color-gray-500: #4b6560;
+  --color-gray-600: #3f5a54;
+  --color-gray-700: #2f4a45;
+  --color-gray-800: #23403a;
+  --color-gray-900: #17332e;
+  --color-gray-950: #102722;
+
+  /* Primary teal ramp (blue + indigo) */
+  --color-blue-50: #eef6f4;
+  --color-blue-100: #dcf1ea;
+  --color-blue-200: #c5e5dc;
+  --color-blue-300: #9fd4c8;
+  --color-blue-400: #4fb3a0;
+  --color-blue-500: #0f7a68;
+  --color-blue-600: #0f6b5c;
+  --color-blue-700: #0f5c50;
+  --color-blue-800: #0b4f43;
+  --color-blue-900: #083d34;
+  --color-blue-950: #062e27;
+
+  --color-indigo-50: #eef6f4;
+  --color-indigo-100: #dcf1ea;
+  --color-indigo-200: #c5e5dc;
+  --color-indigo-300: #9fd4c8;
+  --color-indigo-400: #4fb3a0;
+  --color-indigo-500: #0f7a68;
+  --color-indigo-600: #0f6b5c;
+  --color-indigo-700: #0f5c50;
+  --color-indigo-800: #0b4f43;
+  --color-indigo-900: #083d34;
+  --color-indigo-950: #062e27;
+
+  /* Success ramp (emerald + green) */
+  --color-emerald-50: #dcf3e8;
+  --color-emerald-100: #c9ebdd;
+  --color-emerald-200: #a9ddcb;
+  --color-emerald-300: #7ccbb1;
+  --color-emerald-400: #4fb3a0;
+  --color-emerald-500: #0f7a68;
+  --color-emerald-600: #0f6b5c;
+  --color-emerald-700: #0b5a3a;
+  --color-emerald-800: #0b5a3a;
+  --color-emerald-900: #08452d;
+  --color-emerald-950: #063622;
+
+  --color-green-50: #dcf3e8;
+  --color-green-100: #c9ebdd;
+  --color-green-200: #a9ddcb;
+  --color-green-300: #7ccbb1;
+  --color-green-400: #4fb3a0;
+  --color-green-500: #0f7a68;
+  --color-green-600: #0f6b5c;
+  --color-green-700: #0b5a3a;
+  --color-green-800: #0b5a3a;
+  --color-green-900: #08452d;
+
+  /* Highlight ramp (amber + yellow + orange) */
+  --color-amber-50: #fdf0d5;
+  --color-amber-100: #fbe7c2;
+  --color-amber-200: #f2d9a0;
+  --color-amber-300: #f2c47a;
+  --color-amber-400: #f2a33a;
+  --color-amber-500: #e89324;
+  --color-amber-600: #c97a17;
+  --color-amber-700: #6b4300;
+  --color-amber-800: #6b4300;
+  --color-amber-900: #5a3800;
+  --color-amber-950: #422900;
+
+  --color-yellow-50: #fdf0d5;
+  --color-yellow-100: #fbe7c2;
+  --color-yellow-200: #f2d9a0;
+  --color-yellow-300: #f2c47a;
+  --color-yellow-400: #f2a33a;
+  --color-yellow-500: #e89324;
+  --color-yellow-600: #c97a17;
+  --color-yellow-700: #6b4300;
+  --color-yellow-800: #6b4300;
+  --color-yellow-900: #5a3800;
+
+  --color-orange-50: #fdf0d5;
+  --color-orange-100: #fbe7c2;
+  --color-orange-200: #f2d9a0;
+  --color-orange-300: #f2c47a;
+  --color-orange-400: #f2a33a;
+  --color-orange-500: #c9622f;
+  --color-orange-600: #b05526;
+  --color-orange-700: #6b4300;
+  --color-orange-800: #6b4300;
+  --color-orange-900: #5a3800;
+
+  /* Danger ramp (rose + red) */
+  --color-rose-50: #fdecea;
+  --color-rose-100: #fbdad6;
+  --color-rose-200: #f5bdb7;
+  --color-rose-300: #ee9b92;
+  --color-rose-400: #e06b5f;
+  --color-rose-500: #c94a3e;
+  --color-rose-600: #b23a30;
+  --color-rose-700: #9b1c1c;
+  --color-rose-800: #821717;
+  --color-rose-900: #6b1414;
+  --color-rose-950: #4f0f0f;
+
+  --color-red-50: #fdecea;
+  --color-red-100: #fbdad6;
+  --color-red-200: #f5bdb7;
+  --color-red-300: #ee9b92;
+  --color-red-400: #e06b5f;
+  --color-red-500: #c94a3e;
+  --color-red-600: #b23a30;
+  --color-red-700: #9b1c1c;
+  --color-red-800: #821717;
+  --color-red-900: #6b1414;
+
+  /* Secondary teal ramp (violet, teal, sky, cyan) */
+  --color-violet-50: #eaf3f1;
+  --color-violet-100: #d9eae6;
+  --color-violet-200: #bbd8d1;
+  --color-violet-300: #93c1b6;
+  --color-violet-400: #6aa99c;
+  --color-violet-500: #4a8f82;
+  --color-violet-600: #3a7a6e;
+  --color-violet-700: #2f665c;
+  --color-violet-800: #28564e;
+  --color-violet-900: #214740;
+  --color-violet-950: #16332e;
+
+  --color-teal-50: #eef6f4;
+  --color-teal-100: #dcf1ea;
+  --color-teal-200: #c5e5dc;
+  --color-teal-300: #9fd4c8;
+  --color-teal-400: #4fb3a0;
+  --color-teal-500: #0f7a68;
+  --color-teal-600: #0f6b5c;
+  --color-teal-700: #0f5c50;
+  --color-teal-800: #0b4f43;
+  --color-teal-900: #083d34;
+
+  --color-sky-50: #eef6f4;
+  --color-sky-100: #dcf1ea;
+  --color-sky-200: #c5e5dc;
+  --color-sky-300: #9fd4c8;
+  --color-sky-400: #4fb3a0;
+  --color-sky-500: #0f7a68;
+  --color-sky-600: #0f6b5c;
+  --color-sky-700: #0f5c50;
+  --color-sky-800: #0b4f43;
+  --color-sky-900: #083d34;
+
+  --color-cyan-50: #eef6f4;
+  --color-cyan-100: #dcf1ea;
+  --color-cyan-200: #c5e5dc;
+  --color-cyan-300: #9fd4c8;
+  --color-cyan-400: #4fb3a0;
+  --color-cyan-500: #0f7a68;
+  --color-cyan-600: #0f6b5c;
+  --color-cyan-700: #0f5c50;
+  --color-cyan-800: #0b4f43;
+  --color-cyan-900: #083d34;
+
+  /* Shape and elevation */
+  --radius-lg: 10px;
+  --radius-xl: 10px;
+  --radius-2xl: 14px;
+  --radius-3xl: 18px;
+  --shadow-sm: 0 1px 2px rgba(15, 92, 80, 0.05);
+  --shadow-md: 0 6px 18px -10px rgba(15, 92, 80, 0.22);
+  --shadow-lg: 0 18px 40px -22px rgba(15, 92, 80, 0.28);
+  --shadow-xl: 0 24px 50px -24px rgba(15, 92, 80, 0.32);
 }
 
 * {
@@ -33,7 +281,325 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* --------------------------------------------------------------------------
+   Shared presentation primitives
+   -------------------------------------------------------------------------- */
+@layer components {
+  .app-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .app-page-title {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .app-page-subtitle {
+    margin: 5px 0 0;
+    max-width: 64ch;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .app-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+  }
+
+  .app-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 20px 0;
+  }
+
+  .app-card-title {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .app-card-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .app-card-body {
+    padding: 20px;
+  }
+
+  .app-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .app-input,
+  .app-select,
+  .app-textarea {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-control);
+    background: #ffffff;
+    padding: 0 12px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+  }
+
+  .app-textarea {
+    min-height: 110px;
+    padding: 10px 12px;
+    resize: vertical;
+  }
+
+  .app-input::placeholder,
+  .app-textarea::placeholder {
+    color: #8fa5a0;
+  }
+
+  .app-input:focus,
+  .app-select:focus,
+  .app-textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(15, 92, 80, 0.13);
+  }
+
+  .app-error {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--danger-ink);
+  }
+
+  .app-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-control);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease,
+      transform 150ms ease;
+  }
+
+  .app-btn:disabled,
+  .app-btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .app-btn-primary {
+    background: var(--brand);
+    color: #ffffff;
+  }
+
+  .app-btn-primary:hover:not(:disabled) {
+    background: var(--brand-dark);
+  }
+
+  .app-btn-secondary {
+    background: #ffffff;
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+
+  .app-btn-secondary:hover:not(:disabled) {
+    background: var(--brand-tint);
+  }
+
+  .app-btn-danger {
+    background: var(--danger);
+    border-color: var(--danger-line);
+    color: var(--danger-ink);
+  }
+
+  .app-btn-danger:hover:not(:disabled) {
+    background: #fbdad6;
+  }
+
+  .app-btn-sm {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  .app-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.45;
+    white-space: nowrap;
+  }
+
+  .app-badge-success {
+    background: var(--success);
+    color: var(--success-ink);
+  }
+
+  .app-badge-warning {
+    background: var(--highlight);
+    color: var(--highlight-ink);
+  }
+
+  .app-badge-danger {
+    background: var(--danger);
+    color: var(--danger-ink);
+  }
+
+  .app-badge-neutral {
+    background: var(--brand-tint);
+    color: var(--brand-dark);
+  }
+
+  .app-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .app-table thead th {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .app-table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #eef3f1;
+    font-size: 14px;
+    color: var(--ink);
+    vertical-align: middle;
+  }
+
+  .app-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .app-table tbody tr:hover {
+    background: #f8fbfa;
+  }
+
+  .app-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-card);
+    background: #f8fbfa;
+    text-align: center;
+  }
+
+  .app-empty-icon {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--brand-tint);
+    color: var(--brand);
+  }
+
+  .app-empty-title {
+    margin: 14px 0 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .app-empty-text {
+    margin: 4px 0 0;
+    max-width: 46ch;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .app-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    font-weight: 700;
+  }
+
+  .app-stat-card {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    padding: 18px;
+  }
+
+  .app-stat-label {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .app-stat-value {
+    margin: 6px 0 0;
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--brand);
+  }
+
+  .app-stat-card-highlight {
+    background: var(--highlight);
+    border-color: var(--highlight-line);
+  }
+
+  .app-stat-card-highlight .app-stat-label,
+  .app-stat-card-highlight .app-stat-value {
+    color: var(--highlight-ink);
+  }
 }
 
 a[href]:not([aria-disabled="true"]),
