@@ -17,6 +17,7 @@ type SubjectResult = {
   subject_id: string;
   subject: string;
   code?: string;
+  subject_type?: string | null;
   has_practical?: boolean;
   theory: number | null;
   practical: number | null;
@@ -62,6 +63,7 @@ type Subject = {
   name: string;
   subject_code: string;
   has_practical: boolean;
+  subject_type?: string | null;
   registered: number;
 };
 
@@ -96,12 +98,23 @@ type ResultsResponse = {
   results: Result[];
 };
 
-const GRADES = ["A", "B", "C", "D", "F"] as const;
+const A_LEVEL_FORMS = new Set(["Form V", "Form VI"]);
+const O_LEVEL_GRADES = ["A", "B", "C", "D", "F"] as const;
+const A_LEVEL_GRADES = ["A", "B", "C", "D", "E", "S", "F"] as const;
 const DIVISIONS = ["DIV I", "DIV II", "DIV III", "DIV IV", "DIV 0"];
 const inputClass = "app-input";
 
-function gradeFor(percentage: number) {
+function gradeFor(percentage: number, aLevel = false) {
   const mark = Math.floor(percentage);
+  if (aLevel) {
+    if (mark >= 80) return "A";
+    if (mark >= 70) return "B";
+    if (mark >= 60) return "C";
+    if (mark >= 50) return "D";
+    if (mark >= 40) return "E";
+    if (mark >= 35) return "S";
+    return "F";
+  }
   if (mark >= 75) return "A";
   if (mark >= 65) return "B";
   if (mark >= 45) return "C";
@@ -109,23 +122,40 @@ function gradeFor(percentage: number) {
   return "F";
 }
 
-function pointsFor(grade: string) {
-  return ({ A: 1, B: 2, C: 3, D: 4, F: 5 } as Record<string, number>)[grade] ?? null;
+function pointsFor(grade: string, aLevel = false) {
+  return (
+    aLevel
+      ? ({ A: 1, B: 2, C: 3, D: 4, E: 5, S: 6, F: 7 } as Record<string, number>)
+      : ({ A: 1, B: 2, C: 3, D: 4, F: 5 } as Record<string, number>)
+  )[grade] ?? null;
 }
 
-function bestSevenPoints(subjects: Array<{ points: number | null; percentage: number | null }>) {
+function bestPoints(
+  subjects: Array<{ points: number | null; percentage: number | null }>,
+  count: number,
+  aLevel = false,
+) {
   const ranked = [...subjects]
     .filter((subject) => subject.points !== null && subject.percentage !== null)
-    .sort(
-      (a, b) =>
-        (b.percentage ?? 0) - (a.percentage ?? 0) ||
-        (b.points ?? 0) - (a.points ?? 0),
+    .sort((a, b) =>
+      aLevel
+        ? (a.points ?? 99) - (b.points ?? 99) ||
+          (b.percentage ?? 0) - (a.percentage ?? 0)
+        : (b.percentage ?? 0) - (a.percentage ?? 0) ||
+          (b.points ?? 0) - (a.points ?? 0),
     )
-    .slice(0, 7);
+    .slice(0, count);
   return ranked.reduce((sum, subject) => sum + (subject.points ?? 0), 0);
 }
 
-function divisionFor(points: number) {
+function divisionFor(points: number, aLevel = false) {
+  if (aLevel) {
+    if (points >= 3 && points <= 9) return "DIV I";
+    if (points >= 10 && points <= 12) return "DIV II";
+    if (points >= 13 && points <= 17) return "DIV III";
+    if (points >= 18 && points <= 19) return "DIV IV";
+    return "DIV 0";
+  }
   if (points >= 7 && points <= 17) return "DIV I";
   if (points >= 18 && points <= 21) return "DIV II";
   if (points >= 22 && points <= 25) return "DIV III";
@@ -138,6 +168,8 @@ function remarksForGrade(grade: string) {
   if (grade === "B") return "Very Good";
   if (grade === "C") return "Good";
   if (grade === "D") return "Satisfactory";
+  if (grade === "E") return "Average";
+  if (grade === "S") return "Subsidiary Pass";
   if (grade === "F") return "Unsatisfactory";
   if (grade === "ABS") return "Absent";
   return "—";
@@ -174,6 +206,8 @@ export function ExamResultsPage({
   const [divisionFilter, setDivisionFilter] = useState("All");
   const [sexFilter, setSexFilter] = useState("All");
   const [generatedAt, setGeneratedAt] = useState("");
+  const isALevel = Boolean(exam && A_LEVEL_FORMS.has(exam.class_form));
+  const gradeColumns = isALevel ? A_LEVEL_GRADES : O_LEVEL_GRADES;
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -307,16 +341,17 @@ export function ExamResultsPage({
           const maximum = hasPractical ? 150 : 100;
           const percentage =
             score === null ? null : Math.round((score / maximum) * 10000) / 100;
-          const grade = percentage === null ? "—" : gradeFor(percentage);
+          const grade = percentage === null ? "—" : gradeFor(percentage, isALevel);
           return {
             ...entry,
             subject: metadata?.name ?? entry.subject,
             code: metadata?.subject_code ?? entry.code ?? "",
+            subject_type: metadata?.subject_type ?? entry.subject_type ?? null,
             has_practical: hasPractical,
             total: score,
             percentage,
             grade,
-            points: pointsFor(grade),
+            points: pointsFor(grade, isALevel),
             absent,
             missing,
           };
@@ -342,41 +377,31 @@ export function ExamResultsPage({
         satPoints.length > 0
           ? Math.round((satPoints.reduce((sum, point) => sum + point, 0) / satPoints.length) * 100) / 100
           : null;
+      const requiredSubjects = isALevel ? 3 : 7;
+      const countableSubjects = isALevel
+        ? sat.filter((subject) => subject.subject_type !== "SUBSIDIARY")
+        : sat;
       const hasNoValidScores = sat.length === 0;
-      const isIncomplete = !hasNoValidScores && sat.length < 7 && sat.length > 0;
-      const bestSeven = sat
-        .slice()
-        .sort(
-          (a, b) =>
-            (b.percentage ?? 0) - (a.percentage ?? 0) ||
-            (b.points ?? 0) - (a.points ?? 0),
-        )
-        .slice(0, 7);
-      const points = hasNoValidScores || isIncomplete
-        ? null
-        : bestSeven.reduce((sum, subject) => sum + (subject.points ?? 0), 0);
+      const isIncomplete =
+        !hasNoValidScores && countableSubjects.length < requiredSubjects;
+      const points =
+        hasNoValidScores || isIncomplete
+          ? null
+          : bestPoints(countableSubjects, requiredSubjects, isALevel);
       const displayGrade = hasNoValidScores
         ? "ABS"
         : isIncomplete
           ? "INC"
           : average === null
             ? "—"
-            : gradeFor(average);
+            : gradeFor(average, isALevel);
       const division = hasNoValidScores
         ? "ABS"
         : isIncomplete
           ? "INC"
-          : points !== null && points >= 7 && points <= 17
-            ? "DIV I"
-            : points !== null && points >= 18 && points <= 21
-              ? "DIV II"
-              : points !== null && points >= 22 && points <= 25
-                ? "DIV III"
-                : points !== null && points >= 26 && points <= 33
-                  ? "DIV IV"
-                  : points !== null
-                    ? "DIV 0"
-                    : "INC";
+          : points !== null
+            ? divisionFor(points, isALevel)
+            : "INC";
       const subjectBreakdown = breakdown.map((subject) => ({
         ...subject,
         grade: hasNoValidScores ? "X" : subject.absent || subject.missing ? "ABS" : subject.grade,
@@ -422,7 +447,7 @@ export function ExamResultsPage({
       ...result,
       position: rankedByPosition.get(result.student_id) ?? null,
     }));
-  }, [exam?.has_practical, results, subjects]);
+  }, [exam?.has_practical, isALevel, results, subjects]);
 
   const filteredRows = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -479,8 +504,8 @@ export function ExamResultsPage({
       gpas.length > 0
         ? Math.round((gpas.reduce((sum, value) => sum + value, 0) / gpas.length) * 100) / 100
         : null;
-    return { average, grade: average === null ? "—" : gradeFor(average), gpa };
-  }, [rankableRows]);
+    return { average, grade: average === null ? "—" : gradeFor(average, isALevel), gpa };
+  }, [isALevel, rankableRows]);
 
   const subjectPerformance = useMemo(() => {
     const summaries: SubjectPerformance[] = subjects.map((subject) => {
@@ -495,7 +520,7 @@ export function ExamResultsPage({
         percentages.length > 0
           ? Math.round((percentages.reduce((sum, value) => sum + value, 0) / percentages.length) * 100) / 100
           : null;
-      const grade = average === null ? "—" : gradeFor(average);
+      const grade = average === null ? "—" : gradeFor(average, isALevel);
       const points = entries
         .map(({ result }) => result.points)
         .filter((value): value is number => value !== null);
@@ -504,7 +529,7 @@ export function ExamResultsPage({
           ? Math.round((points.reduce((sum, value) => sum + value, 0) / points.length) * 100) / 100
           : null;
       const grades = Object.fromEntries(
-        GRADES.map((item) => [
+        gradeColumns.map((item) => [
           item,
           {
             F: entries.filter(({ student, result }) => student.student?.sex === "F" && result.grade === item).length,
@@ -525,7 +550,7 @@ export function ExamResultsPage({
       };
     });
     return summaries.sort((a, b) => (b.average ?? -1) - (a.average ?? -1) || a.subject.name.localeCompare(b.subject.name));
-  }, [reportRows, subjects]);
+  }, [gradeColumns, isALevel, reportRows, subjects]);
 
   function chooseExam(nextExamId: string) {
     const next = exams.find((item) => item.id === nextExamId);
@@ -605,11 +630,11 @@ export function ExamResultsPage({
       ]),
       [],
       ["SUBJECT PERFORMANCE SUMMARY"],
-      ["#", "SUBJECT", ...GRADES.flatMap((grade) => [`${grade} F`, `${grade} M`, `${grade} T`]), "AVG", "GRADE", "REG", "SAT", "PASS", "GPA", "REMARKS"],
+      ["#", "SUBJECT", ...gradeColumns.flatMap((grade) => [`${grade} F`, `${grade} M`, `${grade} T`]), "AVG", "GRADE", "REG", "SAT", "PASS", "GPA", "REMARKS"],
       ...subjectPerformance.map((item, index) => [
         index + 1,
         `${item.subject.subject_code} — ${item.subject.name}`,
-        ...GRADES.flatMap((grade) => [item.grades[grade].F, item.grades[grade].M, item.grades[grade].T]),
+        ...gradeColumns.flatMap((grade) => [item.grades[grade].F, item.grades[grade].M, item.grades[grade].T]),
         item.average ?? "",
         item.grade,
         item.subject.registered,
@@ -872,7 +897,7 @@ export function ExamResultsPage({
                 <colgroup>
                   <col className="w-[3%]" />
                   <col className="w-[17%]" />
-                  {GRADES.map((grade) => (
+                  {gradeColumns.map((grade) => (
                     <Fragment key={grade}>
                       <col className="w-[2.9%]" />
                       <col className="w-[2.9%]" />
@@ -891,7 +916,7 @@ export function ExamResultsPage({
                   <tr>
                     <th rowSpan={2} className="px-0.5 py-1">#</th>
                     <th rowSpan={2} className="px-1 py-1 text-left">SUBJECT</th>
-                    {GRADES.map((grade) => (
+                    {gradeColumns.map((grade) => (
                       <th key={grade} colSpan={3} className="border-l border-slate-600 px-0.5 py-1 dark:border-slate-500">{grade}</th>
                     ))}
                     <th rowSpan={2} className="border-l border-slate-600 px-0.5 py-1 dark:border-slate-500">AVG</th>
@@ -903,7 +928,7 @@ export function ExamResultsPage({
                     <th rowSpan={2} className="px-0.5 py-1">REMARKS</th>
                   </tr>
                   <tr>
-                    {GRADES.map((grade) => (
+                    {gradeColumns.map((grade) => (
                       <Fragment key={grade}>
                         <th className="border-l border-slate-600 px-0.5 py-0.5 text-[9px] font-normal dark:border-slate-500">F</th>
                         <th className="px-0.5 py-0.5 text-[9px] font-normal">M</th>
@@ -917,7 +942,7 @@ export function ExamResultsPage({
                     <tr key={item.subject.id} className="border-t border-slate-200 odd:bg-slate-50 dark:border-slate-700 dark:odd:bg-slate-800/60">
                       <td className="px-0.5 py-1">{index + 1}</td>
                       <td className="break-words px-1 py-1 text-left font-semibold">{item.subject.subject_code} — {item.subject.name}</td>
-                      {GRADES.map((grade) => (
+                      {gradeColumns.map((grade) => (
                         <Fragment key={grade}>
                           <td className="border-l border-slate-200 px-0.5 py-1 dark:border-slate-700">{item.grades[grade].F}</td>
                           <td className="px-0.5 py-1">{item.grades[grade].M}</td>
@@ -956,7 +981,7 @@ export function ExamResultsPage({
                     <p><span className="text-slate-500">GPA:</span> {item.gpa === null ? "—" : item.gpa.toFixed(2)}</p>
                   </div>
                   <div className="mt-2 grid grid-cols-3 gap-1 border-t border-slate-200 pt-1.5 dark:border-slate-700 sm:grid-cols-5">
-                    {GRADES.map((grade) => (
+                    {gradeColumns.map((grade) => (
                       <div key={grade} className="min-w-0 text-center text-[10px]">
                         <p className="mb-0.5 font-bold">{grade}</p>
                         <p className="break-words text-slate-600 dark:text-slate-300">

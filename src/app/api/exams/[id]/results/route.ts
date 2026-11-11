@@ -7,6 +7,8 @@ type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
+const A_LEVEL_FORMS = new Set(["Form V", "Form VI"]);
+
 export async function GET(_request: Request, { params }: RouteContext) {
   const supabase = await createClient();
   const {
@@ -70,6 +72,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: studentsError.message }, { status: 500 });
   }
 
+  const isALevel = A_LEVEL_FORMS.has(exam.class_form);
+  const examSubjectTable = isALevel ? "a_level_exam_subjects" : "exam_subjects";
+
   const [
     { data: school, error: schoolError },
     { data: examSubjects, error: examSubjectsError },
@@ -79,7 +84,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
       .select("school_name, district, address")
       .eq("id", 1)
       .maybeSingle(),
-    admin.from("exam_subjects").select("subject_id").eq("exam_id", id),
+    admin.from(examSubjectTable).select("subject_id").eq("exam_id", id),
   ]);
   const metadataError = schoolError || examSubjectsError;
   if (metadataError) {
@@ -87,15 +92,47 @@ export async function GET(_request: Request, { params }: RouteContext) {
   }
 
   const subjectIds = (examSubjects ?? []).map((item) => item.subject_id);
-  const { data: subjectRows, error: subjectRowsError } = subjectIds.length
-    ? await admin
+  let subjectRows: Array<{
+    id: string;
+    name: string;
+    subject_code: string;
+    has_practical: boolean;
+    subject_type: string | null;
+  }> = [];
+  if (subjectIds.length > 0) {
+    if (isALevel) {
+      const { data, error } = await admin
+        .from("a_level_subjects")
+        .select("id, name, code, has_practical, subject_type")
+        .in("id", subjectIds)
+        .order("name");
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      subjectRows = (data ?? []).map((subject) => ({
+        id: subject.id,
+        name: subject.name,
+        subject_code: subject.code,
+        has_practical: Boolean(subject.has_practical),
+        subject_type: subject.subject_type,
+      }));
+    } else {
+      const { data, error } = await admin
         .from("subjects")
         .select("id, name, subject_code, has_practical")
         .in("id", subjectIds)
-        .order("name")
-    : { data: [], error: null };
-  if (subjectRowsError) {
-    return NextResponse.json({ error: subjectRowsError.message }, { status: 500 });
+        .order("name");
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      subjectRows = (data ?? []).map((subject) => ({
+        id: subject.id,
+        name: subject.name,
+        subject_code: subject.subject_code,
+        has_practical: Boolean(subject.has_practical),
+        subject_type: null,
+      }));
+    }
   }
 
   const registeredCounts = new Map<string, number>();
@@ -111,7 +148,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
       );
     }
   }
-  const subjects = (subjectRows ?? []).map((subject) => ({
+  const subjects = subjectRows.map((subject) => ({
     ...subject,
     registered: registeredCounts.get(subject.id) ?? 0,
   }));

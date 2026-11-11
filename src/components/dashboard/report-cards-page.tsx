@@ -106,12 +106,14 @@ type SubjectRow = {
   remark: string;
 };
 
-const GRADE_POINTS: Record<string, number> = { A: 1, B: 2, C: 3, D: 4, F: 5 };
+const GRADE_POINTS: Record<string, number> = { A: 1, B: 2, C: 3, D: 4, E: 5, S: 6, F: 7 };
 const GRADE_REMARKS: Record<string, string> = {
   A: "Bora",
   B: "Nzuri Sana",
   C: "Nzuri",
   D: "Inaridhisha",
+  E: "Wastani",
+  S: "Ufaulu wa Ziada",
   F: "Inahitaji Kuboreshwa",
 };
 const GRADE_CELL_CLASS: Record<string, string> = {
@@ -119,6 +121,8 @@ const GRADE_CELL_CLASS: Record<string, string> = {
   B: "grade-b bg-blue-100 text-blue-900 dark:bg-blue-900/50 dark:text-blue-100",
   C: "grade-c bg-yellow-100 text-yellow-900 dark:bg-yellow-900/50 dark:text-yellow-100",
   D: "grade-d bg-orange-100 text-orange-900 dark:bg-orange-900/50 dark:text-orange-100",
+  E: "grade-d bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-100",
+  S: "grade-d bg-lime-100 text-lime-900 dark:bg-lime-900/50 dark:text-lime-100",
   F: "grade-f bg-red-100 text-red-900 dark:bg-red-900/50 dark:text-red-100",
 };
 const BEHAVIOUR_ITEMS = [
@@ -342,14 +346,19 @@ function subjectsFor(result: StoredResult, subjects: SubjectMeta[]): SubjectRow[
     )
     .map((entry) => {
       const mark = entry.percentage ?? 0;
-      const grade = gradeFor(mark);
+      const storedGrade =
+        entry.grade && !["—", "X", "ABS"].includes(entry.grade)
+          ? entry.grade
+          : null;
+      const grade = storedGrade ?? gradeFor(mark);
+      const points = entry.points ?? GRADE_POINTS[grade] ?? 0;
       return {
         id: entry.subject_id,
         name: namesById.get(entry.subject_id) ?? entry.subject,
         mark,
         grade,
-        points: GRADE_POINTS[grade],
-        remark: GRADE_REMARKS[grade],
+        points,
+        remark: GRADE_REMARKS[grade] ?? "—",
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name, "sw"));
