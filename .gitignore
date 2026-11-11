@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# design mockup runtime (reference only, see newview/README.md)
+/newview/support.js
+/newview/vendor/

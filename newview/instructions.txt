@@ -1,0 +1,58 @@
+You are restyling an existing Next.js web app (Mufumbu Secondary School, "Exams System"). The app already works. Your job is ONLY to change how it looks so that it matches the reference design exactly, starting from the login page and covering every page.
+
+## Hard rules
+- Do NOT change functionality: no changes to routes, API calls, database/schema, auth, permissions, state logic, form validation, or data flow. Presentation only (CSS/Tailwind classes, layout wrappers, fonts, icons, empty states).
+- Keep all existing menu names, labels, and features. Keep the existing collapsible menu groups (People & Classes, Academic Setup, A-Level Setup, Examinations, Certificates, School Settings) and their behavior.
+- Do not add new dependencies except the Google font below.
+- Put all design values in ONE place (CSS variables / tailwind theme) and build shared components so every page inherits the look: AppShell (top bar + sidebar), PageHeader, Card, DataTable, Badge, Button, Input/Select, EmptyState. Replace per-page styling with these.
+
+## Reference design
+Attach screenshots of the reference (dashboard and a menu page). Reference file: https://claude.ai/artifact/N7pKGZecQ2CQoRFWrkY8C1 . Match it exactly.
+
+## Design tokens
+Font: Plus Jakarta Sans (400, 500, 600, 700) via next/font/google, used everywhere.
+Colors:
+- Top bar: #0F5C50, text white
+- Page background: #F3F7F6
+- Cards: #FFFFFF, border 1px #DCE6E3, radius 14px
+- Primary text #17332E, secondary text #4B6560
+- Sidebar: #FFFFFF with right border 1px #DCE6E3; item text #2F4A45; hover bg #EEF6F4; active item bg #DCF1EA, text #0B4F43, font-weight 700
+- Accent amber: #F2A33A (logo square, user avatar), dark text on it #3B2400
+- Highlight card: bg #FDF0D5, border #F2D9A0, text #6B4300
+- Success badge: bg #DCF3E8, text #0B5A3A. Warning badge: bg #FDF0D5, text #6B4300. Danger button/badge: bg #FDECEA, text #9B1C1C. Badges are pill-shaped, 12px, weight 600.
+- Chart/progress colors: #0F7A68, #4FB3A0, #F2A33A, #C9622F
+Controls:
+- Inputs and selects: height 44px, border 1px #C5D4D0, radius 10px, white background, teal focus ring (#0F5C50)
+- Primary button: bg #0F5C50, white text, height 44px, radius 10px, weight 600. Only one primary button per view.
+- Secondary button: white, border 1px #C5D4D0, text #17332E, radius 10px
+- Labels: 13px, weight 600, #4B6560, placed above the field
+Text sizes: page title 26px/700, card title 17px/700, body 14-15px, table header 12px/600 #4B6560.
+
+## Layout
+- Top bar: full width, 64px tall. Left: amber rounded-square logo ("NSS") + "Mufumbu Secondary School" (700, 18px). Right: search (where it already exists), notifications (if it exists), user avatar (amber circle with initial) and name with the existing dropdown.
+- Below it: white sidebar 240px wide on the left and the page content area on the right (padding 28px). Remove the current dark navy sidebar and the logo block inside the sidebar.
+- Below 820px width the sidebar becomes a slide-in drawer opened by a hamburger button in the top bar. All tap targets at least 44px.
+
+## Page content rules (important)
+1. Counts and statistics appear ONLY on the Dashboard (4 stat cards in a row). Remove all stat/count cards from every other page (e.g. on Teachers remove "Total teachers", "Teaching assignments", "Showing").
+2. Remove hero/gradient banners and long descriptive paragraphs from every menu page. Each page header is just: the title (26px/700), optionally ONE short subtitle line (max ~8 words, 15px, #4B6560), and the page's main action button on the right.
+3. Remove the explanatory info card on A-Level Combinations Builder; keep its two-column layout (create form on the left, existing combinations on the right) inside plain white cards.
+4. Tables: no outer clutter. Header row 12px/600, rows 14px, row separator #EEF3F1, hover bg #F8FBFA, initials avatar for people, status as badges. Wide tables scroll horizontally inside their card.
+5. Empty states: short and calm. Centered teal-tint icon chip, a title, ONE line of text, and a primary button. Dashed border is allowed.
+6. Forms: single column on mobile, two columns from 1024px. Show validation errors under the field in #9B1C1C, 13px.
+
+## Login page
+- Background #F3F7F6, centered white card (max-width 420px, radius 14px, border #DCE6E3, padding 32px).
+- Top of the card: amber "NSS" logo square, then "Mufumbu Secondary School" (700) and "Exams System" (secondary text).
+- Labeled fields, a full-width primary "Login" button, error text below in #9B1C1C. No extra marketing text or images. Keep the existing login logic unchanged.
+
+## How to work
+1. First inspect the codebase and list every page and layout. Show me the plan before editing.
+2. Implement tokens and font, then AppShell, then shared components.
+3. Then convert pages in this order: Login, Dashboard, People & Classes, Academic Setup, A-Level Setup, Examinations, Certificates, School Settings.
+4. After each step make sure the build and lint pass and nothing functional changed.
+
+## Done when
+- Every page uses the same top bar, sidebar, fonts, colors and components as the reference.
+- Counts exist only on the Dashboard, and no menu page has a hero banner or long description.
+- All existing features behave exactly as before.
