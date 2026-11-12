@@ -2,6 +2,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { AcademicPeriodBanner } from "@/components/dashboard/academic-period-banner";
 import { createClient } from "@/lib/supabase/server";
+import { isAuthNetworkError } from "@/lib/supabase/timeout-fetch";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
 
@@ -19,6 +20,14 @@ export default async function DashboardLayout({
     data: { user },
     error,
   } = await supabase.auth.getUser();
+
+  // A network/timeout failure is not the same as "signed out". Show the retry
+  // screen instead of silently kicking the user back to the login page.
+  if (isAuthNetworkError(error)) {
+    throw new Error(
+      "Unable to reach the authentication service. Check your connection and try again.",
+    );
+  }
 
   if (error || !user) redirect("/login");
 

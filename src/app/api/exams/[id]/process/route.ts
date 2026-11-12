@@ -276,13 +276,34 @@ export async function POST(_request: Request, { params }: RouteContext) {
     );
   }
 
-  const { data: marks, error: marksError } = await admin
-    .from(marksTable)
-    .select("student_id, subject_id, theory_score, practical_score, is_absent")
-    .eq("exam_id", id);
-  if (marksError) return NextResponse.json({ error: marksError.message }, { status: 500 });
+  // Supabase/PostgREST caps a single select at 1000 rows, so a subject whose
+  // marks fall beyond that window (e.g. History) would be treated as missing.
+  // Fetch all marks page by page with a stable order.
+  const markPageSize = 1000;
+  const marks: Array<{
+    student_id: string;
+    subject_id: string;
+    theory_score: number | null;
+    practical_score: number | null;
+    is_absent: boolean;
+  }> = [];
+  for (let from = 0; ; from += markPageSize) {
+    const { data, error: marksError } = await admin
+      .from(marksTable)
+      .select("student_id, subject_id, theory_score, practical_score, is_absent")
+      .eq("exam_id", id)
+      .order("student_id")
+      .order("subject_id")
+      .range(from, from + markPageSize - 1);
+    if (marksError) {
+      return NextResponse.json({ error: marksError.message }, { status: 500 });
+    }
+    const page = (data ?? []) as typeof marks;
+    marks.push(...page);
+    if (page.length < markPageSize) break;
+  }
   const markMap = new Map(
-    (marks ?? []).map((mark) => [
+    marks.map((mark) => [
       `${mark.student_id}:${mark.subject_id}`,
       mark,
     ]),

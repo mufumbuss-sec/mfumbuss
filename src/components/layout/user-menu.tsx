@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { User, Lock, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { User, Lock, LayoutDashboard, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { SignOutForm } from "@/components/layout/sign-out-form";
 
 export function UserMenu({
   user,
@@ -77,12 +78,7 @@ export function UserMenu({
             Change Password
           </Link>
           <div className="mt-1 border-t border-line">
-            <form action="/auth/signout" method="post">
-              <button className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-danger-ink hover:bg-danger">
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </button>
-            </form>
+            <SignOutForm />
           </div>
         </div>
       )}

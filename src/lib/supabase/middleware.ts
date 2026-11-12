@@ -1,7 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  createTimeoutFetch,
+  isAuthNetworkError,
+} from "@/lib/supabase/timeout-fetch";
+
+const timeoutFetch = createTimeoutFetch();
 
 export async function updateSession(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // Signing out must answer instantly. Refreshing/validating the session here
+  // only adds another round trip to Supabase before the cookies are cleared.
+  if (path === "/auth/signout") {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -10,6 +24,9 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: {
+        fetch: timeoutFetch,
+      },
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -37,7 +54,15 @@ export async function updateSession(request: NextRequest) {
 
   let user: AuthedUser | null = null;
 
-  const { data: claimsData } = await supabase.auth.getClaims();
+  const { data: claimsData, error: claimsError } =
+    await supabase.auth.getClaims();
+
+  // Supabase is unreachable or timed out. Do not lock the user out of the app
+  // because of a network blip — let the page decide what to show.
+  if (isAuthNetworkError(claimsError)) {
+    return supabaseResponse;
+  }
+
   const claims = claimsData?.claims as Record<string, unknown> | undefined;
 
   if (typeof claims?.sub === "string") {
@@ -52,7 +77,12 @@ export async function updateSession(request: NextRequest) {
   } else {
     const {
       data: { user: authUser },
+      error: userError,
     } = await supabase.auth.getUser();
+
+    if (isAuthNetworkError(userError)) {
+      return supabaseResponse;
+    }
 
     if (authUser) {
       user = {
@@ -62,8 +92,6 @@ export async function updateSession(request: NextRequest) {
       };
     }
   }
-
-  const path = request.nextUrl.pathname;
 
   if (!user && path.startsWith("/dashboard")) {
     const url = request.nextUrl.clone();
